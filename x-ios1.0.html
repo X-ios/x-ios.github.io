@@ -459,13 +459,25 @@
             font-size: 18px;
             font-weight: 700;
             color: white;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .region-group-title::before {
+            content: '';
+            width: 4px;
+            height: 20px;
+            border-radius: 2px;
+            background: linear-gradient(180deg, #667eea, #f093fb);
         }
         .region-group-count {
             font-size: 12px;
-            color: rgba(255,255,255,0.5);
-            background: rgba(255,255,255,0.1);
+            color: rgba(255,255,255,0.7);
+            background: rgba(255,255,255,0.08);
             padding: 2px 10px;
             border-radius: 20px;
+            border: 1px solid rgba(255,255,255,0.15);
+            font-weight: 600;
         }
         .region-group-line {
             flex: 1;
@@ -504,6 +516,56 @@
             background: rgba(255,255,255,0.05);
             color: rgba(255,255,255,0.3);
             border: 1px solid rgba(255,255,255,0.1);
+        }
+
+        /* ========== 战队图标样式 ========== */
+        .team-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 2px solid rgba(255,255,255,0.15);
+            background: rgba(255,255,255,0.05);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .team-icon:hover {
+            transform: scale(1.15);
+            border-color: rgba(255,255,255,0.4);
+            box-shadow: 0 0 20px rgba(255,255,255,0.2);
+        }
+        .team-icon-lg {
+            width: 56px;
+            height: 56px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 2px solid rgba(255,255,255,0.2);
+            background: rgba(255,255,255,0.08);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .team-icon-lg:hover {
+            transform: scale(1.1);
+            border-color: rgba(255,255,255,0.5);
+            box-shadow: 0 0 24px rgba(255,255,255,0.25);
+        }
+        .team-icon-sm {
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 1.5px solid rgba(255,255,255,0.12);
+            background: rgba(255,255,255,0.05);
+        }
+        .team-icon-glow-high {
+            box-shadow: 0 0 12px rgba(239,68,68,0.4), 0 0 24px rgba(239,68,68,0.2);
+            border-color: rgba(239,68,68,0.5);
+        }
+        .team-icon-glow-medium {
+            box-shadow: 0 0 12px rgba(245,158,11,0.4), 0 0 24px rgba(245,158,11,0.2);
+            border-color: rgba(245,158,11,0.5);
+        }
+        .team-icon-glow-low {
+            box-shadow: 0 0 12px rgba(59,130,246,0.4), 0 0 24px rgba(59,130,246,0.2);
+            border-color: rgba(59,130,246,0.5);
         }
     </style>
 <base target="_blank">
@@ -582,7 +644,7 @@
                                 </div>
                                 <div class="flex items-center justify-between">
                                     <div class="text-center">
-                                        <div class="w-16 h-16 bg-white/20 rounded-2xl flex items-center justify-center mb-2 text-2xl">🐉</div>
+                                        <img id="hero-icon-a" src="" class="team-icon-lg mx-auto mb-2" alt="">
                                         <div class="text-white font-bold" id="hero-team-a">BLG</div>
                                     </div>
                                     <div class="text-center px-4">
@@ -590,7 +652,7 @@
                                         <div class="text-yellow-300 text-sm font-bold mt-1" id="hero-time">19:00</div>
                                     </div>
                                     <div class="text-center">
-                                        <div class="w-16 h-16 bg-white/20 rounded-2xl flex items-center justify-center mb-2 text-2xl">🦁</div>
+                                        <img id="hero-icon-b" src="" class="team-icon-lg mx-auto mb-2" alt="">
                                         <div class="text-white font-bold" id="hero-team-b">TES</div>
                                     </div>
                                 </div>
@@ -758,7 +820,7 @@
     <!-- ========== 数据管理（恢复上一版布局 + 背景透明） ========== -->
     <div id="page-admin" class="page-container hidden-page">
         <div class="admin-layout h-full">
-            <aside class="admin-sidebar w-64 flex-shrink-0 hidden lg:block overflow-y-auto">
+            <aside class="admin-sidebar w-64 flex-shrink-0 hidden lg:block overflow-y-auto" style="background: rgba(30, 41, 59, 0.6); backdrop-filter: blur(20px) saturate(180%); -webkit-backdrop-filter: blur(20px) saturate(180%); border-right: 1px solid rgba(255,255,255,0.08);">
                 <div class="p-6">
                     <div class="flex items-center gap-3 mb-8">
                         <div class="w-10 h-10 bg-blue-600 rounded-lg flex items-center justify-center">
@@ -888,9 +950,26 @@
                         </div>
                         <div class="px-6 py-4 border-t border-gray-200 flex items-center justify-between">
                             <span class="text-sm text-gray-500" id="table-info">显示 0 条数据</span>
-                            <div class="flex gap-2">
-                                <button class="px-3 py-1 rounded-lg border border-gray-200 text-sm text-gray-600 hover:bg-gray-50 disabled:opacity-50" disabled>上一页</button>
-                                <button class="px-3 py-1 rounded-lg border border-gray-200 text-sm text-gray-600 hover:bg-gray-50 disabled:opacity-50" disabled>下一页</button>
+                            <div class="flex items-center gap-4">
+                                <div class="flex items-center gap-2">
+                                    <span class="text-sm text-gray-500">每页</span>
+                                    <select id="page-size" class="bg-gray-100 border-0 rounded-lg px-2 py-1 text-sm focus:ring-2 focus:ring-blue-500 outline-none" onchange="changePageSize()">
+                                        <option value="10">10</option>
+                                        <option value="20">20</option>
+                                        <option value="50">50</option>
+                                        <option value="100">100</option>
+                                    </select>
+                                    <span class="text-sm text-gray-500">条</span>
+                                </div>
+                                <div class="flex items-center gap-1" id="pagination-numbers"></div>
+                                <div class="flex gap-2">
+                                    <button id="page-prev" onclick="changePage(-1)" class="px-3 py-1.5 rounded-lg border border-gray-200 text-sm text-gray-600 hover:bg-gray-50 disabled:opacity-40 disabled:cursor-not-allowed transition-all">
+                                        <i class="fas fa-chevron-left mr-1"></i>上一页
+                                    </button>
+                                    <button id="page-next" onclick="changePage(1)" class="px-3 py-1.5 rounded-lg border border-gray-200 text-sm text-gray-600 hover:bg-gray-50 disabled:opacity-40 disabled:cursor-not-allowed transition-all">
+                                        下一页<i class="fas fa-chevron-right ml-1"></i>
+                                    </button>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -960,37 +1039,35 @@
                 </div>
 
                 <div id="admin-teams" class="admin-section p-8 hidden">
-                    <div class="flex items-center justify-between mb-6">
-                        <div>
-                            <h2 class="text-2xl font-bold text-gray-800">战队管理</h2>
-                            <p class="text-gray-500 mt-1">管理战队热度与信息</p>
+                    <div class="glass-card p-6 mb-6">
+                        <div class="flex items-center justify-between mb-4">
+                            <div>
+                                <h2 class="text-2xl font-bold text-white">战队管理</h2>
+                                <p class="text-white/50 mt-1">管理战队热度与信息 · 点击热度标签切换等级</p>
+                            </div>
+                            <div class="flex gap-2">
+                                <button onclick="saveTeamHeats()" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-xl text-sm font-medium transition-all active:scale-95 shadow-lg shadow-blue-600/30">
+                                    <i class="fas fa-save mr-2"></i>保存热度设置
+                                </button>
+                            </div>
                         </div>
-                        <div class="flex gap-2">
-                            <button onclick="saveTeamHeats()" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-xl text-sm font-medium transition-all active:scale-95">
-                                <i class="fas fa-save mr-2"></i>保存热度设置
-                            </button>
-                        </div>
-                    </div>
-
-                    <div class="admin-card p-6 mb-6">
-                        <div class="flex items-center gap-6 mb-4">
+                        <div class="flex items-center gap-6 mb-2">
                             <div class="flex items-center gap-2">
                                 <span class="w-3 h-3 rounded-full bg-red-500"></span>
-                                <span class="text-gray-600 text-sm">高热度 - 焦点战队，备受关注</span>
+                                <span class="text-white/70 text-sm">高热度 - 焦点战队</span>
                             </div>
                             <div class="flex items-center gap-2">
                                 <span class="w-3 h-3 rounded-full bg-yellow-500"></span>
-                                <span class="text-gray-600 text-sm">中热度 - 稳定发挥，值得关注</span>
+                                <span class="text-white/70 text-sm">中热度 - 稳定发挥</span>
                             </div>
                             <div class="flex items-center gap-2">
                                 <span class="w-3 h-3 rounded-full bg-blue-500"></span>
-                                <span class="text-gray-600 text-sm">低热度 - 新兴力量，潜力待挖</span>
+                                <span class="text-white/70 text-sm">低热度 - 新兴力量</span>
                             </div>
                         </div>
-                        <p class="text-gray-400 text-sm">点击战队卡片上的热度标签即可切换热度等级</p>
                     </div>
 
-                    <div id="teams-list" class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4"></div>
+                    <div id="teams-list"></div>
                 </div>
             </main>
         </div>
@@ -1082,6 +1159,9 @@
     </div>
 
     <script>
+
+        // ==================== 数据存储 ====================
+  
 
         // ==================== 数据存储 ====================
         const DataStore = {
@@ -1359,6 +1439,49 @@
         let selectedDate = formatDateLocal(new Date());
         let calendarView = 'month';
         let trendPeriodDays = 7;
+        let adminPageSize = 10;
+        let adminCurrentPage = 1;
+
+        const teamIcons = {
+    'AL': 'https://esports-cdn.namitiyu.com/lol/team/FjBYl_bpqXM4Thw2Z2WYxwDIOJx1',
+    'BLG': 'https://esports-cdn.namitiyu.com/lol/team/FuQ-HVlJW08a3QSsFNrwgDSrV-kn',
+    'EDG': 'https://esports-cdn.namitiyu.com/lol/team/2f6a16771b9e8f03507e7f8a7307ab4e.png',
+    'IG': 'https://esports-cdn.namitiyu.com/lol/team/8e0be89305eafd6f37503187a6fc4c53.png',
+    'JDG': 'https://esports-cdn.namitiyu.com/lol/team/FjTJM1hEw1EE9T_fTiz7W2efVrxU',
+    'LGD': 'https://esports-cdn.namitiyu.com/lol/team/Fg_MRnJU_nJIN_fhBFBAoLoAscP5',
+    'LNG': 'https://esports-cdn.namitiyu.com/lol/team/5b00639e9203f5adac6655d783e11d88.png',
+    'NIP': 'https://esports-cdn.namitiyu.com/lol/team/FqCjTdpLzs0aJwMyocEK7zI1DTOi',
+    'OMG': 'https://esports-cdn.namitiyu.com/lol/team/Fk1q1UZDRzxHTV8Eeqm47Z9djiPl',
+    'TES': 'https://esports-cdn.namitiyu.com/lol/team/1139c61f11e06147a05b9180b9ce064a.png',
+    'TT': 'https://esports-cdn.namitiyu.com/lol/team/Fi06LtV6yXZji05FCa8wywt68Zzm',
+    'UP': 'https://esports-cdn.namitiyu.com/lol/team/Fu4KY4VW4cFXNWhjpi3uyW5mCruN',
+    'WBG': 'https://esports-cdn.namitiyu.com/lol/team/FsGLCKNVEaNUowzakjbT75oqQIsY',
+    'WE': 'https://esports-cdn.namitiyu.com/lol/team/a5e8b721fa3495424ab2f7f813ccfd9e.png',
+    'FNC': 'https://esports-cdn.namitiyu.com/lol/team/FrCa25cDJVB_9-p2TJuiDysDDTlk',
+    'G2': 'https://esports-cdn.namitiyu.com/lol/team/Fn8KDMp7ktyLFpTuoe4B7-WCxOAb',
+    'GX': 'https://esports-cdn.namitiyu.com/lol/team/FtWMTXjgkQnUmEq5zZ9NhXMK5zue',
+    'KC': 'https://esports-cdn.namitiyu.com/lol/team/FpvzFLOCAur7cd59-22EEQlzsSw0',
+    'MKOI': 'https://esports-cdn.namitiyu.com/lol/team/Fr-ZkZMxhVaAqqhW3bfj8oYTfSWR',
+    'NAVI': 'https://esports-cdn.namitiyu.com/lol/team/FlnX65PdxHfOuzVgTINE3CsooFku',
+    'SK': 'https://esports-cdn.namitiyu.com/lol/team/FuLdUgOfQ3cPQGwVnVbuwev51wpV',
+    'Shifters': 'https://esports-cdn.namitiyu.com/lol/team/FsXALvZzwk09wnpYEQ-1SAy1jR29',
+    'THRT': 'https://esports-cdn.namitiyu.com/lol/team/FjUxNX1hCw0weLAFpDjuBphIwo5N',
+    'VIT': 'https://esports-cdn.namitiyu.com/lol/team/Foqt6-SaT1Zx6VcY0og9gEM4MMm7',
+    'BFX': 'https://esports-cdn.namitiyu.com/lol/team/FlycExNPh_FPU6tqsmvMotdwigIt',
+    'BRO': 'https://esports-cdn.namitiyu.com/lol/team/FlFdQU07TgJrOF4wvMOGFRJzg8KK',
+    'DK': 'https://esports-cdn.namitiyu.com/lol/team/Fg1Z7jhh5zluHsCcrWC2vOiiEo7s',
+    'DNS': 'https://esports-cdn.namitiyu.com/lol/team/FiREL-9p9kEsrBd0LMbO_gmBv6qC',
+    'GEN': 'https://esports-cdn.namitiyu.com/lol/team/FmS7NLx8b7zRARpNmDkvDrhjKx0w',
+    'HLE': 'https://esports-cdn.namitiyu.com/lol/team/FosSfN6KzBxq4oiU_Xi7z_DJ4rMF',
+    'KRX': 'https://esports-cdn.namitiyu.com/lol/team/Fu9CGMGeE2DOMTzrpB8GeHI_jEZ5',
+    'KT': 'https://esports-cdn.namitiyu.com/lol/team/Fqw0V_AbDcoKj78Xxm1tbGMYP0o2',
+    'NS': 'https://esports-cdn.namitiyu.com/lol/team/FgXx-XxZb5L3_QPcFFJAFKWVrHhE',
+    'T1': 'https://esports-cdn.namitiyu.com/lol/team/FvlF-KaNF_aUW28gaY0-Uw5ITFoW'
+};
+
+        function getTeamIcon(team) {
+            return teamIcons[team] || '';
+        }
 
         const teamAuras = {
             'AL': 'fire',
@@ -1658,12 +1781,14 @@
                         const score = m.status === 'completed' ? `${m.scoreA}:${m.scoreB}` : 'VS';
                         matchesHtml += `
                             <div class="match-card p-2 mb-1.5 cursor-pointer hover:bg-white/[0.08] text-center" onclick="editMatch(${m.id})">
+                                <div class="flex items-center justify-center gap-1 mb-1">
+                                    <img src="${getTeamIcon(m.teamA)}" class="team-icon-sm" alt="${m.teamA}" onerror="this.style.display='none'">
+                                    <span class="text-white/70 text-[10px] font-bold">${score}</span>
+                                    <img src="${getTeamIcon(m.teamB)}" class="team-icon-sm" alt="${m.teamB}" onerror="this.style.display='none'">
+                                </div>
                                 <div class="text-[9px] text-white/40 mb-0.5">${m.time}</div>
-                                <div class="mb-1"><span class="text-[8px] px-1.5 py-0.5 rounded font-semibold ${getRegionStyle(m.region, 'admin').class}" style="${getRegionStyle(m.region, 'admin').style}">${m.region}</span></div>
-                                <div class="text-white font-bold text-xs leading-tight">${m.teamA}</div>
-                                <div class="text-white/70 text-[10px] font-bold my-0.5">${score}</div>
-                                <div class="text-white font-bold text-xs leading-tight">${m.teamB}</div>
-                                <div class="mt-1"><span class="text-[8px] px-1.5 py-0.5 rounded-full ${sc[m.status]}">${sl[m.status]}</span></div>
+                                <div class="mb-0.5"><span class="text-[8px] px-1.5 py-0.5 rounded font-semibold ${getRegionStyle(m.region, 'admin').class}" style="${getRegionStyle(m.region, 'admin').style}">${m.region}</span></div>
+                                <div class="mt-0.5"><span class="text-[8px] px-1.5 py-0.5 rounded-full ${sc[m.status]}">${sl[m.status]}</span></div>
                             </div>`;
                     });
                 }
@@ -1720,7 +1845,7 @@
                                 </div>
                                 <div class="flex-1 flex items-center justify-between">
                                     <div class="flex items-center gap-2">
-                                        <div class="team-aura aura-${auraA} w-8 h-8 rounded-lg flex items-center justify-center text-sm bg-white/5">${configA.icon}</div>
+                                        <img src="${getTeamIcon(m.teamA)}" class="team-icon-sm" alt="${m.teamA}" onerror="this.style.display='none'">
                                         <span class="text-white font-bold">${m.teamA}</span>
                                     </div>
                                     <div class="text-center px-4">
@@ -1729,7 +1854,7 @@
                                     </div>
                                     <div class="flex items-center gap-2">
                                         <span class="text-white font-bold">${m.teamB}</span>
-                                        <div class="team-aura aura-${auraB} w-8 h-8 rounded-lg flex items-center justify-center text-sm bg-white/5">${configB.icon}</div>
+                                        <img src="${getTeamIcon(m.teamB)}" class="team-icon-sm" alt="${m.teamB}" onerror="this.style.display='none'">
                                     </div>
                                 </div>
                             </div>
@@ -1930,29 +2055,36 @@
                 };
 
                 card.innerHTML = `
-                    <div class="flex items-center justify-between">
-                        <div class="flex items-center gap-4 flex-1">
-                            <div class="team-aura aura-${auraA} w-12 h-12 rounded-2xl flex items-center justify-center text-xl bg-white/5 relative">
-                                ${configA.icon}
-                            </div>
-                            <div class="flex-1">
-                                <div class="flex items-center gap-2 mb-1">
-                                    <span class="text-white font-bold text-lg">${m.teamA}</span>
-                                    <span class="text-white/30">vs</span>
-                                    <span class="text-white font-bold text-lg">${m.teamB}</span>
-                                </div>
-                                <div class="flex items-center gap-3 text-sm text-white/50">
-                                    <span><i class="far fa-clock mr-1"></i>${m.time}</span>
-                                    <span class="px-2 py-0.5 rounded-md text-xs font-medium ${getRegionStyle(m.region, 'admin').class}" style="${getRegionStyle(m.region, 'admin').style}">${m.region}</span>
+                    <div class="flex items-center justify-between gap-4">
+                        <!-- 左侧：A战队 -->
+                        <div class="flex items-center gap-3 flex-1 min-w-0">
+                            <img src="${getTeamIcon(m.teamA)}" class="team-icon flex-shrink-0" alt="${m.teamA}" onerror="this.style.display='none'">
+                            <div class="min-w-0">
+                                <div class="flex items-center gap-1.5 mb-0.5">
+                                    <span class="px-1.5 py-0.5 rounded text-[9px] font-medium flex-shrink-0 ${getRegionStyle(m.region, 'admin').class}" style="${getRegionStyle(m.region, 'admin').style}">${m.region}</span>
+                                    <span class="text-white font-bold text-base truncate">${m.teamA}</span>
                                 </div>
                             </div>
                         </div>
-                        <div class="text-right ml-4">
-                            <div class="text-2xl font-bold text-white mb-1">${m.status === 'completed' ? m.scoreA + ' - ' + m.scoreB : '--'}</div>
-                            <span class="px-3 py-1 rounded-full text-xs font-medium ${statusColors[m.status]}">${statusLabels[m.status]}</span>
+                        <!-- 中间：对阵信息 -->
+                        <div class="text-center flex-shrink-0 px-2">
+                            <div class="text-xs text-white/30 mb-1">${m.time}</div>
+                            <div class="text-xl font-bold text-white">VS</div>
+                            <div class="text-lg font-bold text-white/80 mt-0.5">${m.status === 'completed' ? m.scoreA + ' - ' + m.scoreB : '--'}</div>
+                            <span class="px-2 py-0.5 rounded-full text-[10px] font-medium ${statusColors[m.status]}">${statusLabels[m.status]}</span>
+                        </div>
+                        <!-- 右侧：B战队 -->
+                        <div class="flex items-center gap-3 flex-1 min-w-0 justify-end">
+                            <div class="min-w-0 text-right">
+                                <div class="flex items-center gap-1.5 mb-0.5 justify-end">
+                                    <span class="px-1.5 py-0.5 rounded text-[9px] font-medium flex-shrink-0 ${getRegionStyle(m.region, 'admin').class}" style="${getRegionStyle(m.region, 'admin').style}">${m.region}</span>
+                                    <span class="text-white font-bold text-base truncate">${m.teamB}</span>
+                                </div>
+                            </div>
+                            <img src="${getTeamIcon(m.teamB)}" class="team-icon flex-shrink-0" alt="${m.teamB}" onerror="this.style.display='none'">
                         </div>
                     </div>
-                    <div class="mt-3 flex items-center gap-2">
+                    <div class="mt-3">
                         <div class="flex-1 h-1 rounded-full bg-white/10 overflow-hidden">
                             <div class="h-full rounded-full transition-all" style="width: ${m.status === 'completed' ? (m.scoreA/(m.scoreA+m.scoreB)*100) : 50}%; background: linear-gradient(90deg, ${configA.color}, ${configB.color})"></div>
                         </div>
@@ -1976,6 +2108,8 @@
             const auraA = teamAuras[focus.teamA] || 'bright';
             const auraB = teamAuras[focus.teamB] || 'bright';
 
+            const iconA = getTeamIcon(focus.teamA);
+            const iconB = getTeamIcon(focus.teamB);
             container.innerHTML = `
                 <div class="flex items-center justify-between mb-3">
                     <span class="text-white/60 text-sm">${focus.time}</span>
@@ -1983,7 +2117,7 @@
                 </div>
                 <div class="flex items-center justify-between">
                     <div class="text-center">
-                        <div class="w-14 h-14 rounded-2xl flex items-center justify-center text-2xl mb-2 bg-white/5 team-aura aura-${auraA}">${auraConfig[auraA].icon}</div>
+                        ${iconA ? `<img src="${iconA}" class="team-icon-lg mx-auto mb-2" alt="${focus.teamA}">` : `<div class="w-14 h-14 rounded-2xl flex items-center justify-center text-2xl mb-2 bg-white/5 team-aura aura-${auraA}">${auraConfig[auraA].icon}</div>`}
                         <div class="text-white font-bold">${focus.teamA}</div>
                         <div class="text-xs text-white/40">${auraConfig[auraA].name}</div>
                     </div>
@@ -1992,7 +2126,7 @@
                         <div class="text-xs text-white/40 mt-1">${focus.status === 'completed' ? focus.scoreA + ':' + focus.scoreB : '未开始'}</div>
                     </div>
                     <div class="text-center">
-                        <div class="w-14 h-14 rounded-2xl flex items-center justify-center text-2xl mb-2 bg-white/5 team-aura aura-${auraB}">${auraConfig[auraB].icon}</div>
+                        ${iconB ? `<img src="${iconB}" class="team-icon-lg mx-auto mb-2" alt="${focus.teamB}">` : `<div class="w-14 h-14 rounded-2xl flex items-center justify-center text-2xl mb-2 bg-white/5 team-aura aura-${auraB}">${auraConfig[auraB].icon}</div>`}
                         <div class="text-white font-bold">${focus.teamB}</div>
                         <div class="text-xs text-white/40">${auraConfig[auraB].name}</div>
                     </div>
@@ -2020,20 +2154,19 @@
                     filterMatches();
                 };
 
+                const iconUrl = getTeamIcon(t.name);
                 div.innerHTML = `
-                    <div class="team-aura aura-${t.aura} w-10 h-10 rounded-xl flex items-center justify-center text-lg bg-white/5 relative group-hover:scale-110 transition-transform">
-                        ${t.config.icon}
-                    </div>
-                    <div class="flex-1">
+                    ${iconUrl ? `<img src="${iconUrl}" class="team-icon flex-shrink-0 group-hover:scale-110 transition-transform" alt="${t.name}">` : `<div class="team-aura aura-${t.aura} w-10 h-10 rounded-xl flex items-center justify-center text-lg bg-white/5 relative group-hover:scale-110 transition-transform">${t.config.icon}</div>`}
+                    <div class="flex-1 min-w-0">
                         <div class="flex items-center justify-between">
-                            <span class="text-white font-bold text-sm">${t.name}</span>
-                            <span class="text-xs px-2 py-0.5 rounded-md" style="background: ${t.config.color}20; color: ${t.config.color}">${t.config.name}</span>
+                            <span class="text-white font-bold text-sm truncate">${t.name}</span>
+                            <span class="text-xs px-2 py-0.5 rounded-md flex-shrink-0 ml-2" style="background: ${t.config.color}20; color: ${t.config.color}">${t.config.name}</span>
                         </div>
                         <div class="flex items-center gap-2 mt-1">
                             <div class="flex-1 h-1.5 rounded-full bg-white/10 overflow-hidden">
                                 <div class="h-full rounded-full transition-all" style="width: ${t.stats.total ? (t.stats.wins/t.stats.total*100) : 0}%; background: ${t.config.color}"></div>
                             </div>
-                            <span class="text-xs text-white/40">${t.stats.wins}胜</span>
+                            <span class="text-xs text-white/40 flex-shrink-0">${t.stats.wins}胜</span>
                         </div>
                     </div>
                 `;
@@ -2241,6 +2374,10 @@
                 document.getElementById('hero-team-a').textContent = focusMatch.teamA;
                 document.getElementById('hero-team-b').textContent = focusMatch.teamB;
                 document.getElementById('hero-time').textContent = focusMatch.time;
+                const heroIconA = document.getElementById('hero-icon-a');
+                const heroIconB = document.getElementById('hero-icon-b');
+                if (heroIconA) { heroIconA.src = getTeamIcon(focusMatch.teamA); heroIconA.alt = focusMatch.teamA; }
+                if (heroIconB) { heroIconB.src = getTeamIcon(focusMatch.teamB); heroIconB.alt = focusMatch.teamB; }
             }
 
             renderTrendLine();
@@ -2335,6 +2472,7 @@
                     card.className = 'glass-card p-4 relative overflow-hidden cursor-pointer';
                     card.style.setProperty('--card-accent', regionColors[region]);
 
+                    const teamIconUrl = getTeamIcon(t.team);
                     card.innerHTML = `
                         <div class="absolute top-0 right-0 w-20 h-20 rounded-full opacity-20" style="background: ${regionColors[region]}; filter: blur(20px);"></div>
                         <div class="relative">
@@ -2350,7 +2488,10 @@
                                     <div class="absolute inset-0 flex items-center justify-center text-[10px] font-bold text-white">${t.winRate}%</div>
                                 </div>
                             </div>
-                            <div class="text-lg font-bold text-white mb-1">${t.team}</div>
+                            <div class="flex items-center gap-2 mb-1">
+                                ${teamIconUrl ? `<img src="${teamIconUrl}" class="team-icon-sm" alt="${t.team}">` : ''}
+                                <div class="text-lg font-bold text-white">${t.team}</div>
+                            </div>
                             <div class="text-xs text-white/50">${t.wins}胜 ${t.total - t.wins}负 · ${t.total}场</div>
                             <div class="mt-2 flex gap-1">
                                 ${Array(5).fill(0).map((_, i) => 
@@ -2444,7 +2585,15 @@
             tbody.innerHTML = '';
             const filtered = getFilteredMatches();
 
-            filtered.forEach(m => {
+            // 分页计算
+            const totalItems = filtered.length;
+            const totalPages = Math.max(1, Math.ceil(totalItems / adminPageSize));
+            adminCurrentPage = Math.min(adminCurrentPage, totalPages);
+            const startIndex = (adminCurrentPage - 1) * adminPageSize;
+            const endIndex = Math.min(startIndex + adminPageSize, totalItems);
+            const pageItems = filtered.slice(startIndex, endIndex);
+
+            pageItems.forEach(m => {
                 const statusColors = { 'completed': 'text-green-600 bg-green-50', 'live': 'text-red-600 bg-red-50', 'upcoming': 'text-blue-600 bg-blue-50' };
                 const statusLabels = { 'completed': '已完成', 'live': '进行中', 'upcoming': '待进行' };
                 const rStyle = getRegionStyle(m.region, 'admin');
@@ -2468,7 +2617,8 @@
                 tbody.appendChild(tr);
             });
 
-            document.getElementById('table-info').textContent = `显示 ${filtered.length} 条数据 (共 ${matches.length} 条)`;
+            document.getElementById('table-info').textContent = `显示 ${startIndex + 1}-${endIndex} 条 (共 ${totalItems} 条，${totalPages} 页)`;
+            renderPagination(totalPages, adminCurrentPage, totalItems);
 
             const today = getTodayLocal();
             document.getElementById('admin-total').textContent = matches.length;
@@ -2481,6 +2631,69 @@
         }
 
         // ==================== 批量操作 ====================
+        function changePage(delta) {
+            const filtered = getFilteredMatches();
+            const totalPages = Math.max(1, Math.ceil(filtered.length / adminPageSize));
+            const newPage = adminCurrentPage + delta;
+            if (newPage >= 1 && newPage <= totalPages) {
+                adminCurrentPage = newPage;
+                renderAdmin();
+            }
+        }
+
+        function changePageSize() {
+            const select = document.getElementById('page-size');
+            if (select) {
+                adminPageSize = parseInt(select.value);
+                adminCurrentPage = 1;
+                renderAdmin();
+            }
+        }
+
+        function renderPagination(totalPages, current, totalItems) {
+            const container = document.getElementById('pagination-numbers');
+            if (!container) return;
+            container.innerHTML = '';
+
+            if (totalPages <= 1) {
+                document.getElementById('page-prev').disabled = true;
+                document.getElementById('page-next').disabled = true;
+                return;
+            }
+
+            document.getElementById('page-prev').disabled = current <= 1;
+            document.getElementById('page-next').disabled = current >= totalPages;
+
+            // 页码按钮
+            let pages = [];
+            if (totalPages <= 7) {
+                pages = Array.from({length: totalPages}, (_, i) => i + 1);
+            } else {
+                if (current <= 3) {
+                    pages = [1, 2, 3, 4, '...', totalPages];
+                } else if (current >= totalPages - 2) {
+                    pages = [1, '...', totalPages - 3, totalPages - 2, totalPages - 1, totalPages];
+                } else {
+                    pages = [1, '...', current - 1, current, current + 1, '...', totalPages];
+                }
+            }
+
+            pages.forEach(p => {
+                if (p === '...') {
+                    const span = document.createElement('span');
+                    span.className = 'px-2 py-1 text-sm text-gray-400';
+                    span.textContent = '...';
+                    container.appendChild(span);
+                } else {
+                    const btn = document.createElement('button');
+                    btn.className = `px-3 py-1.5 rounded-lg text-sm font-medium transition-all ${p === current ? 'bg-blue-600 text-white shadow-md' : 'text-gray-600 hover:bg-gray-100'}`;
+                    btn.textContent = p;
+                    btn.onclick = () => { adminCurrentPage = p; renderAdmin(); };
+                    container.appendChild(btn);
+                }
+            });
+        }
+
         function updateBatchBar() {
             const checked = document.querySelectorAll('.match-checkbox:checked');
             const bar = document.getElementById('batch-bar');
@@ -2548,11 +2761,12 @@
             });
         }
 
-        function filterMatches() { renderAdmin(); }
+        function filterMatches() { adminCurrentPage = 1; renderAdmin(); }
         function clearFilters() {
             document.getElementById('search-input').value = '';
             document.getElementById('filter-region').value = '';
             document.getElementById('filter-status').value = '';
+            adminCurrentPage = 1;
             renderAdmin();
         }
 
@@ -2570,7 +2784,10 @@
                 target.classList.remove('text-gray-400', 'hover:text-white', 'hover:bg-white/10');
                 target.classList.add('bg-blue-600', 'text-white');
             }
-            if (section === 'teams') renderTeamsList();
+            if (section === 'teams') {
+                matches = DataStore.getMatches();
+                renderTeamsList();
+            }
         }
 
         // ==================== 战队热度管理 ====================
@@ -2580,36 +2797,99 @@
             const container = document.getElementById('teams-list');
             container.innerHTML = '';
 
-            Array.from(teams).sort().forEach(team => {
-                const stats = calculateTeamStats(team);
-                const heat = teamHeats[team] || 'none';
-                const heatInfo = heatConfig[heat];
-                const aura = teamAuras[team] || 'bright';
-                const auraInfo = auraConfig[aura];
+            // 统计每个战队的所属赛区（取出现次数最多的）
+            const teamRegionCount = {};
+            matches.forEach(m => {
+                [m.teamA, m.teamB].forEach(team => {
+                    if (!teamRegionCount[team]) teamRegionCount[team] = {};
+                    teamRegionCount[team][m.region] = (teamRegionCount[team][m.region] || 0) + 1;
+                });
+            });
 
-                const div = document.createElement('div');
-                div.className = 'admin-card p-4 text-center relative overflow-hidden cursor-pointer hover:shadow-lg transition-all';
-                div.onclick = () => toggleTeamHeat(team);
+            const teamRegion = {};
+            Object.entries(teamRegionCount).forEach(([team, regions]) => {
+                teamRegion[team] = Object.entries(regions).sort((a, b) => b[1] - a[1])[0][0];
+            });
 
-                div.innerHTML = `
-                    <div class="absolute top-2 right-2">
-                        <span class="text-[10px] px-2 py-0.5 rounded-full ${heatInfo.class} font-medium">${heatInfo.icon} ${heatInfo.label}</span>
-                    </div>
-                    <div class="team-aura aura-${aura} w-12 h-12 rounded-xl flex items-center justify-center text-xl mx-auto mb-2 bg-gray-50 relative">
-                        ${auraInfo.icon}
-                    </div>
-                    <div class="font-bold text-gray-800 text-sm mb-1">${team}</div>
-                    <div class="text-xs text-gray-500 mb-2">${stats.wins}胜 ${stats.losses}负 · ${stats.total}场</div>
-                    <div class="flex gap-1 justify-center">
-                        ${Array(3).fill(0).map((_, i) => {
-                            const heatKeys = ['high', 'medium', 'low'];
-                            const isActive = heat === heatKeys[i];
-                            const colors = ['bg-red-500', 'bg-yellow-500', 'bg-blue-500'];
-                            return `<div class="w-6 h-1 rounded-full ${isActive ? colors[i] : 'bg-gray-200'}"></div>`;
-                        }).join('')}
+            // 按赛区分组
+            const regionGroups = {};
+            Array.from(teams).forEach(team => {
+                const region = teamRegion[team] || '其它';
+                if (!regionGroups[region]) regionGroups[region] = [];
+                regionGroups[region].push(team);
+            });
+
+            // 按战队数量降序排列赛区
+            const sortedRegions = Object.entries(regionGroups)
+                .sort((a, b) => b[1].length - a[1].length)
+                .map(([region]) => region);
+
+            sortedRegions.forEach(region => {
+                const regionTeams = regionGroups[region]
+                    .map(team => ({ team, stats: calculateTeamStats(team) }))
+                    .sort((a, b) => {
+                        // 先按胜场数降序
+                        if (b.stats.wins !== a.stats.wins) {
+                            return b.stats.wins - a.stats.wins;
+                        }
+                        // 胜场相同按总场次降序
+                        return b.stats.total - a.stats.total;
+                    })
+                    .map(item => item.team);
+                const rStyle = getRegionStyle(region, 'admin');
+
+                // 赛区分组容器
+                const groupDiv = document.createElement('div');
+                groupDiv.className = 'glass-card p-5 mb-5';
+
+                // 赛区标题
+                const headerHtml = `
+                    <div class="flex items-center gap-3 mb-4 pb-3 border-b border-white/10">
+                        <span class="${rStyle.class}" style="${rStyle.style}">${region}</span>
+                        <span class="text-white/40 text-sm">${regionTeams.length} 支战队</span>
+                        <div class="flex-1 h-px bg-gradient-to-r from-white/20 to-transparent"></div>
                     </div>
                 `;
-                container.appendChild(div);
+
+                // 战队网格
+                const gridDiv = document.createElement('div');
+                gridDiv.className = 'grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3';
+
+                regionTeams.forEach(team => {
+                    const stats = calculateTeamStats(team);
+                    const heat = teamHeats[team] || 'none';
+                    const heatInfo = heatConfig[heat];
+                    const aura = teamAuras[team] || 'bright';
+                    const auraInfo = auraConfig[aura];
+
+                    const card = document.createElement('div');
+                    card.className = 'glass-card p-3 text-center relative overflow-hidden cursor-pointer hover:bg-white/[0.12] transition-all';
+                    card.onclick = () => toggleTeamHeat(team);
+
+                    const teamIcon = getTeamIcon(team);
+                    const glowClass = heat === 'high' ? 'team-icon-glow-high' : heat === 'medium' ? 'team-icon-glow-medium' : heat === 'low' ? 'team-icon-glow-low' : '';
+                    card.innerHTML = `
+                        <div class="absolute top-1.5 right-1.5">
+                            <span class="text-[9px] px-1.5 py-0.5 rounded-full ${heatInfo.class} font-medium">${heatInfo.icon} ${heatInfo.label}</span>
+                        </div>
+                        ${teamIcon ? `<img src="${teamIcon}" class="team-icon mx-auto mb-1.5 ${glowClass}" alt="${team}">` : `<div class="team-aura aura-${aura} w-10 h-10 rounded-xl flex items-center justify-center text-lg mx-auto mb-1.5 bg-white/5 relative">${auraInfo.icon}</div>`}
+                        <div class="font-bold text-white text-sm mb-0.5">${team}</div>
+                        <div class="text-[10px] text-white/40 mb-1.5">${stats.wins}胜 ${stats.losses}负 · ${stats.total}场</div>
+                        <div class="flex gap-1 justify-center">
+                            ${Array(3).fill(0).map((_, i) => {
+                                const heatKeys = ['high', 'medium', 'low'];
+                                const isActive = heat === heatKeys[i];
+                                const colors = ['bg-red-500', 'bg-yellow-500', 'bg-blue-500'];
+                                return `<div class="w-5 h-1 rounded-full ${isActive ? colors[i] : 'bg-white/10'}"></div>`;
+                            }).join('')}
+                        </div>
+                    `;
+                    gridDiv.appendChild(card);
+                });
+
+                groupDiv.innerHTML = headerHtml;
+                groupDiv.appendChild(gridDiv);
+                container.appendChild(groupDiv);
             });
         }
 
