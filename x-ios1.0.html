@@ -1,0 +1,2326 @@
+﻿<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>英雄联盟赛事管理系统</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        html, body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            height: 100%;
+            overflow: hidden;
+        }
+
+        /* ========== 全局动态背景系统 ========== */
+        .dynamic-bg {
+            position: fixed;
+            inset: 0;
+            z-index: -1;
+            transition: all 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .bg-bright {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 25%, #f093fb 50%, #f5576c 75%, #4facfe 100%);
+            background-size: 400% 400%;
+            animation: gradientShift 15s ease infinite;
+        }
+        .bg-bright::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: radial-gradient(circle at 20% 80%, rgba(255,255,255,0.4) 0%, transparent 50%),
+                        radial-gradient(circle at 80% 20%, rgba(255,223,128,0.3) 0%, transparent 50%);
+            animation: floatLight 8s ease-in-out infinite;
+        }
+
+        .bg-storm {
+            background: linear-gradient(135deg, #0f0c29 0%, #302b63 50%, #24243e 100%);
+        }
+        .bg-storm::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: 
+                radial-gradient(circle at 50% 50%, rgba(120,50,255,0.15) 0%, transparent 60%),
+                repeating-linear-gradient(90deg, transparent, transparent 50px, rgba(100,200,255,0.03) 50px, rgba(100,200,255,0.03) 51px);
+        }
+        .lightning {
+            position: absolute;
+            width: 2px;
+            height: 100px;
+            background: linear-gradient(to bottom, transparent, #a78bfa, transparent);
+            opacity: 0;
+            animation: lightningFlash 4s infinite;
+        }
+
+        .bg-dark {
+            background: linear-gradient(135deg, #0a0a0a 0%, #1a1a2e 50%, #16213e 100%);
+        }
+        .bg-dark::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: 
+                radial-gradient(circle at 30% 70%, rgba(220,38,38,0.1) 0%, transparent 50%),
+                radial-gradient(circle at 70% 30%, rgba(147,51,234,0.1) 0%, transparent 50%);
+        }
+        .particle {
+            position: absolute;
+            width: 4px;
+            height: 4px;
+            background: rgba(255,255,255,0.3);
+            border-radius: 50%;
+            animation: particleFloat 10s infinite linear;
+        }
+
+        .bg-frost {
+            background: linear-gradient(135deg, #e0f2fe 0%, #bae6fd 25%, #7dd3fc 50%, #38bdf8 75%, #0ea5e9 100%);
+            background-size: 400% 400%;
+            animation: gradientShift 20s ease infinite;
+        }
+        .bg-frost::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: 
+                radial-gradient(circle at 10% 90%, rgba(255,255,255,0.6) 0%, transparent 40%),
+                radial-gradient(circle at 90% 10%, rgba(186,230,253,0.5) 0%, transparent 40%);
+        }
+        .snowflake {
+            position: absolute;
+            color: rgba(255,255,255,0.6);
+            font-size: 14px;
+            animation: snowfall linear infinite;
+        }
+
+        .bg-fire {
+            background: linear-gradient(135deg, #7c2d12 0%, #c2410c 25%, #ea580c 50%, #f97316 75%, #fbbf24 100%);
+            background-size: 400% 400%;
+            animation: gradientShift 12s ease infinite;
+        }
+        .bg-fire::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: 
+                radial-gradient(circle at 50% 100%, rgba(251,191,36,0.3) 0%, transparent 50%),
+                radial-gradient(circle at 20% 50%, rgba(220,38,38,0.2) 0%, transparent 40%);
+        }
+        .ember {
+            position: absolute;
+            width: 6px;
+            height: 6px;
+            background: radial-gradient(circle, #fbbf24, transparent);
+            border-radius: 50%;
+            animation: emberRise 6s infinite ease-out;
+        }
+
+        @keyframes gradientShift {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+        @keyframes floatLight {
+            0%, 100% { transform: translate(0, 0) scale(1); opacity: 0.5; }
+            33% { transform: translate(30px, -30px) scale(1.1); opacity: 0.7; }
+            66% { transform: translate(-20px, 20px) scale(0.9); opacity: 0.4; }
+        }
+        @keyframes lightningFlash {
+            0%, 90%, 100% { opacity: 0; }
+            92% { opacity: 1; height: 150px; }
+            94% { opacity: 0; height: 100px; }
+            96% { opacity: 0.5; }
+        }
+        @keyframes particleFloat {
+            0% { transform: translateY(100vh) rotate(0deg); opacity: 0; }
+            10% { opacity: 1; }
+            90% { opacity: 1; }
+            100% { transform: translateY(-100px) rotate(720deg); opacity: 0; }
+        }
+        @keyframes snowfall {
+            0% { transform: translateY(-10px) translateX(0) rotate(0deg); opacity: 0; }
+            10% { opacity: 1; }
+            100% { transform: translateY(100vh) translateX(100px) rotate(360deg); opacity: 0.3; }
+        }
+        @keyframes emberRise {
+            0% { transform: translateY(100vh) scale(0); opacity: 0; }
+            20% { opacity: 1; transform: scale(1); }
+            100% { transform: translateY(-100px) scale(0); opacity: 0; }
+        }
+
+        /* ========== 导航栏 ========== */
+        .nav-glass {
+            background: rgba(20, 20, 30, 0.7);
+            backdrop-filter: blur(20px) saturate(180%);
+            -webkit-backdrop-filter: blur(20px) saturate(180%);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+        }
+
+        .nav-btn {
+            position: relative;
+            padding: 8px 20px;
+            border-radius: 12px;
+            font-weight: 500;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            color: rgba(255,255,255,0.6);
+            border: 1px solid transparent;
+        }
+        .nav-btn:hover {
+            color: rgba(255,255,255,0.9);
+            background: rgba(255,255,255,0.08);
+            transform: translateY(-1px);
+        }
+        .nav-btn.active {
+            color: #fff;
+            background: rgba(255,255,255,0.12);
+            border-color: rgba(255,255,255,0.15);
+            box-shadow: 0 4px 20px rgba(0,0,0,0.2), inset 0 1px 0 rgba(255,255,255,0.1);
+        }
+        .nav-btn.active::after {
+            content: '';
+            position: absolute;
+            bottom: -2px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 20px;
+            height: 3px;
+            background: linear-gradient(90deg, #667eea, #f093fb);
+            border-radius: 3px;
+        }
+
+        /* ========== 毛玻璃卡片 ========== */
+        .glass-card {
+            background: rgba(255, 255, 255, 0.07);
+            backdrop-filter: blur(16px) saturate(180%);
+            -webkit-backdrop-filter: blur(16px) saturate(180%);
+            border-radius: 24px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2), inset 0 1px 0 rgba(255, 255, 255, 0.1);
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .glass-card:hover {
+            transform: translateY(-4px);
+            background: rgba(255, 255, 255, 0.12);
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.15);
+            border-color: rgba(255, 255, 255, 0.2);
+        }
+
+        /* ========== 日历 ========== */
+        .calendar-container {
+            height: 100%;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+        .calendar-scroll {
+            flex: 1;
+            overflow-y: auto;
+            overflow-x: hidden;
+            padding: 24px;
+        }
+
+        .day-cell {
+            aspect-ratio: 1;
+            border-radius: 16px;
+            background: rgba(255,255,255,0.03);
+            border: 1px solid rgba(255,255,255,0.06);
+            transition: all 0.3s ease;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+        }
+        .day-cell:hover {
+            background: rgba(255,255,255,0.08);
+            border-color: rgba(255,255,255,0.15);
+            transform: scale(1.05);
+            z-index: 10;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.3);
+        }
+        .day-cell.today {
+            background: rgba(99, 102, 241, 0.2);
+            border-color: rgba(99, 102, 241, 0.4);
+            box-shadow: 0 0 20px rgba(99, 102, 241, 0.2);
+        }
+        .day-cell.has-match::after {
+            content: '';
+            position: absolute;
+            bottom: 6px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 4px;
+            height: 4px;
+            border-radius: 50%;
+            background: #fbbf24;
+            box-shadow: 0 0 6px #fbbf24;
+        }
+        .day-cell.selected {
+            background: rgba(255,255,255,0.15);
+            border-color: rgba(255,255,255,0.3);
+            box-shadow: 0 0 30px rgba(255,255,255,0.1);
+        }
+        .day-cell.other-month { opacity: 0.3; }
+
+        .match-card {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            padding: 20px;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+        }
+        .match-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, var(--card-accent, #667eea), var(--card-accent-2, #f093fb));
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+        .match-card:hover {
+            background: rgba(255, 255, 255, 0.1);
+            transform: translateX(8px);
+            border-color: rgba(255, 255, 255, 0.2);
+        }
+        .match-card:hover::before { opacity: 1; }
+        .match-card:active { transform: translateX(4px) scale(0.98); }
+
+        .team-aura { position: relative; }
+        .team-aura::before {
+            content: '';
+            position: absolute;
+            inset: -4px;
+            border-radius: 50%;
+            opacity: 0.4;
+            filter: blur(8px);
+            transition: all 0.3s ease;
+        }
+        .aura-bright::before { background: radial-gradient(circle, #fbbf24, transparent 70%); }
+        .aura-storm::before { background: radial-gradient(circle, #a78bfa, transparent 70%); }
+        .aura-dark::before { background: radial-gradient(circle, #dc2626, transparent 70%); }
+        .aura-frost::before { background: radial-gradient(circle, #38bdf8, transparent 70%); }
+        .aura-fire::before { background: radial-gradient(circle, #f97316, transparent 70%); }
+
+        .switch-track {
+            position: relative;
+            background: rgba(0,0,0,0.3);
+            border-radius: 12px;
+            padding: 4px;
+            display: inline-flex;
+            gap: 4px;
+        }
+        .switch-thumb {
+            position: absolute;
+            top: 4px;
+            height: calc(100% - 8px);
+            background: rgba(255,255,255,0.15);
+            border-radius: 10px;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+
+        ::-webkit-scrollbar { width: 6px; height: 6px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.15); border-radius: 3px; }
+        ::-webkit-scrollbar-thumb:hover { background: rgba(255,255,255,0.25); }
+
+        .page-container {
+            height: 100vh;
+            padding-top: 72px;
+            overflow: hidden;
+        }
+        .page-scrollable {
+            height: 100%;
+            overflow-y: auto;
+            overflow-x: hidden;
+        }
+
+        .hero-bg {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 25%, #f093fb 50%, #f5576c 75%, #4facfe 100%);
+            background-size: 400% 400%;
+            animation: gradientShift 15s ease infinite;
+        }
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
+        }
+        .float-animation { animation: float 6s ease-in-out infinite; }
+
+        /* 管理页 - 恢复上一版布局，背景透明 */
+        .admin-layout {
+            display: flex;
+            height: 100%;
+        }
+        .admin-main {
+            flex: 1;
+            overflow-y: auto;
+            overflow-x: hidden;
+            background: transparent;
+        }
+        .admin-sidebar {
+            background: #1e293b;
+            transition: all 0.3s ease;
+        }
+        .admin-card {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            transition: all 0.2s ease;
+        }
+        .admin-card:hover {
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        }
+        .table-row-hover:hover { background-color: #f8fafc; }
+        .modal-enter { animation: modalSlideIn 0.3s ease-out; }
+        @keyframes modalSlideIn {
+            from { opacity: 0; transform: scale(0.95) translateY(-10px); }
+            to { opacity: 1; transform: scale(1) translateY(0); }
+        }
+        .hidden-page { display: none !important; }
+
+        /* 走势线条图 */
+        .trend-line-container {
+            position: relative;
+            height: 200px;
+            width: 100%;
+        }
+        .trend-line-svg {
+            width: 100%;
+            height: 100%;
+            overflow: visible;
+        }
+        .trend-line-path {
+            fill: none;
+            stroke-width: 3;
+            stroke-linecap: round;
+            stroke-linejoin: round;
+            filter: drop-shadow(0 0 8px currentColor);
+        }
+        .trend-line-area {
+            stroke: none;
+            opacity: 0.15;
+        }
+        .trend-dot {
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+        .trend-dot:hover {
+            r: 6;
+            filter: drop-shadow(0 0 6px currentColor);
+        }
+        .trend-label {
+            font-size: 11px;
+            font-weight: 600;
+            fill: rgba(255,255,255,0.7);
+        }
+        .trend-grid {
+            stroke: rgba(255,255,255,0.05);
+            stroke-width: 1;
+            stroke-dasharray: 4,4;
+        }
+
+        /* 批量操作栏 */
+        .batch-bar {
+            background: linear-gradient(90deg, rgba(99,102,241,0.2), rgba(168,85,247,0.2));
+            border: 1px solid rgba(99,102,241,0.3);
+            border-radius: 12px;
+            padding: 12px 16px;
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            backdrop-filter: blur(10px);
+        }
+
+        /* 战队实力榜赛区分组 */
+        .region-group { margin-bottom: 24px; }
+        .region-group-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 12px;
+            padding: 0 4px;
+        }
+        .region-group-title {
+            font-size: 18px;
+            font-weight: 700;
+            color: white;
+        }
+        .region-group-count {
+            font-size: 12px;
+            color: rgba(255,255,255,0.5);
+            background: rgba(255,255,255,0.1);
+            padding: 2px 10px;
+            border-radius: 20px;
+        }
+        .region-group-line {
+            flex: 1;
+            height: 1px;
+            background: linear-gradient(90deg, rgba(255,255,255,0.2), transparent);
+        }
+        .top5-grid {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 12px;
+        }
+        @media (max-width: 1200px) {
+            .top5-grid { grid-template-columns: repeat(3, 1fr); }
+        }
+        @media (max-width: 768px) {
+            .top5-grid { grid-template-columns: repeat(2, 1fr); }
+        }
+
+        /* 热度标签 */
+        .heat-high {
+            background: linear-gradient(135deg, rgba(239,68,68,0.3), rgba(220,38,38,0.2));
+            color: #fecaca;
+            border: 1px solid rgba(239,68,68,0.4);
+        }
+        .heat-medium {
+            background: linear-gradient(135deg, rgba(245,158,11,0.3), rgba(217,119,6,0.2));
+            color: #fde68a;
+            border: 1px solid rgba(245,158,11,0.4);
+        }
+        .heat-low {
+            background: linear-gradient(135deg, rgba(59,130,246,0.3), rgba(37,99,235,0.2));
+            color: #bfdbfe;
+            border: 1px solid rgba(59,130,246,0.4);
+        }
+        .heat-none {
+            background: rgba(255,255,255,0.05);
+            color: rgba(255,255,255,0.3);
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+    </style>
+<base target="_blank">
+</head>
+<body>
+
+    <!-- 动态背景层 -->
+    <div id="dynamic-bg" class="dynamic-bg bg-bright">
+        <div class="lightning"></div>
+        <div class="lightning"></div>
+        <div class="lightning"></div>
+    </div>
+
+    <!-- 导航栏 -->
+    <nav class="fixed top-0 left-0 right-0 z-50 nav-glass px-6 h-[72px] flex items-center">
+        <div class="max-w-7xl mx-auto flex items-center justify-between w-full">
+            <div class="flex items-center gap-3">
+                <div class="w-10 h-10 bg-gradient-to-br from-blue-500 to-purple-600 rounded-xl flex items-center justify-center shadow-lg shadow-purple-500/30">
+                    <i class="fas fa-gamepad text-white text-lg"></i>
+                </div>
+                <span class="text-white font-bold text-xl tracking-tight">LOL赛事通</span>
+            </div>
+            <div class="flex items-center gap-1 bg-black/20 rounded-2xl p-1 switch-track" id="nav-switch">
+                <div class="switch-thumb" id="switch-thumb"></div>
+                <button onclick="switchPage('home')" id="nav-home" class="nav-btn active relative z-10 px-5 py-2 text-sm">
+                    <i class="fas fa-chart-pie mr-2"></i>数据看板
+                </button>
+                <button onclick="switchPage('calendar')" id="nav-calendar" class="nav-btn relative z-10 px-5 py-2 text-sm">
+                    <i class="fas fa-calendar-alt mr-2"></i>赛事日历
+                </button>
+                <button onclick="switchPage('admin')" id="nav-admin" class="nav-btn relative z-10 px-5 py-2 text-sm">
+                    <i class="fas fa-database mr-2"></i>数据管理
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- ========== 首页：数据看板 ========== -->
+    <div id="page-home" class="page-container">
+        <div class="page-scrollable">
+            <div class="hero-bg relative overflow-hidden">
+                <div class="absolute inset-0 bg-black/20"></div>
+                <div class="relative max-w-7xl mx-auto px-6 py-12">
+                    <div class="flex flex-col lg:flex-row items-center justify-between gap-10">
+                        <div class="text-white space-y-6 max-w-2xl">
+                            <div class="inline-flex items-center gap-2 glass-card px-4 py-2 rounded-full text-sm font-medium">
+                                <span class="w-2 h-2 bg-green-400 rounded-full animate-pulse"></span>
+                                实时数据更新
+                            </div>
+                            <h1 class="text-5xl lg:text-6xl font-bold leading-tight">
+                                2026 赛季<br>
+                                <span class="bg-clip-text text-transparent bg-gradient-to-r from-yellow-300 to-pink-400">全球赛事追踪</span>
+                            </h1>
+                            <div class="flex gap-4 pt-4 flex-wrap">
+                                <div class="glass-card px-6 py-3 rounded-2xl text-center min-w-[100px]">
+                                    <div class="text-2xl font-bold" id="stat-total-matches">0</div>
+                                    <div class="text-xs text-white/70">总场次</div>
+                                </div>
+                                <div class="glass-card px-6 py-3 rounded-2xl text-center min-w-[100px]">
+                                    <div class="text-2xl font-bold" id="stat-active-teams">0</div>
+                                    <div class="text-xs text-white/70">活跃战队</div>
+                                </div>
+                                <div class="glass-card px-6 py-3 rounded-2xl text-center min-w-[100px]">
+                                    <div class="text-2xl font-bold" id="stat-today-matches">0</div>
+                                    <div class="text-xs text-white/70">今日赛程</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="relative w-full max-w-md float-animation">
+                            <div class="glass-card p-6 rounded-3xl space-y-4" id="hero-match-card">
+                                <div class="flex items-center justify-between mb-4">
+                                    <span class="text-white/80 text-sm font-medium">焦点赛事</span>
+                                    <span id="hero-region" class="region-tag-home region-lpl">LPL</span>
+                                </div>
+                                <div class="flex items-center justify-between">
+                                    <div class="text-center">
+                                        <div class="w-16 h-16 bg-white/20 rounded-2xl flex items-center justify-center mb-2 text-2xl">🐉</div>
+                                        <div class="text-white font-bold" id="hero-team-a">BLG</div>
+                                    </div>
+                                    <div class="text-center px-4">
+                                        <div class="text-3xl font-bold text-white">VS</div>
+                                        <div class="text-yellow-300 text-sm font-bold mt-1" id="hero-time">19:00</div>
+                                    </div>
+                                    <div class="text-center">
+                                        <div class="w-16 h-16 bg-white/20 rounded-2xl flex items-center justify-center mb-2 text-2xl">🦁</div>
+                                        <div class="text-white font-bold" id="hero-team-b">TES</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="max-w-7xl mx-auto px-6 py-12 space-y-8">
+                <!-- 赛区活跃度走势 + 赛区分布 -->
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                    <div class="lg:col-span-2 glass-card p-6">
+                        <div class="flex items-center justify-between mb-6">
+                            <h3 class="text-xl font-bold text-white">赛区活跃度走势</h3>
+                            <div class="flex gap-2">
+                                <button onclick="setTrendPeriod(7)" class="trend-period-btn px-3 py-1 rounded-lg text-xs font-medium bg-white/20 text-white" data-days="7">近7天</button>
+                                <button onclick="setTrendPeriod(30)" class="trend-period-btn px-3 py-1 rounded-lg text-xs font-medium text-white/50 hover:bg-white/10" data-days="30">近30天</button>
+                                <button onclick="setTrendPeriod(90)" class="trend-period-btn px-3 py-1 rounded-lg text-xs font-medium text-white/50 hover:bg-white/10" data-days="90">近90天</button>
+                            </div>
+                        </div>
+                        <div class="trend-line-container" id="trend-chart-container"></div>
+                        <div class="flex justify-center gap-6 mt-4 text-sm text-white/60 flex-wrap" id="trend-legend"></div>
+                    </div>
+                    <div class="glass-card p-6">
+                        <h3 class="text-xl font-bold text-white mb-6">赛区分布</h3>
+                        <div class="space-y-4" id="region-stats"></div>
+                    </div>
+                </div>
+
+                <!-- 战队实力榜 - 按赛区分组，每赛区Top5，热度优先 -->
+                <div>
+                    <h3 class="text-2xl font-bold text-white mb-6 flex items-center gap-2">
+                        <i class="fas fa-shield-alt text-yellow-400"></i>战队实力榜
+                        <span class="text-sm font-normal text-white/50">各赛区 TOP5 · 热度优先</span>
+                    </h3>
+                    <div id="team-showcase"></div>
+                </div>
+
+                <!-- 近期赛程 - 只显示昨天今天明天 -->
+                <div class="glass-card p-6 mb-8">
+                    <h3 class="text-xl font-bold text-white mb-6 flex items-center gap-2">
+                        <i class="fas fa-history text-blue-400"></i>近期赛程
+                        <span class="text-sm font-normal text-white/50">近3日</span>
+                    </h3>
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-left">
+                            <thead>
+                                <tr class="border-b border-white/10 text-white/40 text-sm">
+                                    <th class="pb-3 font-medium">时间</th>
+                                    <th class="pb-3 font-medium">赛区</th>
+                                    <th class="pb-3 font-medium">对阵</th>
+                                    <th class="pb-3 font-medium">比分</th>
+                                    <th class="pb-3 font-medium">状态</th>
+                                </tr>
+                            </thead>
+                            <tbody class="text-sm text-white/80" id="recent-matches"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ========== 赛事日历 ========== -->
+    <div id="page-calendar" class="page-container hidden-page">
+        <div class="calendar-container">
+            <div class="px-8 pt-6 pb-4 flex flex-col lg:flex-row items-start lg:items-center justify-between gap-4">
+                <div>
+                    <h1 class="text-3xl font-bold text-white mb-1 flex items-center gap-3">
+                        <i class="fas fa-calendar-star text-yellow-400"></i>
+                        赛事日历
+                        <span class="text-sm font-normal text-white/50 bg-white/10 px-3 py-1 rounded-full" id="calendar-month-label">2026年5月</span>
+                    </h1>
+                    <p class="text-white/50 text-sm">点击日期查看当日赛事，悬停战队查看氛围预览</p>
+                </div>
+
+                <div class="flex items-center gap-3">
+                    <div class="glass-card flex items-center gap-2 p-1.5">
+                        <button onclick="changeMonth(-1)" class="w-10 h-10 rounded-xl flex items-center justify-center text-white/70 hover:text-white hover:bg-white/10 transition-all active:scale-95">
+                            <i class="fas fa-chevron-left"></i>
+                        </button>
+                        <span class="text-white font-bold px-4 min-w-[120px] text-center" id="month-display">2026年5月</span>
+                        <button onclick="changeMonth(1)" class="w-10 h-10 rounded-xl flex items-center justify-center text-white/70 hover:text-white hover:bg-white/10 transition-all active:scale-95">
+                            <i class="fas fa-chevron-right"></i>
+                        </button>
+                    </div>
+
+                    <button onclick="goToToday()" class="glass-card px-5 py-2.5 text-white font-medium hover:bg-white/10 transition-all active:scale-95 text-sm">
+                        今天
+                    </button>
+
+                    <div class="glass-card flex items-center p-1 gap-1">
+                        <button onclick="setCalendarView('month')" id="view-month" class="view-btn px-4 py-2 rounded-lg text-sm font-medium text-white bg-white/15 transition-all active:scale-95">月</button>
+                        <button onclick="setCalendarView('week')" id="view-week" class="view-btn px-4 py-2 rounded-lg text-sm font-medium text-white/60 hover:text-white hover:bg-white/10 transition-all active:scale-95">周</button>
+                        <button onclick="setCalendarView('list')" id="view-list" class="view-btn px-4 py-2 rounded-lg text-sm font-medium text-white/60 hover:text-white hover:bg-white/10 transition-all active:scale-95">列表</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="calendar-scroll">
+                <div class="max-w-7xl mx-auto px-4 pb-8">
+                    <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+                        <div class="lg:col-span-8 space-y-6">
+                            <div class="grid grid-cols-7 gap-2 mb-2">
+                                <div class="text-center text-white/40 text-sm font-medium py-2">日</div>
+                                <div class="text-center text-white/40 text-sm font-medium py-2">一</div>
+                                <div class="text-center text-white/40 text-sm font-medium py-2">二</div>
+                                <div class="text-center text-white/40 text-sm font-medium py-2">三</div>
+                                <div class="text-center text-white/40 text-sm font-medium py-2">四</div>
+                                <div class="text-center text-white/40 text-sm font-medium py-2">五</div>
+                                <div class="text-center text-white/40 text-sm font-medium py-2">六</div>
+                            </div>
+
+                            <div class="grid grid-cols-7 gap-2" id="calendar-grid"></div>
+
+                            <div class="glass-card p-6 mt-6" id="day-detail-panel">
+                                <div class="flex items-center justify-between mb-6">
+                                    <h3 class="text-xl font-bold text-white flex items-center gap-2">
+                                        <i class="fas fa-clock text-yellow-400"></i>
+                                        <span id="selected-date-label">5月10日 赛事</span>
+                                        <span class="text-sm font-normal text-white/50" id="match-count-badge">3 场</span>
+                                    </h3>
+                                    <div class="flex gap-2">
+                                        <button onclick="openModal()" class="px-4 py-2 rounded-xl bg-white/10 text-white text-sm font-medium hover:bg-white/20 transition-all active:scale-95 flex items-center gap-2">
+                                            <i class="fas fa-plus"></i>添加
+                                        </button>
+                                    </div>
+                                </div>
+                                <div class="space-y-3" id="day-matches-list"></div>
+                            </div>
+                        </div>
+
+                        <div class="lg:col-span-4 space-y-6">
+                            <div class="glass-card p-6 relative overflow-hidden">
+                                <div class="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-yellow-400/20 to-transparent rounded-full blur-2xl"></div>
+                                <h3 class="text-lg font-bold text-white mb-4 flex items-center gap-2 relative z-10">
+                                    <i class="fas fa-fire text-orange-400"></i>今日焦点
+                                </h3>
+                                <div id="today-highlight" class="relative z-10"></div>
+                            </div>
+
+                            <div class="glass-card p-6">
+                                <h3 class="text-lg font-bold text-white mb-4 flex items-center gap-2">
+                                    <i class="fas fa-bolt text-purple-400"></i>战队氛围
+                                </h3>
+                                <div class="space-y-3" id="team-aura-list"></div>
+                            </div>
+
+                            <div class="glass-card p-6">
+                                <h3 class="text-lg font-bold text-white mb-4 flex items-center gap-2">
+                                    <i class="fas fa-trophy text-yellow-400"></i> upcoming
+                                </h3>
+                                <div class="space-y-3" id="upcoming-big-events"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ========== 数据管理（恢复上一版布局 + 背景透明） ========== -->
+    <div id="page-admin" class="page-container hidden-page">
+        <div class="admin-layout h-full">
+            <aside class="admin-sidebar w-64 flex-shrink-0 hidden lg:block overflow-y-auto">
+                <div class="p-6">
+                    <div class="flex items-center gap-3 mb-8">
+                        <div class="w-10 h-10 bg-blue-600 rounded-lg flex items-center justify-center">
+                            <i class="fas fa-database text-white"></i>
+                        </div>
+                        <div>
+                            <div class="text-white font-bold">赛事数据中心</div>
+                            <div class="text-gray-400 text-xs">管理系统 v2.0</div>
+                        </div>
+                    </div>
+                    <nav class="space-y-1">
+                        <button onclick="showAdminSection('matches')" class="admin-nav-item w-full flex items-center gap-3 px-4 py-3 rounded-xl text-white bg-blue-600 transition-all">
+                            <i class="fas fa-list-alt w-5"></i><span>赛事管理</span>
+                        </button>
+                        <button onclick="showAdminSection('teams')" class="admin-nav-item w-full flex items-center gap-3 px-4 py-3 rounded-xl text-gray-400 hover:text-white hover:bg-white/10 transition-all">
+                            <i class="fas fa-users w-5"></i><span>战队管理</span>
+                        </button>
+                        <button onclick="showAdminSection('import')" class="admin-nav-item w-full flex items-center gap-3 px-4 py-3 rounded-xl text-gray-400 hover:text-white hover:bg-white/10 transition-all">
+                            <i class="fas fa-file-import w-5"></i><span>批量导入</span>
+                        </button>
+                        <button onclick="showAdminSection('export')" class="admin-nav-item w-full flex items-center gap-3 px-4 py-3 rounded-xl text-gray-400 hover:text-white hover:bg-white/10 transition-all">
+                            <i class="fas fa-file-export w-5"></i><span>数据导出</span>
+                        </button>
+                    </nav>
+                </div>
+            </aside>
+
+            <main class="admin-main">
+                <div id="admin-matches" class="admin-section p-8">
+                    <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-8 gap-4">
+                        <div>
+                            <h2 class="text-2xl font-bold text-gray-800">赛事数据管理</h2>
+                            <p class="text-gray-500 mt-1">管理所有赛区赛事数据</p>
+                        </div>
+                        <div class="flex gap-3 flex-wrap">
+                            <button onclick="openModal()" class="bg-blue-600 hover:bg-blue-700 text-white px-5 py-2.5 rounded-xl font-medium transition-all flex items-center gap-2 shadow-lg shadow-blue-600/30">
+                                <i class="fas fa-plus"></i>添加赛事
+                            </button>
+                            <button onclick="showAdminSection('import')" class="bg-white hover:bg-gray-50 text-gray-700 border border-gray-200 px-5 py-2.5 rounded-xl font-medium transition-all flex items-center gap-2">
+                                <i class="fas fa-upload"></i>导入
+                            </button>
+                            <button onclick="exportData()" class="bg-white hover:bg-gray-50 text-gray-700 border border-gray-200 px-5 py-2.5 rounded-xl font-medium transition-all flex items-center gap-2">
+                                <i class="fas fa-download"></i>导出
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+                        <div class="admin-card p-4">
+                            <div class="text-gray-500 text-sm mb-1">总赛事数</div>
+                            <div class="text-2xl font-bold text-gray-800" id="admin-total">0</div>
+                        </div>
+                        <div class="admin-card p-4">
+                            <div class="text-gray-500 text-sm mb-1">今日赛事</div>
+                            <div class="text-2xl font-bold text-blue-600" id="admin-today">0</div>
+                        </div>
+                        <div class="admin-card p-4">
+                            <div class="text-gray-500 text-sm mb-1">已完成</div>
+                            <div class="text-2xl font-bold text-green-600" id="admin-completed">0</div>
+                        </div>
+                        <div class="admin-card p-4">
+                            <div class="text-gray-500 text-sm mb-1">待进行</div>
+                            <div class="text-2xl font-bold text-orange-600" id="admin-pending">0</div>
+                        </div>
+                    </div>
+
+                    <div class="batch-bar" id="batch-bar" style="display:none;">
+                        <span class="text-white/80 text-sm"><i class="fas fa-check-square mr-2"></i>已选择 <strong id="batch-count" class="text-white">0</strong> 项</span>
+                        <div class="h-4 w-px bg-white/20"></div>
+                        <button onclick="batchDelete()" class="px-3 py-1.5 rounded-lg bg-red-500/20 text-red-300 text-xs font-medium hover:bg-red-500/30 transition-all active:scale-95">
+                            <i class="fas fa-trash mr-1"></i>批量删除
+                        </button>
+                        <button onclick="batchSetStatus('completed')" class="px-3 py-1.5 rounded-lg bg-green-500/20 text-green-300 text-xs font-medium hover:bg-green-500/30 transition-all active:scale-95">
+                            <i class="fas fa-check mr-1"></i>标记已完成
+                        </button>
+                        <button onclick="batchSetStatus('upcoming')" class="px-3 py-1.5 rounded-lg bg-blue-500/20 text-blue-300 text-xs font-medium hover:bg-blue-500/30 transition-all active:scale-95">
+                            <i class="fas fa-clock mr-1"></i>标记待进行
+                        </button>
+                        <button onclick="batchSetStatus('live')" class="px-3 py-1.5 rounded-lg bg-orange-500/20 text-orange-300 text-xs font-medium hover:bg-orange-500/30 transition-all active:scale-95">
+                            <i class="fas fa-play mr-1"></i>标记进行中
+                        </button>
+                        <button onclick="clearBatchSelection()" class="ml-auto px-3 py-1.5 rounded-lg bg-white/10 text-white/60 text-xs font-medium hover:bg-white/20 transition-all active:scale-95">
+                            <i class="fas fa-times mr-1"></i>取消选择
+                        </button>
+                    </div>
+
+                    <div class="admin-card p-4 mb-6 flex flex-wrap gap-4 items-center">
+                        <div class="flex items-center gap-2 bg-gray-50 rounded-lg px-3 py-2">
+                            <i class="fas fa-search text-gray-400"></i>
+                            <input type="text" id="search-input" placeholder="搜索战队或赛区..." 
+                                class="border-0 bg-transparent focus:ring-0 text-sm w-48 outline-none" oninput="filterMatches()">
+                        </div>
+                        <select id="filter-region" class="bg-gray-100 border-0 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 outline-none" onchange="filterMatches()">
+                            <option value="">全部赛区</option>
+                        </select>
+                        <select id="filter-status" class="bg-gray-100 border-0 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 outline-none" onchange="filterMatches()">
+                            <option value="">全部状态</option>
+                            <option value="completed">已完成</option>
+                            <option value="upcoming">待进行</option>
+                            <option value="live">进行中</option>
+                        </select>
+                        <button onclick="clearFilters()" class="text-gray-500 hover:text-gray-700 text-sm ml-auto">
+                            <i class="fas fa-undo mr-1"></i>重置筛选
+                        </button>
+                    </div>
+
+                    <div class="admin-card overflow-hidden">
+                        <div class="overflow-x-auto">
+                            <table class="w-full text-left">
+                                <thead class="bg-gray-50 border-b border-gray-200">
+                                    <tr>
+                                        <th class="px-6 py-4 text-xs font-semibold text-gray-500 uppercase tracking-wider">
+                                            <input type="checkbox" id="select-all" class="rounded border-gray-300 text-blue-600 focus:ring-blue-500" onchange="toggleSelectAll()">
+                                        </th>
+                                        <th class="px-6 py-4 text-xs font-semibold text-gray-500 uppercase tracking-wider">赛区</th>
+                                        <th class="px-6 py-4 text-xs font-semibold text-gray-500 uppercase tracking-wider">日期</th>
+                                        <th class="px-6 py-4 text-xs font-semibold text-gray-500 uppercase tracking-wider">时间</th>
+                                        <th class="px-6 py-4 text-xs font-semibold text-gray-500 uppercase tracking-wider text-right">A战队</th>
+                                        <th class="px-6 py-4 text-xs font-semibold text-gray-500 uppercase tracking-wider text-center">比分</th>
+                                        <th class="px-6 py-4 text-xs font-semibold text-gray-500 uppercase tracking-wider">B战队</th>
+                                        <th class="px-6 py-4 text-xs font-semibold text-gray-500 uppercase tracking-wider">状态</th>
+                                        <th class="px-6 py-4 text-xs font-semibold text-gray-500 uppercase tracking-wider text-right">操作</th>
+                                    </tr>
+                                </thead>
+                                <tbody class="divide-y divide-gray-100" id="matches-table-body"></tbody>
+                            </table>
+                        </div>
+                        <div class="px-6 py-4 border-t border-gray-200 flex items-center justify-between">
+                            <span class="text-sm text-gray-500" id="table-info">显示 0 条数据</span>
+                            <div class="flex gap-2">
+                                <button class="px-3 py-1 rounded-lg border border-gray-200 text-sm text-gray-600 hover:bg-gray-50 disabled:opacity-50" disabled>上一页</button>
+                                <button class="px-3 py-1 rounded-lg border border-gray-200 text-sm text-gray-600 hover:bg-gray-50 disabled:opacity-50" disabled>下一页</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="admin-import" class="admin-section p-8 hidden">
+                    <h2 class="text-2xl font-bold text-gray-800 mb-6">批量导入数据</h2>
+                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                        <div class="admin-card p-6">
+                            <h3 class="font-bold text-gray-800 mb-4">Excel / CSV 导入</h3>
+                            <div class="border-2 border-dashed border-gray-300 rounded-xl p-8 text-center hover:border-blue-500 transition-colors cursor-pointer" onclick="document.getElementById('file-input').click()">
+                                <i class="fas fa-cloud-upload-alt text-4xl text-gray-400 mb-4"></i>
+                                <p class="text-gray-600 font-medium">点击上传文件</p>
+                                <p class="text-gray-400 text-sm mt-2">支持 .xlsx, .csv 格式</p>
+                                <input type="file" id="file-input" class="hidden" accept=".csv,.xlsx" onchange="handleFileImport(this)">
+                            </div>
+                            <div class="mt-4 p-4 bg-blue-50 rounded-lg">
+                                <p class="text-sm text-blue-800 font-medium mb-2">文件格式要求：</p>
+                                <p class="text-xs text-blue-600">赛区, 日期(YYYY-MM-DD), 时间(HH:MM), A战队, A成绩, B成绩, B战队</p>
+                            </div>
+                        </div>
+                        <div class="admin-card p-6">
+                            <h3 class="font-bold text-gray-800 mb-4">JSON 导入</h3>
+                            <textarea id="json-input" class="w-full h-48 p-4 border border-gray-200 rounded-xl text-sm font-mono focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none outline-none" placeholder='[
+  {
+    "region": "LPL",
+    "date": "2026-05-10",
+    "time": "19:00",
+    "teamA": "BLG",
+    "scoreA": 2,
+    "scoreB": 1,
+    "teamB": "TES"
+  }
+]'></textarea>
+                            <button onclick="importFromJSON()" class="mt-4 w-full bg-blue-600 hover:bg-blue-700 text-white py-2.5 rounded-xl font-medium transition-all">
+                                导入 JSON 数据
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="admin-export" class="admin-section p-8 hidden">
+                    <h2 class="text-2xl font-bold text-gray-800 mb-6">数据导出</h2>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                        <button onclick="exportToCSV()" class="admin-card p-6 text-left hover:shadow-lg transition-all group">
+                            <div class="w-12 h-12 bg-green-100 rounded-xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
+                                <i class="fas fa-file-csv text-green-600 text-xl"></i>
+                            </div>
+                            <h3 class="font-bold text-gray-800 mb-2">导出 CSV</h3>
+                            <p class="text-sm text-gray-500">导出为逗号分隔值文件，兼容 Excel</p>
+                        </button>
+                        <button onclick="exportToJSON()" class="admin-card p-6 text-left hover:shadow-lg transition-all group">
+                            <div class="w-12 h-12 bg-blue-100 rounded-xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
+                                <i class="fas fa-file-code text-blue-600 text-xl"></i>
+                            </div>
+                            <h3 class="font-bold text-gray-800 mb-2">导出 JSON</h3>
+                            <p class="text-sm text-gray-500">导出为 JSON 格式，便于程序处理</p>
+                        </button>
+                        <button onclick="exportToExcel()" class="admin-card p-6 text-left hover:shadow-lg transition-all group">
+                            <div class="w-12 h-12 bg-purple-100 rounded-xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
+                                <i class="fas fa-file-excel text-purple-600 text-xl"></i>
+                            </div>
+                            <h3 class="font-bold text-gray-800 mb-2">导出 Excel</h3>
+                            <p class="text-sm text-gray-500">导出为 .xlsx 格式，保留完整样式</p>
+                        </button>
+                    </div>
+                </div>
+
+                <div id="admin-teams" class="admin-section p-8 hidden">
+                    <div class="flex items-center justify-between mb-6">
+                        <div>
+                            <h2 class="text-2xl font-bold text-gray-800">战队管理</h2>
+                            <p class="text-gray-500 mt-1">管理战队热度与信息</p>
+                        </div>
+                        <div class="flex gap-2">
+                            <button onclick="saveTeamHeats()" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-xl text-sm font-medium transition-all active:scale-95">
+                                <i class="fas fa-save mr-2"></i>保存热度设置
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="admin-card p-6 mb-6">
+                        <div class="flex items-center gap-6 mb-4">
+                            <div class="flex items-center gap-2">
+                                <span class="w-3 h-3 rounded-full bg-red-500"></span>
+                                <span class="text-gray-600 text-sm">高热度 - 焦点战队，备受关注</span>
+                            </div>
+                            <div class="flex items-center gap-2">
+                                <span class="w-3 h-3 rounded-full bg-yellow-500"></span>
+                                <span class="text-gray-600 text-sm">中热度 - 稳定发挥，值得关注</span>
+                            </div>
+                            <div class="flex items-center gap-2">
+                                <span class="w-3 h-3 rounded-full bg-blue-500"></span>
+                                <span class="text-gray-600 text-sm">低热度 - 新兴力量，潜力待挖</span>
+                            </div>
+                        </div>
+                        <p class="text-gray-400 text-sm">点击战队卡片上的热度标签即可切换热度等级</p>
+                    </div>
+
+                    <div id="teams-list" class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4"></div>
+                </div>
+            </main>
+        </div>
+    </div>
+
+    <!-- 模态框 -->
+    <div id="match-modal" class="fixed inset-0 z-[60] hidden">
+        <div class="absolute inset-0 bg-black/50 backdrop-blur-sm" onclick="closeModal()"></div>
+        <div class="absolute inset-0 flex items-center justify-center p-4">
+            <div class="bg-white rounded-2xl shadow-2xl w-full max-w-lg modal-enter overflow-hidden max-h-[90vh] overflow-y-auto">
+                <div class="px-6 py-4 border-b border-gray-100 flex items-center justify-between sticky top-0 bg-white z-10">
+                    <h3 class="text-lg font-bold text-gray-800" id="modal-title">添加赛事</h3>
+                    <button onclick="closeModal()" class="text-gray-400 hover:text-gray-600 w-8 h-8 flex items-center justify-center rounded-full hover:bg-gray-100 transition-all">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+                <form id="match-form" class="p-6 space-y-4" onsubmit="saveMatch(event)">
+                    <input type="hidden" id="match-id">
+                    <div class="grid grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">赛事赛区 <span class="text-gray-400 text-xs">(可自定义)</span></label>
+                            <input type="text" id="form-region" list="region-suggestions" required 
+                                class="w-full border border-gray-200 rounded-xl px-4 py-2.5 focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none" 
+                                placeholder="输入或选择赛区">
+                            <datalist id="region-suggestions">
+                                <option value="LPL">
+                                <option value="LCK">
+                                <option value="LEC">
+                                <option value="LCS">
+                                <option value="MSI">
+                                <option value="Worlds">
+                                <option value="PCS">
+                                <option value="VCS">
+                                <option value="CBLOL">
+                            </datalist>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">状态</label>
+                            <select id="form-status" class="w-full border border-gray-200 rounded-xl px-4 py-2.5 focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none bg-white">
+                                <option value="upcoming">待进行</option>
+                                <option value="live">进行中</option>
+                                <option value="completed">已完成</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="grid grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">日期</label>
+                            <input type="date" id="form-date" required class="w-full border border-gray-200 rounded-xl px-4 py-2.5 focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">时间</label>
+                            <input type="time" id="form-time" required class="w-full border border-gray-200 rounded-xl px-4 py-2.5 focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none">
+                        </div>
+                    </div>
+                    <div class="grid grid-cols-3 gap-4 items-end">
+                        <div class="col-span-1">
+                            <label class="block text-sm font-medium text-gray-700 mb-1">A战队</label>
+                            <input type="text" id="form-team-a" required placeholder="如: BLG" class="w-full border border-gray-200 rounded-xl px-4 py-2.5 focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none">
+                        </div>
+                        <div class="col-span-1">
+                            <label class="block text-sm font-medium text-gray-700 mb-1 text-center">比分</label>
+                            <div class="flex items-center gap-2">
+                                <input type="number" id="form-score-a" min="0" placeholder="0" class="w-full border border-gray-200 rounded-xl px-3 py-2.5 text-center focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none">
+                                <span class="text-gray-400 font-bold">:</span>
+                                <input type="number" id="form-score-b" min="0" placeholder="0" class="w-full border border-gray-200 rounded-xl px-3 py-2.5 text-center focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none">
+                            </div>
+                        </div>
+                        <div class="col-span-1">
+                            <label class="block text-sm font-medium text-gray-700 mb-1">B战队</label>
+                            <input type="text" id="form-team-b" required placeholder="如: TES" class="w-full border border-gray-200 rounded-xl px-4 py-2.5 focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none">
+                        </div>
+                    </div>
+                    <div class="pt-4 flex gap-3 sticky bottom-0 bg-white pb-2">
+                        <button type="button" onclick="closeModal()" class="flex-1 px-4 py-2.5 border border-gray-200 text-gray-700 rounded-xl hover:bg-gray-50 font-medium transition-all">取消</button>
+                        <button type="submit" class="flex-1 px-4 py-2.5 bg-blue-600 hover:bg-blue-700 text-white rounded-xl font-medium transition-all shadow-lg shadow-blue-600/30">保存</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast -->
+    <div id="toast" class="fixed bottom-6 right-6 z-[70] transform translate-y-20 opacity-0 transition-all duration-300">
+        <div class="bg-gray-800 text-white px-6 py-3 rounded-xl shadow-2xl flex items-center gap-3">
+            <i class="fas fa-check-circle text-green-400"></i>
+            <span id="toast-message">操作成功</span>
+        </div>
+    </div>
+
+    <script>
+
+        // ==================== 数据存储 ====================
+        const DataStore = {
+            getMatches() {
+                return JSON.parse(localStorage.getItem('lol_matches')) || this.getDefaultData();
+            },
+            saveMatches(data) {
+                localStorage.setItem('lol_matches', JSON.stringify(data));
+                window.dispatchEvent(new CustomEvent('dataChanged', { detail: data }));
+            },
+            getTeamHeats() {
+                return JSON.parse(localStorage.getItem('lol_team_heats')) || {};
+            },
+            saveTeamHeats(data) {
+                localStorage.setItem('lol_team_heats', JSON.stringify(data));
+            },
+            getDefaultData() {
+                return [
+                    { id: 1, region: 'LPL', date: '2026-05-10', time: '17:00', teamA: 'JDG', scoreA: 2, scoreB: 0, teamB: 'WBG', status: 'completed' },
+                    { id: 2, region: 'LPL', date: '2026-05-10', time: '19:00', teamA: 'BLG', scoreA: 2, scoreB: 1, teamB: 'TES', status: 'completed' },
+                    { id: 3, region: 'LCK', date: '2026-05-11', time: '16:00', teamA: 'T1', scoreA: 1, scoreB: 2, teamB: 'Gen.G', status: 'completed' },
+                    { id: 4, region: 'LCK', date: '2026-05-11', time: '18:30', teamA: 'DK', scoreA: 0, scoreB: 0, teamB: 'HLE', status: 'upcoming' },
+                    { id: 5, region: 'LEC', date: '2026-05-12', time: '23:00', teamA: 'G2', scoreA: 0, scoreB: 0, teamB: 'FNC', status: 'upcoming' },
+                    { id: 6, region: 'LCS', date: '2026-05-13', time: '08:00', teamA: 'TL', scoreA: 0, scoreB: 0, teamB: 'C9', status: 'upcoming' },
+                    { id: 7, region: 'MSI', date: '2026-05-15', time: '20:00', teamA: 'BLG', scoreA: 0, scoreB: 0, teamB: 'T1', status: 'upcoming' },
+                    { id: 8, region: 'LPL', date: '2026-05-14', time: '17:00', teamA: 'IG', scoreA: 0, scoreB: 0, teamB: 'NIP', status: 'upcoming' },
+                    { id: 9, region: 'LPL', date: '2026-05-09', time: '15:00', teamA: 'EDG', scoreA: 2, scoreB: 1, teamB: 'RNG', status: 'completed' },
+                    { id: 10, region: 'LCK', date: '2026-05-09', time: '17:00', teamA: 'KT', scoreA: 0, scoreB: 2, teamB: 'BRO', status: 'completed' },
+                    { id: 11, region: 'LPL', date: '2026-05-16', time: '19:00', teamA: 'WBG', scoreA: 0, scoreB: 0, teamB: 'JDG', status: 'upcoming' },
+                    { id: 12, region: 'MSI', date: '2026-05-17', time: '18:00', teamA: 'Gen.G', scoreA: 0, scoreB: 0, teamB: 'BLG', status: 'upcoming' },
+                ];
+            }
+        };
+
+        let matches = DataStore.getMatches();
+        let teamHeats = DataStore.getTeamHeats();
+        let editingId = null;
+        let currentPage = 'home';
+        let calendarDate = new Date(2026, 4, 1);
+        let selectedDate = formatDateLocal(new Date());
+        let calendarView = 'month';
+        let trendPeriodDays = 7;
+
+        const teamAuras = {
+            'BLG': 'bright', 'TES': 'storm', 'JDG': 'fire', 'WBG': 'dark',
+            'T1': 'storm', 'Gen.G': 'bright', 'DK': 'frost', 'HLE': 'fire',
+            'G2': 'bright', 'FNC': 'fire', 'TL': 'frost', 'C9': 'bright',
+            'IG': 'storm', 'NIP': 'dark', 'EDG': 'fire', 'RNG': 'bright',
+            'KT': 'frost', 'BRO': 'dark'
+        };
+
+        const auraConfig = {
+            bright: { name: '晨曦', icon: '☀️', bg: 'bg-bright', desc: '光芒万丈，锐不可当', color: '#fbbf24' },
+            storm: { name: '雷霆', icon: '⚡', bg: 'bg-storm', desc: '电闪雷鸣，势不可挡', color: '#a78bfa' },
+            dark: { name: '深渊', icon: '🌑', bg: 'bg-dark', desc: '暗影笼罩，神秘莫测', color: '#dc2626' },
+            frost: { name: '极冰', icon: '❄️', bg: 'bg-frost', desc: '冷静沉着，冰封千里', color: '#38bdf8' },
+            fire: { name: '烈焰', icon: '🔥', bg: 'bg-fire', desc: '热血沸腾，燃烧殆尽', color: '#f97316' }
+        };
+
+        const heatConfig = {
+            high: { label: '高热度', class: 'heat-high', icon: '🔥', desc: '焦点战队，备受关注' },
+            medium: { label: '中热度', class: 'heat-medium', icon: '⭐', desc: '稳定发挥，值得关注' },
+            low: { label: '低热度', class: 'heat-low', icon: '💎', desc: '新兴力量，潜力待挖' },
+            none: { label: '未标记', class: 'heat-none', icon: '○', desc: '点击标记热度' }
+        };
+
+        const heatOrder = ['high', 'medium', 'low', 'none'];
+        const heatRank = { high: 3, medium: 2, low: 1, none: 0 };
+
+        window.addEventListener('dataChanged', (e) => {
+            matches = e.detail;
+            if (currentPage === 'home') renderHome();
+            if (currentPage === 'calendar') renderCalendar();
+            if (currentPage === 'admin') renderAdmin();
+        });
+
+        // ==================== 日期工具函数 ====================
+        function formatDateLocal(date) {
+            const year = date.getFullYear();
+            const month = String(date.getMonth() + 1).padStart(2, '0');
+            const day = String(date.getDate()).padStart(2, '0');
+            return `${year}-${month}-${day}`;
+        }
+
+        function parseDateLocal(dateStr) {
+            const [year, month, day] = dateStr.split('-').map(Number);
+            return new Date(year, month - 1, day);
+        }
+
+        function getTodayLocal() {
+            return formatDateLocal(new Date());
+        }
+
+        function getYesterdayLocal() {
+            const d = new Date();
+            d.setDate(d.getDate() - 1);
+            return formatDateLocal(d);
+        }
+
+        function getTomorrowLocal() {
+            const d = new Date();
+            d.setDate(d.getDate() + 1);
+            return formatDateLocal(d);
+        }
+
+        // ==================== 赛区标签配色（加深版） ====================
+        function getRegionStyle(region, context = 'admin') {
+            const predefined = {
+                'LPL':  { admin: 'background:#fecaca;color:#7f1d1d;border:1px solid #f87171', home: 'region-lpl' },
+                'LCK':  { admin: 'background:#bfdbfe;color:#1e3a8a;border:1px solid #60a5fa', home: 'region-lck' },
+                'LEC':  { admin: 'background:#a7f3d0;color:#064e3b;border:1px solid #34d399', home: 'region-lec' },
+                'LCS':  { admin: 'background:#fde68a;color:#78350f;border:1px solid #fbbf24', home: 'region-lcs' },
+                'MSI':  { admin: 'background:#ddd6fe;color:#4c1d95;border:1px solid #a78bfa', home: 'region-msi' },
+                'Worlds':{ admin: 'background:#fbcfe8;color:#831843;border:1px solid #f472b6', home: 'region-worlds' }
+            };
+
+            if (predefined[region]) {
+                if (context === 'admin') return { style: predefined[region].admin, class: 'px-2 py-1 rounded-lg text-xs font-bold inline-block' };
+                return { class: `region-tag-home ${predefined[region].home}` };
+            }
+
+            let hash = 0;
+            for (let i = 0; i < region.length; i++) hash = region.charCodeAt(i) + ((hash << 5) - hash);
+            const h = Math.abs(hash % 360);
+
+            if (context === 'admin') {
+                return { 
+                    style: `background:hsl(${h},85%,90%);color:hsl(${h},90%,25%);border:1px solid hsl(${h},80%,70%)`, 
+                    class: 'px-2 py-1 rounded-lg text-xs font-bold inline-block' 
+                };
+            }
+            return { 
+                style: `background:hsla(${h},80%,50%,0.35);color:hsl(${h},95%,90%);border:1px solid hsla(${h},80%,60%,0.5)`, 
+                class: 'region-tag-home' 
+            };
+        }
+
+        // ==================== 页面切换 ====================
+        function switchPage(page) {
+            currentPage = page;
+            const pages = ['home', 'calendar', 'admin'];
+            const btns = pages.map(p => document.getElementById('nav-' + p));
+            const containers = pages.map(p => document.getElementById('page-' + p));
+
+            btns.forEach((btn, i) => {
+                if (pages[i] === page) {
+                    btn.classList.add('active');
+                    btn.classList.remove('text-white/60');
+                } else {
+                    btn.classList.remove('active');
+                }
+            });
+
+            const activeBtn = document.getElementById('nav-' + page);
+            const thumb = document.getElementById('switch-thumb');
+            if (activeBtn && thumb) {
+                thumb.style.width = activeBtn.offsetWidth + 'px';
+                thumb.style.left = activeBtn.offsetLeft + 'px';
+            }
+
+            containers.forEach((container, i) => {
+                if (pages[i] === page) {
+                    container.classList.remove('hidden-page');
+                } else {
+                    container.classList.add('hidden-page');
+                }
+            });
+
+            if (page === 'home') renderHome();
+            else if (page === 'calendar') {
+                renderCalendar();
+                updateCalendarBg();
+            }
+            else if (page === 'admin') renderAdmin();
+        }
+
+        // ==================== 日历背景系统 ====================
+        function updateCalendarBg() {
+            const bg = document.getElementById('dynamic-bg');
+            const dayMatches = matches.filter(m => m.date === selectedDate);
+            let dominantAura = 'bright';
+
+            if (dayMatches.length > 0) {
+                const teams = [...new Set(dayMatches.flatMap(m => [m.teamA, m.teamB]))];
+                const auras = teams.map(t => teamAuras[t] || 'bright');
+                const counts = {};
+                auras.forEach(a => counts[a] = (counts[a] || 0) + 1);
+                dominantAura = Object.entries(counts).sort((a,b) => b[1]-a[1])[0][0];
+            }
+
+            bg.className = 'dynamic-bg ' + auraConfig[dominantAura].bg;
+
+            bg.querySelectorAll('.lightning, .particle, .snowflake, .ember').forEach(el => el.remove());
+
+            if (dominantAura === 'storm') {
+                for (let i = 0; i < 3; i++) {
+                    const l = document.createElement('div');
+                    l.className = 'lightning';
+                    l.style.left = (20 + i * 30) + '%';
+                    l.style.animationDelay = (i * 1.5) + 's';
+                    bg.appendChild(l);
+                }
+            } else if (dominantAura === 'dark') {
+                for (let i = 0; i < 20; i++) {
+                    const p = document.createElement('div');
+                    p.className = 'particle';
+                    p.style.left = Math.random() * 100 + '%';
+                    p.style.animationDelay = Math.random() * 10 + 's';
+                    p.style.animationDuration = (8 + Math.random() * 6) + 's';
+                    bg.appendChild(p);
+                }
+            } else if (dominantAura === 'frost') {
+                for (let i = 0; i < 15; i++) {
+                    const s = document.createElement('div');
+                    s.className = 'snowflake';
+                    s.innerHTML = '❄';
+                    s.style.left = Math.random() * 100 + '%';
+                    s.style.animationDelay = Math.random() * 8 + 's';
+                    s.style.animationDuration = (6 + Math.random() * 6) + 's';
+                    s.style.fontSize = (10 + Math.random() * 10) + 'px';
+                    bg.appendChild(s);
+                }
+            } else if (dominantAura === 'fire') {
+                for (let i = 0; i < 12; i++) {
+                    const e = document.createElement('div');
+                    e.className = 'ember';
+                    e.style.left = Math.random() * 100 + '%';
+                    e.style.animationDelay = Math.random() * 6 + 's';
+                    e.style.animationDuration = (4 + Math.random() * 4) + 's';
+                    bg.appendChild(e);
+                }
+            }
+        }
+
+        // ==================== 日历渲染 ====================
+        function renderCalendar() {
+            matches = DataStore.getMatches();
+            renderCalendarGrid();
+            renderDayMatches(selectedDate);
+            renderTodayHighlight();
+            renderTeamAuras();
+            renderUpcomingEvents();
+        }
+
+        function renderCalendarGrid() {
+            const grid = document.getElementById('calendar-grid');
+            grid.innerHTML = '';
+
+            const year = calendarDate.getFullYear();
+            const month = calendarDate.getMonth();
+            const firstDayOfMonth = new Date(year, month, 1);
+            const firstDay = firstDayOfMonth.getDay();
+            const daysInMonth = new Date(year, month + 1, 0).getDate();
+            const daysInPrevMonth = new Date(year, month, 0).getDate();
+            const today = getTodayLocal();
+
+            document.getElementById('month-display').textContent = `${year}年${month + 1}月`;
+            document.getElementById('calendar-month-label').textContent = `${year}年${month + 1}月`;
+
+            for (let i = firstDay - 1; i >= 0; i--) {
+                const day = daysInPrevMonth - i;
+                const dateStr = formatDateLocal(new Date(year, month - 1, day));
+                const cell = createDayCell(day, dateStr, today, true);
+                grid.appendChild(cell);
+            }
+
+            for (let day = 1; day <= daysInMonth; day++) {
+                const dateStr = formatDateLocal(new Date(year, month, day));
+                const cell = createDayCell(day, dateStr, today, false);
+                grid.appendChild(cell);
+            }
+
+            const remainingCells = 42 - (firstDay + daysInMonth);
+            for (let day = 1; day <= remainingCells; day++) {
+                const dateStr = formatDateLocal(new Date(year, month + 1, day));
+                const cell = createDayCell(day, dateStr, today, true);
+                grid.appendChild(cell);
+            }
+        }
+
+        function createDayCell(day, dateStr, today, isOtherMonth) {
+            const dayMatches = matches.filter(m => m.date === dateStr);
+            const isToday = dateStr === today;
+            const isSelected = dateStr === selectedDate;
+
+            const cell = document.createElement('div');
+            cell.className = `day-cell flex flex-col items-center justify-center ${isToday ? 'today' : ''} ${isSelected ? 'selected' : ''} ${dayMatches.length > 0 ? 'has-match' : ''} ${isOtherMonth ? 'other-month' : ''}`;
+            cell.onclick = () => selectDate(dateStr);
+
+            const num = document.createElement('span');
+            num.className = `text-lg font-bold ${isToday ? 'text-white' : 'text-white/80'}`;
+            num.textContent = day;
+            cell.appendChild(num);
+
+            if (dayMatches.length > 0) {
+                const indicators = document.createElement('div');
+                indicators.className = 'flex gap-1 mt-1';
+                dayMatches.slice(0, 3).forEach(m => {
+                    const dot = document.createElement('div');
+                    dot.className = 'w-1.5 h-1.5 rounded-full';
+                    const aura = teamAuras[m.teamA] || 'bright';
+                    dot.style.background = auraConfig[aura].color;
+                    dot.style.boxShadow = `0 0 4px ${auraConfig[aura].color}`;
+                    indicators.appendChild(dot);
+                });
+                cell.appendChild(indicators);
+            }
+
+            return cell;
+        }
+
+        function selectDate(dateStr) {
+            selectedDate = dateStr;
+            renderCalendarGrid();
+            renderDayMatches(dateStr);
+            updateCalendarBg();
+        }
+
+        function changeMonth(delta) {
+            calendarDate.setMonth(calendarDate.getMonth() + delta);
+            renderCalendarGrid();
+        }
+
+        function goToToday() {
+            const now = new Date();
+            calendarDate = new Date(now.getFullYear(), now.getMonth(), 1);
+            selectedDate = getTodayLocal();
+            renderCalendar();
+        }
+
+        function setCalendarView(view) {
+            calendarView = view;
+            document.querySelectorAll('.view-btn').forEach(btn => {
+                btn.classList.remove('bg-white/15', 'text-white');
+                btn.classList.add('text-white/60');
+            });
+            document.getElementById('view-' + view).classList.add('bg-white/15', 'text-white');
+            document.getElementById('view-' + view).classList.remove('text-white/60');
+            renderCalendar();
+        }
+
+        function renderDayMatches(dateStr) {
+            const container = document.getElementById('day-matches-list');
+            const label = document.getElementById('selected-date-label');
+            const badge = document.getElementById('match-count-badge');
+            container.innerHTML = '';
+
+            const dayMatches = matches.filter(m => m.date === dateStr).sort((a,b) => a.time.localeCompare(b.time));
+            const dateObj = parseDateLocal(dateStr);
+            label.textContent = `${dateObj.getMonth() + 1}月${dateObj.getDate()}日 赛事`;
+            badge.textContent = `${dayMatches.length} 场`;
+
+            if (dayMatches.length === 0) {
+                container.innerHTML = `
+                    <div class="text-center py-12 text-white/30">
+                        <i class="fas fa-calendar-day text-4xl mb-3"></i>
+                        <p>当日暂无赛事</p>
+                    </div>
+                `;
+                return;
+            }
+
+            dayMatches.forEach(m => {
+                const auraA = teamAuras[m.teamA] || 'bright';
+                const auraB = teamAuras[m.teamB] || 'bright';
+                const configA = auraConfig[auraA];
+                const configB = auraConfig[auraB];
+
+                const card = document.createElement('div');
+                card.className = 'match-card';
+                card.style.setProperty('--card-accent', configA.color);
+                card.style.setProperty('--card-accent-2', configB.color);
+                card.onclick = () => editMatch(m.id);
+
+                const statusLabels = { completed: '已结束', upcoming: '未开始', live: '进行中' };
+                const statusColors = { 
+                    completed: 'bg-gray-500/20 text-gray-300', 
+                    upcoming: 'bg-blue-500/20 text-blue-300', 
+                    live: 'bg-red-500/20 text-red-300 animate-pulse' 
+                };
+
+                card.innerHTML = `
+                    <div class="flex items-center justify-between">
+                        <div class="flex items-center gap-4 flex-1">
+                            <div class="team-aura aura-${auraA} w-12 h-12 rounded-2xl flex items-center justify-center text-xl bg-white/5 relative">
+                                ${configA.icon}
+                            </div>
+                            <div class="flex-1">
+                                <div class="flex items-center gap-2 mb-1">
+                                    <span class="text-white font-bold text-lg">${m.teamA}</span>
+                                    <span class="text-white/30">vs</span>
+                                    <span class="text-white font-bold text-lg">${m.teamB}</span>
+                                </div>
+                                <div class="flex items-center gap-3 text-sm text-white/50">
+                                    <span><i class="far fa-clock mr-1"></i>${m.time}</span>
+                                    <span class="px-2 py-0.5 rounded-md text-xs font-medium ${getRegionStyle(m.region, 'admin').class}" style="${getRegionStyle(m.region, 'admin').style}">${m.region}</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="text-right ml-4">
+                            <div class="text-2xl font-bold text-white mb-1">${m.status === 'completed' ? m.scoreA + ' - ' + m.scoreB : '--'}</div>
+                            <span class="px-3 py-1 rounded-full text-xs font-medium ${statusColors[m.status]}">${statusLabels[m.status]}</span>
+                        </div>
+                    </div>
+                    <div class="mt-3 flex items-center gap-2">
+                        <div class="flex-1 h-1 rounded-full bg-white/10 overflow-hidden">
+                            <div class="h-full rounded-full transition-all" style="width: ${m.status === 'completed' ? (m.scoreA/(m.scoreA+m.scoreB)*100) : 50}%; background: linear-gradient(90deg, ${configA.color}, ${configB.color})"></div>
+                        </div>
+                    </div>
+                `;
+                container.appendChild(card);
+            });
+        }
+
+        function renderTodayHighlight() {
+            const container = document.getElementById('today-highlight');
+            const today = getTodayLocal();
+            const todayMatches = matches.filter(m => m.date === today);
+
+            if (todayMatches.length === 0) {
+                container.innerHTML = '<p class="text-white/40 text-sm">今日暂无焦点赛事</p>';
+                return;
+            }
+
+            const focus = todayMatches[0];
+            const auraA = teamAuras[focus.teamA] || 'bright';
+            const auraB = teamAuras[focus.teamB] || 'bright';
+
+            container.innerHTML = `
+                <div class="flex items-center justify-between mb-3">
+                    <span class="text-white/60 text-sm">${focus.time}</span>
+                    <span class="px-2 py-0.5 rounded-md text-xs font-medium bg-white/10 text-white/80">${focus.region}</span>
+                </div>
+                <div class="flex items-center justify-between">
+                    <div class="text-center">
+                        <div class="w-14 h-14 rounded-2xl flex items-center justify-center text-2xl mb-2 bg-white/5 team-aura aura-${auraA}">${auraConfig[auraA].icon}</div>
+                        <div class="text-white font-bold">${focus.teamA}</div>
+                        <div class="text-xs text-white/40">${auraConfig[auraA].name}</div>
+                    </div>
+                    <div class="text-center px-4">
+                        <div class="text-2xl font-bold text-white">VS</div>
+                        <div class="text-xs text-white/40 mt-1">${focus.status === 'completed' ? focus.scoreA + ':' + focus.scoreB : '未开始'}</div>
+                    </div>
+                    <div class="text-center">
+                        <div class="w-14 h-14 rounded-2xl flex items-center justify-center text-2xl mb-2 bg-white/5 team-aura aura-${auraB}">${auraConfig[auraB].icon}</div>
+                        <div class="text-white font-bold">${focus.teamB}</div>
+                        <div class="text-xs text-white/40">${auraConfig[auraB].name}</div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function renderTeamAuras() {
+            const container = document.getElementById('team-aura-list');
+            container.innerHTML = '';
+
+            const teams = [...new Set(matches.flatMap(m => [m.teamA, m.teamB]))];
+            const teamData = teams.map(t => {
+                const aura = teamAuras[t] || 'bright';
+                const stats = calculateTeamStats(t);
+                return { name: t, aura, stats, config: auraConfig[aura] };
+            }).sort((a,b) => b.stats.wins - a.stats.wins).slice(0, 6);
+
+            teamData.forEach(t => {
+                const div = document.createElement('div');
+                div.className = 'flex items-center gap-3 p-3 rounded-xl hover:bg-white/5 transition-all cursor-pointer group';
+                div.onclick = () => {
+                    document.getElementById('search-input').value = t.name;
+                    switchPage('admin');
+                    filterMatches();
+                };
+
+                div.innerHTML = `
+                    <div class="team-aura aura-${t.aura} w-10 h-10 rounded-xl flex items-center justify-center text-lg bg-white/5 relative group-hover:scale-110 transition-transform">
+                        ${t.config.icon}
+                    </div>
+                    <div class="flex-1">
+                        <div class="flex items-center justify-between">
+                            <span class="text-white font-bold text-sm">${t.name}</span>
+                            <span class="text-xs px-2 py-0.5 rounded-md" style="background: ${t.config.color}20; color: ${t.config.color}">${t.config.name}</span>
+                        </div>
+                        <div class="flex items-center gap-2 mt-1">
+                            <div class="flex-1 h-1.5 rounded-full bg-white/10 overflow-hidden">
+                                <div class="h-full rounded-full transition-all" style="width: ${t.stats.total ? (t.stats.wins/t.stats.total*100) : 0}%; background: ${t.config.color}"></div>
+                            </div>
+                            <span class="text-xs text-white/40">${t.stats.wins}胜</span>
+                        </div>
+                    </div>
+                `;
+                container.appendChild(div);
+            });
+        }
+
+        function renderUpcomingEvents() {
+            const container = document.getElementById('upcoming-big-events');
+            container.innerHTML = '';
+
+            const upcoming = matches.filter(m => m.status === 'upcoming' && ['MSI', 'Worlds'].includes(m.region))
+                .sort((a,b) => a.date.localeCompare(b.date)).slice(0, 3);
+
+            if (upcoming.length === 0) {
+                container.innerHTML = '<p class="text-white/40 text-sm">暂无大型赛事</p>';
+                return;
+            }
+
+            upcoming.forEach(m => {
+                const div = document.createElement('div');
+                div.className = 'flex items-center gap-3 p-3 rounded-xl hover:bg-white/5 transition-all cursor-pointer';
+                div.onclick = () => selectDate(m.date);
+
+                const daysLeft = Math.ceil((parseDateLocal(m.date) - new Date()) / (1000 * 60 * 60 * 24));
+
+                div.innerHTML = `
+                    <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-yellow-500/20 to-orange-500/20 flex items-center justify-center text-yellow-400 text-lg border border-yellow-500/20">
+                        <i class="fas fa-trophy"></i>
+                    </div>
+                    <div class="flex-1">
+                        <div class="text-white font-bold text-sm">${m.region} · ${m.teamA} vs ${m.teamB}</div>
+                        <div class="text-white/40 text-xs mt-0.5">${m.date} ${m.time}</div>
+                    </div>
+                    <div class="text-right">
+                        <div class="text-yellow-400 font-bold text-sm">${daysLeft > 0 ? daysLeft + '天' : '今天'}</div>
+                        <div class="text-white/30 text-xs">后开赛</div>
+                    </div>
+                `;
+                container.appendChild(div);
+            });
+        }
+
+        // ==================== 走势线条图 ====================
+        function setTrendPeriod(days) {
+            trendPeriodDays = days;
+            document.querySelectorAll('.trend-period-btn').forEach(btn => {
+                const btnDays = parseInt(btn.dataset.days);
+                if (btnDays === days) {
+                    btn.classList.add('bg-white/20', 'text-white');
+                    btn.classList.remove('text-white/50', 'hover:bg-white/10');
+                } else {
+                    btn.classList.remove('bg-white/20', 'text-white');
+                    btn.classList.add('text-white/50', 'hover:bg-white/10');
+                }
+            });
+            renderTrendLine();
+        }
+
+        function renderTrendLine() {
+            const container = document.getElementById('trend-chart-container');
+            const legend = document.getElementById('trend-legend');
+            container.innerHTML = '';
+            legend.innerHTML = '';
+
+            const allRegions = [...new Set(matches.map(m => m.region))];
+            const regionColors = {};
+            allRegions.forEach(r => {
+                const s = getRegionStyle(r, 'admin');
+                const match = s.style.match(/background:([^;]+)/);
+                regionColors[r] = match ? match[1] : '#999';
+            });
+
+            const dates = [];
+            const today = new Date();
+            for (let i = trendPeriodDays - 1; i >= 0; i--) {
+                const d = new Date(today);
+                d.setDate(d.getDate() - i);
+                dates.push(formatDateLocal(d));
+            }
+
+            const regionData = {};
+            allRegions.forEach(region => {
+                regionData[region] = dates.map(date => {
+                    return matches.filter(m => m.region === region && m.date === date).length;
+                });
+            });
+
+            const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+            svg.classList.add('trend-line-svg');
+            svg.setAttribute('viewBox', '0 0 800 200');
+            svg.setAttribute('preserveAspectRatio', 'none');
+
+            const padding = { top: 20, right: 30, bottom: 30, left: 30 };
+            const width = 800 - padding.left - padding.right;
+            const height = 200 - padding.top - padding.bottom;
+
+            let maxValue = 0;
+            Object.values(regionData).forEach(data => {
+                maxValue = Math.max(maxValue, ...data);
+            });
+            maxValue = Math.max(maxValue, 1);
+
+            for (let i = 0; i <= 4; i++) {
+                const y = padding.top + (height / 4) * i;
+                const line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+                line.setAttribute('x1', padding.left);
+                line.setAttribute('y1', y);
+                line.setAttribute('x2', 800 - padding.right);
+                line.setAttribute('y2', y);
+                line.classList.add('trend-grid');
+                svg.appendChild(line);
+            }
+
+            allRegions.forEach(region => {
+                const data = regionData[region];
+                const color = regionColors[region];
+
+                const points = data.map((value, index) => {
+                    const x = padding.left + (width / (dates.length - 1)) * index;
+                    const y = padding.top + height - (value / maxValue) * height;
+                    return { x, y, value };
+                });
+
+                const areaPath = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+                let areaD = `M ${points[0].x} ${padding.top + height}`;
+                points.forEach(p => areaD += ` L ${p.x} ${p.y}`);
+                areaD += ` L ${points[points.length - 1].x} ${padding.top + height} Z`;
+                areaPath.setAttribute('d', areaD);
+                areaPath.classList.add('trend-line-area');
+                areaPath.style.fill = color;
+                svg.appendChild(areaPath);
+
+                const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+                let d = `M ${points[0].x} ${points[0].y}`;
+                points.slice(1).forEach(p => d += ` L ${p.x} ${p.y}`);
+                path.setAttribute('d', d);
+                path.classList.add('trend-line-path');
+                path.style.stroke = color;
+                svg.appendChild(path);
+
+                points.forEach((p, i) => {
+                    const circle = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+                    circle.setAttribute('cx', p.x);
+                    circle.setAttribute('cy', p.y);
+                    circle.setAttribute('r', 4);
+                    circle.setAttribute('fill', color);
+                    circle.classList.add('trend-dot');
+
+                    const title = document.createElementNS('http://www.w3.org/2000/svg', 'title');
+                    title.textContent = `${dates[i]}: ${p.value}场`;
+                    circle.appendChild(title);
+
+                    svg.appendChild(circle);
+                });
+            });
+
+            const labelStep = Math.ceil(dates.length / 6);
+            dates.forEach((date, index) => {
+                if (index % labelStep === 0 || index === dates.length - 1) {
+                    const x = padding.left + (width / (dates.length - 1)) * index;
+                    const text = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+                    text.setAttribute('x', x);
+                    text.setAttribute('y', 195);
+                    text.setAttribute('text-anchor', 'middle');
+                    text.classList.add('trend-label');
+                    const d = parseDateLocal(date);
+                    text.textContent = `${d.getMonth() + 1}/${d.getDate()}`;
+                    svg.appendChild(text);
+                }
+            });
+
+            container.appendChild(svg);
+
+            allRegions.forEach(region => {
+                const dot = document.createElement('div');
+                dot.className = 'flex items-center gap-2';
+                dot.innerHTML = `<span class="w-3 h-3 rounded-full" style="background:${regionColors[region]}"></span><span class="text-white/60">${region}</span>`;
+                legend.appendChild(dot);
+            });
+        }
+
+        // ==================== 首页渲染 ====================
+        function renderHome() {
+            matches = DataStore.getMatches();
+            const today = getTodayLocal();
+            document.getElementById('stat-total-matches').textContent = matches.length;
+            const teams = new Set();
+            matches.forEach(m => { teams.add(m.teamA); teams.add(m.teamB); });
+            document.getElementById('stat-active-teams').textContent = teams.size;
+            document.getElementById('stat-today-matches').textContent = matches.filter(m => m.date === today).length;
+
+            const upcoming = matches.filter(m => m.status === 'upcoming').sort((a, b) => (a.date + a.time).localeCompare(b.date + b.time))[0];
+            const latest = matches.filter(m => m.status === 'completed').sort((a, b) => (b.date + b.time).localeCompare(a.date + a.time))[0];
+            const focusMatch = upcoming || latest || matches[0];
+
+            if (focusMatch) {
+                const rStyle = getRegionStyle(focusMatch.region, 'home');
+                const regionEl = document.getElementById('hero-region');
+                regionEl.textContent = focusMatch.region;
+                regionEl.className = rStyle.class;
+                if (rStyle.style) regionEl.style.cssText = rStyle.style;
+                else regionEl.style.cssText = '';
+
+                document.getElementById('hero-team-a').textContent = focusMatch.teamA;
+                document.getElementById('hero-team-b').textContent = focusMatch.teamB;
+                document.getElementById('hero-time').textContent = focusMatch.time;
+            }
+
+            renderTrendLine();
+
+            // 赛区分布 - 加深颜色
+            const allRegions = [...new Set(matches.map(m => m.region))];
+            const regionColors = {};
+            allRegions.forEach(r => {
+                const s = getRegionStyle(r, 'admin');
+                const match = s.style.match(/background:([^;]+)/);
+                regionColors[r] = match ? match[1] : '#999';
+            });
+
+            const regionStats = document.getElementById('region-stats');
+            regionStats.innerHTML = '';
+            allRegions.forEach(region => {
+                const count = matches.filter(m => m.region === region).length;
+                const percentage = matches.length ? (count / matches.length * 100).toFixed(1) : 0;
+                const div = document.createElement('div');
+                div.className = 'flex items-center gap-3';
+                div.innerHTML = `
+                    <div class="w-12 text-sm font-bold text-white/80">${region}</div>
+                    <div class="flex-1 bg-white/10 rounded-full h-2.5 overflow-hidden">
+                        <div class="h-full rounded-full transition-all duration-1000" style="width: ${percentage}%; background: ${regionColors[region]}"></div>
+                    </div>
+                    <div class="w-12 text-right text-sm text-white/50">${count}场</div>
+                `;
+                regionStats.appendChild(div);
+            });
+
+            // 战队实力榜 - 按赛区场次排序，战队按热度优先
+            const teamShowcase = document.getElementById('team-showcase');
+            teamShowcase.innerHTML = '';
+
+            const teamStats = {};
+            matches.forEach(m => {
+                [m.teamA, m.teamB].forEach(team => {
+                    if (!teamStats[team]) teamStats[team] = { wins: 0, total: 0, region: m.region };
+                    teamStats[team].total++;
+                });
+                if (m.status === 'completed') {
+                    if (m.scoreA > m.scoreB) teamStats[m.teamA].wins++;
+                    else if (m.scoreB > m.scoreA) teamStats[m.teamB].wins++;
+                }
+            });
+
+            // 计算每个赛区的场次，按场次降序排列赛区
+            const regionMatchCounts = {};
+            allRegions.forEach(r => {
+                regionMatchCounts[r] = matches.filter(m => m.region === r).length;
+            });
+            const sortedRegions = [...allRegions].sort((a, b) => regionMatchCounts[b] - regionMatchCounts[a]);
+
+            sortedRegions.forEach(region => {
+                const regionTeams = Object.entries(teamStats)
+                    .filter(([team, stats]) => stats.region === region)
+                    .map(([team, stats]) => ({
+                        team,
+                        ...stats,
+                        winRate: stats.total ? Math.round(stats.wins / stats.total * 100) : 0,
+                        heat: teamHeats[team] || 'none',
+                        heatRank: heatRank[teamHeats[team] || 'none']
+                    }))
+                    .sort((a, b) => {
+                        // 先按热度排序（高热度在前）
+                        if (b.heatRank !== a.heatRank) return b.heatRank - a.heatRank;
+                        // 热度相同按胜率排序
+                        return b.winRate - a.winRate;
+                    })
+                    .slice(0, 5);
+
+                if (regionTeams.length === 0) return;
+
+                const group = document.createElement('div');
+                group.className = 'region-group';
+
+                const header = document.createElement('div');
+                header.className = 'region-group-header';
+                header.innerHTML = `
+                    <span class="region-group-title">${region}</span>
+                    <span class="region-group-count">${regionMatchCounts[region]}场 · TOP ${regionTeams.length}</span>
+                    <div class="region-group-line"></div>
+                `;
+                group.appendChild(header);
+
+                const grid = document.createElement('div');
+                grid.className = 'top5-grid';
+
+                regionTeams.forEach(t => {
+                    const heatInfo = heatConfig[t.heat];
+                    const card = document.createElement('div');
+                    card.className = 'glass-card p-4 relative overflow-hidden cursor-pointer';
+                    card.style.setProperty('--card-accent', regionColors[region]);
+
+                    card.innerHTML = `
+                        <div class="absolute top-0 right-0 w-20 h-20 rounded-full opacity-20" style="background: ${regionColors[region]}; filter: blur(20px);"></div>
+                        <div class="relative">
+                            <div class="flex items-center justify-between mb-2">
+                                <span class="text-[10px] px-2 py-0.5 rounded-full ${heatInfo.class} font-medium">${heatInfo.icon} ${heatInfo.label}</span>
+                                <div class="win-rate-ring" style="width: 40px; height: 40px;">
+                                    <svg width="40" height="40" viewBox="0 0 60 60">
+                                        <circle class="win-rate-bg" cx="30" cy="30" r="26"></circle>
+                                        <circle class="win-rate-fill" cx="30" cy="30" r="26" 
+                                            stroke-dasharray="163.36" 
+                                            stroke-dashoffset="${163.36 - (163.36 * t.winRate / 100)}"></circle>
+                                    </svg>
+                                    <div class="absolute inset-0 flex items-center justify-center text-[10px] font-bold text-white">${t.winRate}%</div>
+                                </div>
+                            </div>
+                            <div class="text-lg font-bold text-white mb-1">${t.team}</div>
+                            <div class="text-xs text-white/50">${t.wins}胜 ${t.total - t.wins}负 · ${t.total}场</div>
+                            <div class="mt-2 flex gap-1">
+                                ${Array(5).fill(0).map((_, i) => 
+                                    `<div class="h-1 flex-1 rounded-full ${i < Math.round(t.winRate/20) ? 'bg-green-400' : 'bg-white/10'}"></div>`
+                                ).join('')}
+                            </div>
+                        </div>
+                    `;
+                    grid.appendChild(card);
+                });
+
+                group.appendChild(grid);
+                teamShowcase.appendChild(group);
+            });
+
+            // 近期赛程 - 只显示昨天今天明天
+            const recentMatches = document.getElementById('recent-matches');
+            recentMatches.innerHTML = '';
+
+            const yesterday = getYesterdayLocal();
+            const tomorrow = getTomorrowLocal();
+            const targetDates = [yesterday, today, tomorrow];
+
+            const dayLabels = {};
+            dayLabels[yesterday] = '昨天';
+            dayLabels[today] = '今天';
+            dayLabels[tomorrow] = '明天';
+
+            let hasAnyMatch = false;
+
+            targetDates.forEach(dateStr => {
+                const dayMatches = matches.filter(m => m.date === dateStr).sort((a,b) => a.time.localeCompare(b.time));
+
+                if (dayMatches.length > 0) {
+                    hasAnyMatch = true;
+                    const dayLabel = document.createElement('tr');
+                    dayLabel.innerHTML = `<td colspan="5" class="py-3"><span class="text-xs font-bold text-white/40 uppercase tracking-wider">${dayLabels[dateStr]} · ${dateStr}</span></td>`;
+                    recentMatches.appendChild(dayLabel);
+
+                    dayMatches.forEach(m => {
+                        const statusColors = { 'completed': 'text-green-400 bg-green-500/10', 'live': 'text-red-400 bg-red-500/10 animate-pulse', 'upcoming': 'text-blue-400 bg-blue-500/10' };
+                        const statusLabels = { 'completed': '已完成', 'live': '进行中', 'upcoming': '待进行' };
+                        const rStyle = getRegionStyle(m.region, 'home');
+
+                        const tr = document.createElement('tr');
+                        tr.className = 'hover:bg-white/5 transition-colors';
+                        tr.innerHTML = `
+                            <td class="py-3 text-white/60 whitespace-nowrap">${m.time}</td>
+                            <td class="py-3"><span class="${rStyle.class}" ${rStyle.style ? 'style="'+rStyle.style+'"' : ''}>${m.region}</span></td>
+                            <td class="py-3">
+                                <div class="flex items-center gap-2">
+                                    <span class="font-bold text-white">${m.teamA}</span>
+                                    <span class="text-white/30">vs</span>
+                                    <span class="font-bold text-white">${m.teamB}</span>
+                                </div>
+                            </td>
+                            <td class="py-3 font-bold text-white">${m.status === 'completed' ? m.scoreA + ' - ' + m.scoreB : '-'}</td>
+                            <td class="py-3"><span class="px-2 py-1 rounded-lg text-xs font-medium ${statusColors[m.status]}">${statusLabels[m.status]}</span></td>
+                        `;
+                        recentMatches.appendChild(tr);
+                    });
+                }
+            });
+
+            if (!hasAnyMatch) {
+                recentMatches.innerHTML = `
+                    <tr><td colspan="5" class="py-12 text-center text-white/30">
+                        <i class="fas fa-calendar-day text-4xl mb-3"></i>
+                        <p>近三日暂无赛事</p>
+                    </td></tr>
+                `;
+            }
+        }
+
+        function calculateTeamStats(teamName) {
+            const teamMatches = matches.filter(m => m.teamA === teamName || m.teamB === teamName);
+            let wins = 0, losses = 0;
+            teamMatches.forEach(m => {
+                if (m.status === 'completed') {
+                    if (m.teamA === teamName) { if (m.scoreA > m.scoreB) wins++; else if (m.scoreA < m.scoreB) losses++; }
+                    else { if (m.scoreB > m.scoreA) wins++; else if (m.scoreB < m.scoreA) losses++; }
+                }
+            });
+            return { wins, losses, total: teamMatches.length };
+        }
+
+        // ==================== 管理页渲染 ====================
+        function renderAdmin() {
+            matches = DataStore.getMatches();
+            const tbody = document.getElementById('matches-table-body');
+            tbody.innerHTML = '';
+            const filtered = getFilteredMatches();
+
+            filtered.forEach(m => {
+                const statusColors = { 'completed': 'text-green-600 bg-green-50', 'live': 'text-red-600 bg-red-50', 'upcoming': 'text-blue-600 bg-blue-50' };
+                const statusLabels = { 'completed': '已完成', 'live': '进行中', 'upcoming': '待进行' };
+                const rStyle = getRegionStyle(m.region, 'admin');
+
+                const tr = document.createElement('tr');
+                tr.className = 'table-row-hover transition-colors';
+                tr.innerHTML = `
+                    <td class="px-6 py-4"><input type="checkbox" class="match-checkbox rounded border-gray-300 text-blue-600 focus:ring-blue-500" value="${m.id}" onchange="updateBatchBar()"></td>
+                    <td class="px-6 py-4"><span class="${rStyle.class}" style="${rStyle.style}">${m.region}</span></td>
+                    <td class="px-6 py-4 text-gray-700 whitespace-nowrap">${m.date}</td>
+                    <td class="px-6 py-4 text-gray-700">${m.time}</td>
+                    <td class="px-6 py-4 text-right font-bold text-gray-800">${m.teamA}</td>
+                    <td class="px-6 py-4 text-center font-bold text-blue-600">${m.status === 'completed' ? m.scoreA + ' : ' + m.scoreB : '-'}</td>
+                    <td class="px-6 py-4 font-bold text-gray-800">${m.teamB}</td>
+                    <td class="px-6 py-4"><span class="px-2 py-1 rounded-lg text-xs font-medium ${statusColors[m.status]}">${statusLabels[m.status]}</span></td>
+                    <td class="px-6 py-4 text-right whitespace-nowrap">
+                        <button onclick="editMatch(${m.id})" class="text-blue-600 hover:text-blue-800 mr-3 transition-colors p-1"><i class="fas fa-edit"></i></button>
+                        <button onclick="deleteMatch(${m.id})" class="text-red-600 hover:text-red-800 transition-colors p-1"><i class="fas fa-trash"></i></button>
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            });
+
+            document.getElementById('table-info').textContent = `显示 ${filtered.length} 条数据 (共 ${matches.length} 条)`;
+
+            const today = getTodayLocal();
+            document.getElementById('admin-total').textContent = matches.length;
+            document.getElementById('admin-today').textContent = matches.filter(m => m.date === today).length;
+            document.getElementById('admin-completed').textContent = matches.filter(m => m.status === 'completed').length;
+            document.getElementById('admin-pending').textContent = matches.filter(m => m.status !== 'completed').length;
+
+            updateRegionFilter();
+            updateBatchBar();
+        }
+
+        // ==================== 批量操作 ====================
+        function updateBatchBar() {
+            const checked = document.querySelectorAll('.match-checkbox:checked');
+            const bar = document.getElementById('batch-bar');
+            const count = document.getElementById('batch-count');
+
+            if (checked.length > 0) {
+                bar.style.display = 'flex';
+                count.textContent = checked.length;
+            } else {
+                bar.style.display = 'none';
+            }
+        }
+
+        function getSelectedIds() {
+            return Array.from(document.querySelectorAll('.match-checkbox:checked')).map(cb => parseInt(cb.value));
+        }
+
+        function batchDelete() {
+            const ids = getSelectedIds();
+            if (ids.length === 0) return;
+            if (!confirm(`确定要删除选中的 ${ids.length} 场赛事吗？`)) return;
+
+            matches = matches.filter(m => !ids.includes(m.id));
+            DataStore.saveMatches(matches);
+            renderAdmin();
+            showToast(`已删除 ${ids.length} 场赛事`);
+        }
+
+        function batchSetStatus(status) {
+            const ids = getSelectedIds();
+            if (ids.length === 0) return;
+
+            const statusLabels = { completed: '已完成', upcoming: '待进行', live: '进行中' };
+            matches.forEach(m => {
+                if (ids.includes(m.id)) m.status = status;
+            });
+            DataStore.saveMatches(matches);
+            renderAdmin();
+            showToast(`已将 ${ids.length} 场赛事标记为${statusLabels[status]}`);
+        }
+
+        function clearBatchSelection() {
+            document.querySelectorAll('.match-checkbox').forEach(cb => cb.checked = false);
+            document.getElementById('select-all').checked = false;
+            updateBatchBar();
+        }
+
+        function updateRegionFilter() {
+            const select = document.getElementById('filter-region');
+            const currentVal = select.value;
+            const regions = [...new Set(matches.map(m => m.region))].sort();
+            let html = '<option value="">全部赛区</option>';
+            regions.forEach(r => html += `<option value="${r}">${r}</option>`);
+            select.innerHTML = html;
+            select.value = currentVal;
+        }
+
+        function getFilteredMatches() {
+            const search = document.getElementById('search-input').value.toLowerCase();
+            const region = document.getElementById('filter-region').value;
+            const status = document.getElementById('filter-status').value;
+            return matches.filter(m => {
+                const matchSearch = !search || m.teamA.toLowerCase().includes(search) || m.teamB.toLowerCase().includes(search) || m.region.toLowerCase().includes(search);
+                return matchSearch && (!region || m.region === region) && (!status || m.status === status);
+            });
+        }
+
+        function filterMatches() { renderAdmin(); }
+        function clearFilters() {
+            document.getElementById('search-input').value = '';
+            document.getElementById('filter-region').value = '';
+            document.getElementById('filter-status').value = '';
+            renderAdmin();
+        }
+
+        function showAdminSection(section) {
+            document.querySelectorAll('.admin-section').forEach(el => el.classList.add('hidden'));
+            document.getElementById('admin-' + section).classList.remove('hidden');
+
+            document.querySelectorAll('.admin-nav-item').forEach(el => {
+                el.classList.remove('bg-blue-600', 'text-white');
+                el.classList.add('text-gray-400', 'hover:text-white', 'hover:bg-white/10');
+            });
+
+            const target = event ? event.target.closest('.admin-nav-item') : document.querySelector('.admin-nav-item');
+            if (target) {
+                target.classList.remove('text-gray-400', 'hover:text-white', 'hover:bg-white/10');
+                target.classList.add('bg-blue-600', 'text-white');
+            }
+            if (section === 'teams') renderTeamsList();
+        }
+
+        // ==================== 战队热度管理 ====================
+        function renderTeamsList() {
+            const teams = new Set();
+            matches.forEach(m => { teams.add(m.teamA); teams.add(m.teamB); });
+            const container = document.getElementById('teams-list');
+            container.innerHTML = '';
+
+            Array.from(teams).sort().forEach(team => {
+                const stats = calculateTeamStats(team);
+                const heat = teamHeats[team] || 'none';
+                const heatInfo = heatConfig[heat];
+                const aura = teamAuras[team] || 'bright';
+                const auraInfo = auraConfig[aura];
+
+                const div = document.createElement('div');
+                div.className = 'admin-card p-4 text-center relative overflow-hidden cursor-pointer hover:shadow-lg transition-all';
+                div.onclick = () => toggleTeamHeat(team);
+
+                div.innerHTML = `
+                    <div class="absolute top-2 right-2">
+                        <span class="text-[10px] px-2 py-0.5 rounded-full ${heatInfo.class} font-medium">${heatInfo.icon} ${heatInfo.label}</span>
+                    </div>
+                    <div class="team-aura aura-${aura} w-12 h-12 rounded-xl flex items-center justify-center text-xl mx-auto mb-2 bg-gray-50 relative">
+                        ${auraInfo.icon}
+                    </div>
+                    <div class="font-bold text-gray-800 text-sm mb-1">${team}</div>
+                    <div class="text-xs text-gray-500 mb-2">${stats.wins}胜 ${stats.losses}负 · ${stats.total}场</div>
+                    <div class="flex gap-1 justify-center">
+                        ${Array(3).fill(0).map((_, i) => {
+                            const heatKeys = ['high', 'medium', 'low'];
+                            const isActive = heat === heatKeys[i];
+                            const colors = ['bg-red-500', 'bg-yellow-500', 'bg-blue-500'];
+                            return `<div class="w-6 h-1 rounded-full ${isActive ? colors[i] : 'bg-gray-200'}"></div>`;
+                        }).join('')}
+                    </div>
+                `;
+                container.appendChild(div);
+            });
+        }
+
+        function toggleTeamHeat(team) {
+            const currentHeat = teamHeats[team] || 'none';
+            const currentIndex = heatOrder.indexOf(currentHeat);
+            const nextIndex = (currentIndex + 1) % heatOrder.length;
+            const nextHeat = heatOrder[nextIndex];
+
+            if (nextHeat === 'none') {
+                delete teamHeats[team];
+            } else {
+                teamHeats[team] = nextHeat;
+            }
+
+            renderTeamsList();
+            showToast(`${team} 热度已更新为 ${heatConfig[nextHeat].label}`);
+        }
+
+        function saveTeamHeats() {
+            DataStore.saveTeamHeats(teamHeats);
+            showToast('战队热度设置已保存');
+        }
+
+        // ==================== 数据操作 ====================
+        function openModal(id = null) {
+            editingId = id;
+            document.getElementById('modal-title').textContent = id ? '编辑赛事' : '添加赛事';
+            document.getElementById('match-modal').classList.remove('hidden');
+
+            if (id) {
+                const m = matches.find(x => x.id === id);
+                document.getElementById('form-region').value = m.region;
+                document.getElementById('form-date').value = m.date;
+                document.getElementById('form-time').value = m.time;
+                document.getElementById('form-team-a').value = m.teamA;
+                document.getElementById('form-score-a').value = m.scoreA;
+                document.getElementById('form-score-b').value = m.scoreB;
+                document.getElementById('form-team-b').value = m.teamB;
+                document.getElementById('form-status').value = m.status;
+            } else {
+                document.getElementById('match-form').reset();
+                document.getElementById('form-date').value = selectedDate || getTodayLocal();
+                document.getElementById('form-status').value = 'upcoming';
+            }
+        }
+
+        function closeModal() {
+            document.getElementById('match-modal').classList.add('hidden');
+            editingId = null;
+        }
+
+        function saveMatch(e) {
+            e.preventDefault();
+            const data = {
+                id: editingId || Date.now(),
+                region: document.getElementById('form-region').value.trim(),
+                date: document.getElementById('form-date').value,
+                time: document.getElementById('form-time').value,
+                teamA: document.getElementById('form-team-a').value.trim(),
+                scoreA: parseInt(document.getElementById('form-score-a').value) || 0,
+                scoreB: parseInt(document.getElementById('form-score-b').value) || 0,
+                teamB: document.getElementById('form-team-b').value.trim(),
+                status: document.getElementById('form-status').value
+            };
+
+            if (editingId) {
+                const idx = matches.findIndex(m => m.id === editingId);
+                matches[idx] = data;
+            } else {
+                matches.push(data);
+            }
+
+            DataStore.saveMatches(matches);
+            closeModal();
+            if (currentPage === 'admin') renderAdmin();
+            if (currentPage === 'calendar') renderCalendar();
+            if (currentPage === 'home') renderHome();
+            showToast(editingId ? '赛事更新成功' : '赛事添加成功');
+        }
+
+        function editMatch(id) { openModal(id); }
+        function deleteMatch(id) {
+            if (confirm('确定要删除这场赛事吗？')) {
+                matches = matches.filter(m => m.id !== id);
+                DataStore.saveMatches(matches);
+                if (currentPage === 'admin') renderAdmin();
+                if (currentPage === 'calendar') renderCalendar();
+                showToast('赛事删除成功');
+            }
+        }
+        function toggleSelectAll() {
+            const checked = document.getElementById('select-all').checked;
+            document.querySelectorAll('.match-checkbox').forEach(cb => cb.checked = checked);
+            updateBatchBar();
+        }
+        function showToast(msg) {
+            const toast = document.getElementById('toast');
+            document.getElementById('toast-message').textContent = msg;
+            toast.classList.remove('translate-y-20', 'opacity-0');
+            setTimeout(() => toast.classList.add('translate-y-20', 'opacity-0'), 3000);
+        }
+
+        // ==================== 导入导出 ====================
+        function exportToCSV() {
+            const headers = ['赛区', '日期', '时间', 'A战队', 'A成绩', 'B成绩', 'B战队', '状态'];
+            const rows = matches.map(m => [m.region, m.date, m.time, m.teamA, m.scoreA, m.scoreB, m.teamB, m.status]);
+            downloadFile([headers, ...rows].map(r => r.join(',')).join('\n'), 'lol_matches.csv', 'text/csv');
+            showToast('CSV 导出成功');
+        }
+        function exportToJSON() {
+            downloadFile(JSON.stringify(matches, null, 2), 'lol_matches.json', 'application/json');
+            showToast('JSON 导出成功');
+        }
+        function exportToExcel() {
+            let html = '<table><tr><th>赛区</th><th>日期</th><th>时间</th><th>A战队</th><th>A成绩</th><th>B成绩</th><th>B战队</th><th>状态</th></tr>';
+            matches.forEach(m => html += `<tr><td>${m.region}</td><td>${m.date}</td><td>${m.time}</td><td>${m.teamA}</td><td>${m.scoreA}</td><td>${m.scoreB}</td><td>${m.teamB}</td><td>${m.status}</td></tr>`);
+            html += '</table>';
+            const blob = new Blob([html], { type: 'application/vnd.ms-excel' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a'); a.href = url; a.download = 'lol_matches.xls'; a.click(); URL.revokeObjectURL(url);
+            showToast('Excel 导出成功');
+        }
+        function downloadFile(content, filename, type) {
+            const blob = new Blob([content], { type });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a'); a.href = url; a.download = filename; a.click(); URL.revokeObjectURL(url);
+        }
+        function exportData() { exportToCSV(); }
+
+        function handleFileImport(input) {
+            const file = input.files[0];
+            if (!file) return;
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const rows = e.target.result.split('\n').filter(line => line.trim());
+                const newMatches = []; let maxId = Math.max(...matches.map(m => m.id), 0);
+                for (let i = 1; i < rows.length; i++) {
+                    const cols = rows[i].split(',');
+                    if (cols.length >= 7) {
+                        newMatches.push({
+                            id: ++maxId, region: cols[0].trim(), date: cols[1].trim(), time: cols[2].trim(),
+                            teamA: cols[3].trim(), scoreA: parseInt(cols[4]) || 0, scoreB: parseInt(cols[5]) || 0,
+                            teamB: cols[6].trim(), status: cols[7]?.trim() || 'upcoming'
+                        });
+                    }
+                }
+                matches = [...matches, ...newMatches];
+                DataStore.saveMatches(matches);
+                if (currentPage === 'admin') renderAdmin();
+                if (currentPage === 'calendar') renderCalendar();
+                showToast(`成功导入 ${newMatches.length} 条数据`);
+            };
+            reader.readAsText(file);
+            input.value = '';
+        }
+
+        function importFromJSON() {
+            try {
+                const data = JSON.parse(document.getElementById('json-input').value);
+                let maxId = Math.max(...matches.map(m => m.id), 0);
+                const newMatches = data.map(m => ({
+                    id: ++maxId, region: m.region, date: m.date, time: m.time,
+                    teamA: m.teamA, scoreA: m.scoreA || 0, scoreB: m.scoreB || 0,
+                    teamB: m.teamB, status: m.status || 'upcoming'
+                }));
+                matches = [...matches, ...newMatches];
+                DataStore.saveMatches(matches);
+                if (currentPage === 'admin') renderAdmin();
+                if (currentPage === 'calendar') renderCalendar();
+                document.getElementById('json-input').value = '';
+                showToast(`成功导入 ${newMatches.length} 条数据`);
+            } catch (e) { alert('JSON 格式错误，请检查输入'); }
+        }
+
+        // ==================== 初始化 ====================
+        document.addEventListener('DOMContentLoaded', () => {
+            const homeBtn = document.getElementById('nav-home');
+            const thumb = document.getElementById('switch-thumb');
+            if (homeBtn && thumb) {
+                thumb.style.width = homeBtn.offsetWidth + 'px';
+                thumb.style.left = homeBtn.offsetLeft + 'px';
+            }
+            renderHome();
+        });
+    </script>
+</body>
+</html>
