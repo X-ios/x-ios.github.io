@@ -18,32 +18,10 @@
             font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
             min-height: 100%;
             overflow-x: hidden;
-            background: #0f0f1a;
             touch-action: manipulation;
             -webkit-font-smoothing: antialiased;
-        }
-
-        /* ========== 小程序环境适配 ========== */
-        .is-miniprogram .nav-glass {
-            padding-top: calc(env(safe-area-inset-top) + 8px);
-            height: auto;
-            min-height: calc(56px + env(safe-area-inset-top));
-        }
-        .is-miniprogram .page-container {
-            padding-top: calc(56px + env(safe-area-inset-top));
-        }
-        .is-miniprogram .admin-layout {
-            padding-top: env(safe-area-inset-top);
-        }
-
-        /* ========== 安全区域 ========== */
-        .safe-bottom {
-            padding-bottom: constant(safe-area-inset-bottom);
-            padding-bottom: env(safe-area-inset-bottom);
-        }
-        .safe-top {
-            padding-top: constant(safe-area-inset-top);
-            padding-top: env(safe-area-inset-top);
+            /* 关键修复：body 背景必须透明，让 dynamic-bg 透出来 */
+            background: transparent;
         }
 
         /* ========== 全局动态背景系统 ========== */
@@ -185,6 +163,11 @@
 
         /* ========== 导航栏 ========== */
         .nav-glass {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 50;
             background: rgba(20, 20, 30, 0.85);
             backdrop-filter: blur(20px) saturate(180%);
             -webkit-backdrop-filter: blur(20px) saturate(180%);
@@ -385,6 +368,8 @@
         .calendar-scroll:hover::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.15); }
 
         .page-container {
+            position: relative;
+            z-index: 1;
             min-height: 100vh;
             padding-top: calc(72px + env(safe-area-inset-top));
             overflow: hidden;
@@ -618,11 +603,6 @@
             border-color: rgba(59,130,246,0.5);
         }
 
-        /* ========== 移动端表格卡片化 ========== */
-        .mobile-card-list {
-            display: none;
-        }
-        
         /* ========== 响应式断点 ========== */
         @media (max-width: 1200px) {
             .top5-grid { grid-template-columns: repeat(3, 1fr); }
@@ -656,7 +636,6 @@
             .match-card { padding: 12px; border-radius: 12px; }
             .match-card:active { transform: scale(0.98); }
             
-            /* 管理页表格移动端隐藏，显示卡片 */
             .admin-table-wrap { display: none; }
             .mobile-card-list { display: block; }
             
@@ -684,22 +663,6 @@
             .team-icon { width: 36px; height: 36px; }
             .team-icon-lg { width: 48px; height: 48px; }
             .team-icon-sm { width: 24px; height: 24px; }
-            
-            /* 模态框全屏 */
-            #match-modal .bg-white {
-                max-width: 100%;
-                margin: 0;
-                border-radius: 20px 20px 0 0;
-                position: fixed;
-                bottom: 0;
-                left: 0;
-                right: 0;
-                top: auto;
-                max-height: 85vh;
-            }
-            #match-modal .absolute.inset-0.flex {
-                align-items: flex-end;
-            }
         }
 
         @media (max-width: 480px) {
@@ -737,18 +700,7 @@
                 transition-duration: 0.01ms !important;
             }
         }
-
-        /* 小程序特定优化 */
-        .is-miniprogram .glass-card {
-            backdrop-filter: blur(10px) saturate(150%);
-            -webkit-backdrop-filter: blur(10px) saturate(150%);
-        }
-        .is-miniprogram .dynamic-bg::before,
-        .is-miniprogram .dynamic-bg::after {
-            display: none; /* 小程序中减少伪元素渲染开销 */
-        }
     </style>
-<base target="_blank">
 </head>
 <body>
 
@@ -760,7 +712,7 @@
     </div>
 
     <!-- 导航栏 -->
-    <nav class="fixed top-0 left-0 right-0 z-50 nav-glass px-4 h-[72px] flex items-center">
+    <nav class="nav-glass px-4 h-[72px] flex items-center">
         <div class="max-w-7xl mx-auto flex items-center justify-between w-full">
             <div class="flex items-center gap-2">
                 <div class="w-9 h-9 bg-gradient-to-br from-blue-500 to-purple-600 rounded-xl flex items-center justify-center shadow-lg shadow-purple-500/30">
@@ -785,7 +737,7 @@
 
     <!-- ========== 首页：数据看板 ========== -->
     <div id="page-home" class="page-container">
-        <div class="page-scrollable safe-bottom">
+        <div class="page-scrollable">
             <div class="hero-bg relative overflow-hidden">
                 <div class="absolute inset-0 bg-black/20"></div>
                 <div class="relative max-w-7xl mx-auto px-4 sm:px-6 py-8 sm:py-12">
@@ -889,7 +841,6 @@
                             </thead>
                             <tbody class="text-xs sm:text-sm text-white/80" id="recent-matches"></tbody>
                         </table>
-                        <!-- 移动端卡片列表 -->
                         <div class="sm:hidden space-y-3" id="recent-matches-mobile"></div>
                     </div>
                 </div>
@@ -1026,7 +977,7 @@
                 </div>
             </aside>
 
-            <main class="admin-main safe-bottom">
+            <main class="admin-main">
                 <div id="admin-matches" class="admin-section p-4 sm:p-8">
                     <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-6 sm:mb-8 gap-4">
                         <div>
@@ -1339,23 +1290,6 @@
     </div>
 
     <script>
-
-        // ==================== 小程序环境检测 ====================
-        (function detectMiniProgram() {
-            const ua = navigator.userAgent.toLowerCase();
-            // 微信/QQ/支付宝/抖音等小程序环境检测
-            if (/miniprogram|micromessenger|alipay|toutiaomicroapp/i.test(ua) || window.__wxjs_environment === 'miniprogram') {
-                document.body.classList.add('is-miniprogram');
-            }
-            // 尝试通过 JSBridge 二次确认（微信）
-            if (typeof wx !== 'undefined' && wx.miniProgram && wx.miniProgram.getEnv) {
-                wx.miniProgram.getEnv(function(res) {
-                    if (res.miniprogram) {
-                        document.body.classList.add('is-miniprogram');
-                    }
-                });
-            }
-        })();
 
         // ==================== 数据存储 ====================
         const DataStore = {
@@ -2707,11 +2641,9 @@
                 teamShowcase.appendChild(group);
             });
 
-            // 桌面端表格
             const recentMatches = document.getElementById('recent-matches');
             recentMatches.innerHTML = '';
             
-            // 移动端卡片
             const recentMatchesMobile = document.getElementById('recent-matches-mobile');
             recentMatchesMobile.innerHTML = '';
 
@@ -2732,12 +2664,10 @@
                 if (dayMatches.length > 0) {
                     hasAnyMatch = true;
                     
-                    // 桌面端
                     const dayLabel = document.createElement('tr');
                     dayLabel.innerHTML = `<td colspan="5" class="py-3"><span class="text-xs font-bold text-white/40 uppercase tracking-wider">${dayLabels[dateStr]} · ${dateStr}</span></td>`;
                     recentMatches.appendChild(dayLabel);
 
-                    // 移动端
                     const mobileDayLabel = document.createElement('div');
                     mobileDayLabel.className = 'text-xs font-bold text-white/40 uppercase tracking-wider py-2';
                     mobileDayLabel.textContent = `${dayLabels[dateStr]} · ${dateStr}`;
@@ -2748,7 +2678,6 @@
                         const statusLabels = { 'completed': '已完成', 'live': '进行中', 'upcoming': '待进行' };
                         const rStyle = getRegionStyle(m.region, 'home');
 
-                        // 桌面端行
                         const tr = document.createElement('tr');
                         tr.className = 'hover:bg-white/5 transition-colors';
                         tr.innerHTML = `
@@ -2766,7 +2695,6 @@
                         `;
                         recentMatches.appendChild(tr);
 
-                        // 移动端卡片
                         const mobileCard = document.createElement('div');
                         mobileCard.className = 'glass-card p-3 flex items-center justify-between';
                         mobileCard.innerHTML = `
@@ -2824,7 +2752,6 @@
             const endIndex = Math.min(startIndex + adminPageSize, totalItems);
             const pageItems = filtered.slice(startIndex, endIndex);
 
-            // 移动端列表容器
             const mobileList = document.getElementById('matches-mobile-list');
             mobileList.innerHTML = '';
 
@@ -2833,7 +2760,6 @@
                 const statusLabels = { 'completed': '已完成', 'live': '进行中', 'upcoming': '待进行' };
                 const rStyle = getRegionStyle(m.region, 'admin');
 
-                // 桌面端表格行
                 const tr = document.createElement('tr');
                 tr.className = 'table-row-hover transition-colors';
                 tr.innerHTML = `
@@ -2852,7 +2778,6 @@
                 `;
                 tbody.appendChild(tr);
 
-                // 移动端卡片
                 const mobileCard = document.createElement('div');
                 mobileCard.className = 'admin-card p-4 relative';
                 mobileCard.innerHTML = `
