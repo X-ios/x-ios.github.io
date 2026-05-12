@@ -603,6 +603,9 @@
             border-color: rgba(59,130,246,0.5);
         }
 
+        .admin-table-wrap { display: block; }
+        .mobile-card-list { display: none; }
+
         /* ========== 响应式断点 ========== */
         @media (max-width: 1200px) {
             .top5-grid { grid-template-columns: repeat(3, 1fr); }
@@ -701,6 +704,7 @@
             }
         }
     </style>
+<base target="_blank">
 </head>
 <body>
 
@@ -2603,15 +2607,24 @@
             const teamShowcase = document.getElementById('team-showcase');
             teamShowcase.innerHTML = '';
 
-            const teamStats = {};
+            // 按赛区独立聚合战队战绩（同一战队在不同赛区战绩分开计算）
+            const regionTeamStats = {};
             matches.forEach(m => {
+                if (!regionTeamStats[m.region]) regionTeamStats[m.region] = {};
+
                 [m.teamA, m.teamB].forEach(team => {
-                    if (!teamStats[team]) teamStats[team] = { wins: 0, total: 0, region: m.region };
-                    teamStats[team].total++;
+                    if (!regionTeamStats[m.region][team]) {
+                        regionTeamStats[m.region][team] = { wins: 0, total: 0, region: m.region };
+                    }
+                    regionTeamStats[m.region][team].total++;
                 });
+
                 if (m.status === 'completed') {
-                    if (m.scoreA > m.scoreB) teamStats[m.teamA].wins++;
-                    else if (m.scoreB > m.scoreA) teamStats[m.teamB].wins++;
+                    if (m.scoreA > m.scoreB) {
+                        regionTeamStats[m.region][m.teamA].wins++;
+                    } else if (m.scoreB > m.scoreA) {
+                        regionTeamStats[m.region][m.teamB].wins++;
+                    }
                 }
             });
 
@@ -2622,8 +2635,10 @@
             const sortedRegions = [...allRegions].sort((a, b) => regionMatchCounts[b] - regionMatchCounts[a]);
 
             sortedRegions.forEach(region => {
-                const regionTeams = Object.entries(teamStats)
-                    .filter(([team, stats]) => stats.region === region)
+                const regionTeamsData = regionTeamStats[region];
+                if (!regionTeamsData) return;
+
+                const regionTeams = Object.entries(regionTeamsData)
                     .map(([team, stats]) => ({
                         team,
                         ...stats,
@@ -3040,38 +3055,37 @@
 
         // ==================== 战队热度管理 ====================
         function renderTeamsList() {
-            const teams = new Set();
-            matches.forEach(m => { teams.add(m.teamA); teams.add(m.teamB); });
             const container = document.getElementById('teams-list');
             container.innerHTML = '';
 
-            const teamRegionCount = {};
+            // 按赛区独立聚合战队数据，战绩按赛区分开计算
+            const regionTeamStats = {};
             matches.forEach(m => {
+                if (!regionTeamStats[m.region]) regionTeamStats[m.region] = {};
+
                 [m.teamA, m.teamB].forEach(team => {
-                    if (!teamRegionCount[team]) teamRegionCount[team] = {};
-                    teamRegionCount[team][m.region] = (teamRegionCount[team][m.region] || 0) + 1;
+                    if (!regionTeamStats[m.region][team]) {
+                        regionTeamStats[m.region][team] = { wins: 0, total: 0, region: m.region };
+                    }
+                    regionTeamStats[m.region][team].total++;
                 });
+
+                if (m.status === 'completed') {
+                    if (m.scoreA > m.scoreB) {
+                        regionTeamStats[m.region][m.teamA].wins++;
+                    } else if (m.scoreB > m.scoreA) {
+                        regionTeamStats[m.region][m.teamB].wins++;
+                    }
+                }
             });
 
-            const teamRegion = {};
-            Object.entries(teamRegionCount).forEach(([team, regions]) => {
-                teamRegion[team] = Object.entries(regions).sort((a, b) => b[1] - a[1])[0][0];
-            });
-
-            const regionGroups = {};
-            Array.from(teams).forEach(team => {
-                const region = teamRegion[team] || '其它';
-                if (!regionGroups[region]) regionGroups[region] = [];
-                regionGroups[region].push(team);
-            });
-
-            const sortedRegions = Object.entries(regionGroups)
-                .sort((a, b) => b[1].length - a[1].length)
-                .map(([region]) => region);
+            // 按赛区战队数量排序
+            const sortedRegions = Object.keys(regionTeamStats)
+                .sort((a, b) => Object.keys(regionTeamStats[b]).length - Object.keys(regionTeamStats[a]).length);
 
             sortedRegions.forEach(region => {
-                const regionTeams = regionGroups[region]
-                    .map(team => ({ team, stats: calculateTeamStats(team) }))
+                const regionTeams = Object.entries(regionTeamStats[region])
+                    .map(([team, stats]) => ({ team, stats }))
                     .sort((a, b) => {
                         if (b.stats.wins !== a.stats.wins) {
                             return b.stats.wins - a.stats.wins;
@@ -3096,7 +3110,7 @@
                 gridDiv.className = 'grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-2 sm:gap-3';
 
                 regionTeams.forEach(team => {
-                    const stats = calculateTeamStats(team);
+                    const stats = regionTeamStats[region][team];
                     const heat = teamHeats[team] || 'none';
                     const heatInfo = heatConfig[heat];
                     const aura = teamAuras[team] || 'bright';
@@ -3114,7 +3128,7 @@
                         </div>
                         ${teamIcon ? `<img src="${teamIcon}" class="team-icon mx-auto mb-1.5 ${glowClass}" alt="${team}">` : `<div class="team-aura aura-${aura} w-10 h-10 rounded-xl flex items-center justify-center text-lg mx-auto mb-1.5 bg-white/5 relative">${auraInfo.icon}</div>`}
                         <div class="font-bold text-white text-xs sm:text-sm mb-0.5">${team}</div>
-                        <div class="text-[9px] sm:text-[10px] text-white/40 mb-1.5">${stats.wins}胜 ${stats.losses}负 · ${stats.total}场</div>
+                        <div class="text-[9px] sm:text-[10px] text-white/40 mb-1.5">${stats.wins}胜 ${stats.total - stats.wins}负 · ${stats.total}场</div>
                         <div class="flex gap-1 justify-center">
                             ${Array(3).fill(0).map((_, i) => {
                                 const heatKeys = ['high', 'medium', 'low'];
