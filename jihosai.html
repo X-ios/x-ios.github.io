@@ -12,8 +12,8 @@
             --bg-deep: #080b14;
             --bg-card: rgba(18, 24, 42, 0.85);
             --bg-card-hover: rgba(26, 34, 58, 0.92);
-            --border-subtle: rgba(148, 163, 184, 0.1);
-            --border-hover: rgba(148, 163, 184, 0.22);
+            --border-subtle: rgba(148, 163, 184, 0.12);
+            --border-hover: rgba(148, 163, 184, 0.28);
             --text-primary: #e2e8f0;
             --text-secondary: #94a3b8;
             --text-muted: #64748b;
@@ -46,6 +46,18 @@
                 radial-gradient(ellipse 60% 80% at 80% 20%, rgba(167, 139, 250, 0.05) 0%, transparent 60%),
                 radial-gradient(circle at 50% 50%, rgba(251, 191, 36, 0.03) 0%, transparent 50%);
         }
+        .bg-particles::after {
+            content: ''; position: absolute; inset: 0;
+            background:
+                radial-gradient(ellipse 60% 50% at 50% 50%, rgba(56,189,248,0.05) 0%, transparent 60%),
+                radial-gradient(ellipse 50% 60% at 30% 70%, rgba(244,114,182,0.05) 0%, transparent 50%);
+            animation: bgPulse 15s ease-in-out infinite alternate;
+            pointer-events: none;
+        }
+        @keyframes bgPulse {
+            0% { opacity: 0.6; transform: scale(1) rotate(0deg); }
+            100% { opacity: 1; transform: scale(1.15) rotate(3deg); }
+        }
         .particle {
             position: absolute; width: 3px; height: 3px;
             background: rgba(255,255,255,0.25); border-radius: 50%;
@@ -58,21 +70,51 @@
             100% { transform: translateY(-20px) scale(0.5); opacity: 0; }
         }
 
-        .app { display: flex; min-height: 100vh; position: relative; z-index: 1; }
+        .glow-blob {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(100px);
+            opacity: 0;
+            animation: blobBreathe 18s infinite ease-in-out;
+            pointer-events: none;
+        }
+        @keyframes blobBreathe {
+            0%, 100% { opacity: 0.2; transform: translate(0, 0) scale(1); }
+            33% { opacity: 0.45; transform: translate(40px, -30px) scale(1.15); }
+            66% { opacity: 0.35; transform: translate(-20px, 20px) scale(0.9); }
+        }
+
+        .aurora {
+            position: absolute;
+            width: 300%;
+            height: 80px;
+            background: linear-gradient(90deg, transparent, rgba(56,189,248,0.12), rgba(167,139,250,0.12), rgba(251,191,36,0.08), transparent);
+            filter: blur(25px);
+            animation: auroraSlide 20s linear infinite;
+            pointer-events: none;
+            opacity: 0.6;
+        }
+        @keyframes auroraSlide {
+            0% { transform: translateX(-60%) skewX(-5deg); }
+            100% { transform: translateX(0%) skewX(-5deg); }
+        }
+
+        .app { display: flex; flex-direction: column; min-height: 100vh; position: relative; z-index: 1; }
 
         .sidebar {
-            width: 240px; flex-shrink: 0;
-            background: rgba(8, 11, 20, 0.7);
-            backdrop-filter: blur(20px);
-            border-right: 1px solid var(--border-subtle);
-            padding: 24px 0;
-            display: flex; flex-direction: column;
+            width: 100%; flex-shrink: 0;
+            background: rgba(8, 11, 20, 0.6);
+            backdrop-filter: blur(30px);
+            border-bottom: 1px solid var(--border-subtle);
+            padding: 10px 20px;
+            display: flex; flex-direction: row; align-items: center; gap: 16px;
+            overflow-x: auto;
         }
+        .sidebar::-webkit-scrollbar { display: none; }
+        .sidebar { -ms-overflow-style: none; scrollbar-width: none; }
         .sidebar-brand {
             display: flex; align-items: center; gap: 12px;
-            padding: 0 20px 20px;
-            border-bottom: 1px solid var(--border-subtle);
-            margin-bottom: 20px;
+            flex-shrink: 0;
         }
         .sidebar-brand i { font-size: 22px; color: var(--accent-gold); }
         .sidebar-brand span {
@@ -80,20 +122,22 @@
             background: linear-gradient(135deg, #fbbf24, #f472b6);
             -webkit-background-clip: text; -webkit-text-fill-color: transparent;
         }
-        .section-title {
-            font-size: 10px; font-weight: 700; letter-spacing: 0.15em;
-            color: var(--text-muted); text-transform: uppercase;
-            padding: 0 20px; margin-bottom: 10px;
+        .section-title { display: none; }
+        .tournament-list {
+            display: flex; flex-direction: row; align-items: center; gap: 6px;
+            padding: 0; margin-bottom: 0; flex: 1; min-width: 0; overflow-x: auto;
         }
-        .tournament-list { padding: 0 10px; margin-bottom: 24px; }
+        .tournament-list::-webkit-scrollbar { display: none; }
+        .tournament-list { -ms-overflow-style: none; scrollbar-width: none; }
         .tournament-item {
             display: flex; align-items: center; justify-content: space-between;
-            padding: 9px 12px; margin-bottom: 4px;
+            padding: 7px 14px; margin-bottom: 0;
             border-radius: 12px; cursor: pointer;
             border: 1px solid transparent;
             transition: all 0.2s;
             font-size: 13px; font-weight: 500;
             color: var(--text-secondary);
+            white-space: nowrap;
         }
         .tournament-item:hover { background: rgba(255,255,255,0.04); color: var(--text-primary); }
         .tournament-item.active {
@@ -105,24 +149,25 @@
             opacity: 0; width: 20px; height: 20px; border-radius: 5px;
             border: none; background: transparent; color: var(--text-muted);
             cursor: pointer; display: flex; align-items: center; justify-content: center;
-            transition: all 0.2s; font-size: 10px;
+            transition: all 0.2s; font-size: 10px; margin-left: 8px;
         }
         .tournament-item:hover .del-btn { opacity: 1; }
         .tournament-item .del-btn:hover { background: rgba(239,68,68,0.15); color: #ef4444; }
         .add-tournament-btn {
-            margin: 0 20px 24px; padding: 7px 12px;
+            margin: 0; padding: 7px 12px;
             background: rgba(255,255,255,0.05);
             border: 1px dashed var(--border-subtle);
             border-radius: 10px; color: var(--text-muted);
             font-size: 12px; cursor: pointer; transition: all 0.2s;
             display: flex; align-items: center; gap: 6px;
+            flex-shrink: 0;
         }
         .add-tournament-btn:hover {
             border-color: var(--accent-gold); color: var(--accent-gold);
             background: rgba(251,191,36,0.05);
         }
 
-        .main { flex: 1; min-width: 0; padding: 20px 24px; }
+        .main { flex: 1; min-width: 0; padding: 16px 24px; }
         .page-header {
             display: flex; justify-content: space-between; align-items: flex-start;
             margin-bottom: 16px;
@@ -137,12 +182,13 @@
 
         .top-bar {
             display: flex; align-items: center; justify-content: space-between;
-            background: rgba(8, 11, 20, 0.6);
-            backdrop-filter: blur(16px);
-            border: 1px solid var(--border-subtle);
+            background: rgba(8, 11, 20, 0.55);
+            backdrop-filter: blur(24px);
+            border: 1px solid rgba(255,255,255,0.08);
             border-radius: 16px; padding: 8px 14px;
             margin-bottom: 16px;
             gap: 12px; flex-wrap: wrap;
+            box-shadow: 0 4px 24px rgba(0,0,0,0.3), inset 0 1px 0 rgba(255,255,255,0.04);
         }
         .tab-group {
             display: flex; gap: 4px;
@@ -198,12 +244,13 @@
             color: var(--text-primary);
         }
 
-        /* ===== 对阵图网格 ===== */
         .bracket-viewport {
             overflow: auto; border-radius: 20px;
-            background: rgba(0,0,0,0.2);
-            border: 1px solid var(--border-subtle);
+            background: rgba(0,0,0,0.12);
+            backdrop-filter: blur(16px);
+            border: 1px solid rgba(255,255,255,0.06);
             padding: 20px;
+            box-shadow: inset 0 1px 0 rgba(255,255,255,0.03), 0 8px 32px rgba(0,0,0,0.2);
         }
         .bracket-canvas {
             position: relative;
@@ -212,7 +259,6 @@
             min-width: fit-content;
         }
 
-        /* 列标题 */
         .grid-header {
             display: flex;
             margin-bottom: 12px;
@@ -230,12 +276,10 @@
             border-bottom: 1px solid rgba(251,191,36,0.12);
         }
 
-        /* 网格体 */
         .grid-body {
             position: relative;
         }
 
-        /* SVG 连线层 */
         .svg-layer {
             position: absolute; top: 0; left: 0;
             pointer-events: none; z-index: 0;
@@ -250,17 +294,17 @@
         .svg-layer .win-path { stroke: url(#gradWin); }
         .svg-layer .lose-path { stroke: url(#gradLose); }
 
-        /* ===== 比赛卡片（绝对定位） ===== */
         .match-card {
             position: absolute;
             width: 250px;
-            background: linear-gradient(160deg, rgba(22,30,52,0.95) 0%, rgba(14,20,38,0.98) 100%);
-            border: 1px solid var(--border-subtle);
+            background: linear-gradient(160deg, rgba(22,30,52,0.88) 0%, rgba(14,20,38,0.92) 100%);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255,255,255,0.08);
             border-radius: 14px;
-            overflow: hidden;
+            overflow: visible;
             cursor: pointer;
             transition: all 0.25s cubic-bezier(0.4,0,0.2,1);
-            box-shadow: 0 2px 6px rgba(0,0,0,0.3), inset 0 1px 0 rgba(255,255,255,0.04);
+            box-shadow: 0 2px 8px rgba(0,0,0,0.3), inset 0 1px 0 rgba(255,255,255,0.05);
             z-index: 1;
         }
         .match-card::before {
@@ -285,12 +329,48 @@
         }
         .match-card:hover {
             transform: translateY(-2px) scale(1.02);
-            background: linear-gradient(160deg, rgba(30,40,68,0.97) 0%, rgba(20,28,50,0.99) 100%);
+            background: linear-gradient(160deg, rgba(30,40,68,0.95) 0%, rgba(20,28,50,0.98) 100%);
             border-color: var(--border-hover);
-            box-shadow: 0 10px 24px rgba(0,0,0,0.4), inset 0 1px 0 rgba(255,255,255,0.06);
+            box-shadow: 0 10px 24px rgba(0,0,0,0.4), inset 0 1px 0 rgba(255,255,255,0.08);
             z-index: 10;
         }
         .match-card:hover::before { opacity: 1; }
+
+        /* 总决赛特殊光晕 */
+        .match-card.is-final {
+            border-color: rgba(251,191,36,0.3);
+            box-shadow: 0 0 30px rgba(251,191,36,0.08), 0 2px 8px rgba(0,0,0,0.3), inset 0 1px 0 rgba(255,255,255,0.05);
+        }
+        .match-card.is-final:hover {
+            border-color: rgba(251,191,36,0.5);
+            box-shadow: 0 0 40px rgba(251,191,36,0.15), 0 10px 24px rgba(0,0,0,0.4), inset 0 1px 0 rgba(255,255,255,0.08);
+        }
+
+        /* 皇冠图标 */
+        .finals-crown {
+            position: absolute;
+            top: -16px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 32px;
+            height: 32px;
+            background: linear-gradient(135deg, #fbbf24, #f59e0b);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+            color: #fff;
+            box-shadow: 0 0 24px rgba(251,191,36,0.6), 0 4px 12px rgba(0,0,0,0.4);
+            z-index: 5;
+            border: 2px solid rgba(255,255,255,0.3);
+            pointer-events: none;
+            animation: crownFloat 3s ease-in-out infinite;
+        }
+        @keyframes crownFloat {
+            0%, 100% { transform: translateX(-50%) translateY(0); }
+            50% { transform: translateX(-50%) translateY(-4px); }
+        }
 
         .match-card-header {
             display: flex; justify-content: space-between; align-items: center;
@@ -389,11 +469,12 @@
         .match-link.win-link { color: rgba(56,189,248,0.5); }
         .match-link.lose-link { color: rgba(248,113,113,0.5); }
 
-        /* ===== 数据后台 ===== */
         .admin-table-wrap {
             overflow-x: auto; border-radius: 16px;
-            background: rgba(0,0,0,0.15);
-            border: 1px solid var(--border-subtle);
+            background: rgba(0,0,0,0.1);
+            backdrop-filter: blur(16px);
+            border: 1px solid rgba(255,255,255,0.06);
+            box-shadow: 0 8px 32px rgba(0,0,0,0.2);
         }
         table { width: 100%; min-width: 1100px; border-collapse: collapse; }
         th {
@@ -437,7 +518,6 @@
             font-size: 12px; font-weight: 600;
         }
 
-        /* ===== 模态框 ===== */
         .modal-overlay {
             position: fixed; inset: 0; z-index: 100;
             background: rgba(0,0,0,0.7);
@@ -446,12 +526,13 @@
         }
         .modal-overlay.show { display: flex; }
         .modal {
-            background: linear-gradient(160deg, rgba(22,30,52,0.98) 0%, rgba(14,20,38,0.99) 100%);
-            border: 1px solid var(--border-subtle);
+            background: linear-gradient(160deg, rgba(22,30,52,0.92) 0%, rgba(14,20,38,0.95) 100%);
+            backdrop-filter: blur(40px);
+            border: 1px solid rgba(255,255,255,0.12);
             border-radius: 24px; padding: 28px;
             width: 520px; max-width: 92vw;
             max-height: 88vh; overflow-y: auto;
-            box-shadow: 0 24px 60px rgba(0,0,0,0.5);
+            box-shadow: 0 24px 80px rgba(0,0,0,0.6), inset 0 1px 0 rgba(255,255,255,0.06);
         }
         .modal h3 { font-size: 18px; font-weight: 700; margin-bottom: 20px; }
         .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-bottom: 20px; }
@@ -482,6 +563,7 @@
         ::-webkit-scrollbar-thumb:hover { background: rgba(255,255,255,0.2); }
     </style>
 <base target="_blank">
+<base target="_blank">
 </head>
 <body>
     <div class="bg-particles" id="particles"></div>
@@ -492,7 +574,6 @@
                 <i class="fas fa-trophy"></i>
                 <span>赛程工坊 Pro</span>
             </div>
-            <div class="section-title">赛事分区</div>
             <div class="tournament-list" id="tournamentList"></div>
             <button class="add-tournament-btn" onclick="addTournament()">
                 <i class="fas fa-plus"></i> 新增赛事
@@ -661,7 +742,6 @@
     </div>
 
 <script>
-// ===================== 数据核心 =====================
 let tournaments = {};
 let currentTournament = '';
 let currentPage = 'bracket';
@@ -683,37 +763,28 @@ function getNextId() {
     return matches.length === 0 ? 1 : Math.max(...matches.map(m => m.id)) + 1;
 }
 
-// ===================== 类型判断 =====================
 function isLoserType(t) { return /败者|loser|losers/i.test(t); }
 function isFinalType(t) { return /总决赛|final|决赛(?!半)/i.test(t); }
 function isSemiType(t) { return /半决赛|semi/i.test(t); }
 
-// ===================== 默认数据（无12进8） =====================
 function createDefaultData() {
     const data = {};
     const lpl = [];
     const add = (id, type, round, a, b, sa, sb, date, time, wn, ln) => {
         lpl.push({ id, type, roundName: round, teamA: a, teamB: b, scoreA: sa, scoreB: sb, date, time, winNextId: wn, loseNextId: ln });
     };
-    // 胜者组R1
     add(1, '胜者组', '胜者组 R1', 'BLG', 'TES', 2, 1, '2026-05-12', '17:00', 5, 7);
     add(2, '胜者组', '胜者组 R1', 'JDG', 'WBG', 2, 0, '2026-05-12', '19:00', 5, 8);
     add(3, '胜者组', '胜者组 R1', 'NIP', 'LNG', 1, 2, '2026-05-13', '17:00', 6, 7);
     add(4, '胜者组', '胜者组 R1', 'IG',  'AL',  2, 1, '2026-05-13', '19:00', 6, 8);
-    // 胜者组R2
     add(5, '胜者组', '胜者组 R2', null, null, 0, 0, '2026-05-14', '17:00', 11, 9);
     add(6, '胜者组', '胜者组 R2', null, null, 0, 0, '2026-05-15', '19:00', 11, 10);
-    // 败者组R1
     add(7, '败者组', '败者组 R1', null, null, 0, 0, '2026-05-16', '15:00', 9, null);
     add(8, '败者组', '败者组 R1', null, null, 0, 0, '2026-05-17', '17:00', 10, null);
-    // 败者组R2
     add(9, '败者组', '败者组 R2', null, null, 0, 0, '2026-05-20', '16:00', 12, null);
     add(10, '败者组', '败者组 R2', null, null, 0, 0, '2026-05-21', '18:00', 12, null);
-    // 胜者组R3
     add(11, '胜者组', '胜者组 R3', null, null, 0, 0, '2026-05-22', '18:00', 13, 12);
-    // 败者组R3
     add(12, '败者组', '败者组 R3', null, null, 0, 0, '2026-05-23', '17:00', 13, null);
-    // 总决赛
     add(13, '总决赛', '总决赛', null, null, 0, 0, '2026-05-24', '18:00', null, null);
     data['LPL 夏季赛 2026'] = lpl;
 
@@ -733,7 +804,6 @@ function createDefaultData() {
     return data;
 }
 
-// ===================== 推演引擎 =====================
 function propagate() {
     const matches = getMatches();
     matches.forEach(m => { m.winner = null; m.loser = null; m.isCompleted = false;
@@ -765,7 +835,6 @@ function fillSlot(match, team) {
     return false;
 }
 
-// ===================== 布局算法 =====================
 function computeDepth(matches) {
     matches.forEach(m => m.depth = null);
     const hasParent = new Set();
@@ -788,7 +857,6 @@ function computeDepth(matches) {
         });
     }
     matches.forEach(m => { if (m.depth === null) m.depth = 0; });
-    // 总决赛独占最后一列
     const nonFinalMatches = matches.filter(m => !isFinalType(m.type));
     const maxNonFinalDepth = nonFinalMatches.length > 0 ? Math.max(...nonFinalMatches.map(m => m.depth)) : 0;
     matches.filter(m => isFinalType(m.type)).forEach(m => { m.depth = maxNonFinalDepth + 1; });
@@ -854,7 +922,6 @@ function getColName(matches, depth) {
     return '';
 }
 
-// ===================== ID 显示 =====================
 function displayId(match) {
     if (isFinalType(match.type)) return 'FINALS';
     return 'GAME' + match.id;
@@ -874,7 +941,6 @@ function safeTypeClass(type) {
     return type.replace(/[^a-zA-Z0-9一-龥]/g, '');
 }
 
-// ===================== 渲染对阵图 =====================
 function renderBracket() {
     propagate();
     const matches = getMatches();
@@ -890,7 +956,6 @@ function renderBracket() {
     const maxDepth = Math.max(...matches.map(m => m.depth));
     const maxRow = Math.max(...matches.map(m => m.gridRow || 0));
 
-    // 渲染列标题
     const headerEl = document.getElementById('gridHeader');
     headerEl.innerHTML = '';
     for (let d = 0; d <= maxDepth; d++) {
@@ -900,7 +965,6 @@ function renderBracket() {
         headerEl.appendChild(div);
     }
 
-    // 渲染卡片
     const bodyEl = document.getElementById('gridBody');
     const svgEl = document.getElementById('svgLayer');
     bodyEl.innerHTML = '';
@@ -920,8 +984,9 @@ function renderBracket() {
 }
 
 function createCard(match, allMatches) {
+    const isFinal = isFinalType(match.type);
     const card = document.createElement('div');
-    card.className = `match-card type-${safeTypeClass(match.type)}`;
+    card.className = `match-card type-${safeTypeClass(match.type)} ${isFinal ? 'is-final' : ''}`;
     card.dataset.id = match.id;
     card.onclick = () => openModal(match.id);
 
@@ -944,7 +1009,10 @@ function createCard(match, allMatches) {
     const winRef = match.winNextId ? displayRefId(match.winNextId, allMatches) : '';
     const loseRef = match.loseNextId ? displayRefId(match.loseNextId, allMatches) : '';
 
+    const crownHtml = isFinal ? '<div class="finals-crown"><i class="fas fa-crown"></i></div>' : '';
+
     card.innerHTML = `
+        ${crownHtml}
         <div class="match-card-header">
             <div class="match-meta">
                 <span class="match-id-tag ${tagClass(match)}">${displayId(match)}</span>
@@ -976,10 +1044,8 @@ function createCard(match, allMatches) {
     return card;
 }
 
-// ===================== SVG 连线 =====================
 function drawConnections(matches, maxDepth, maxRow) {
     const svg = document.getElementById('svgLayer');
-    const body = document.getElementById('gridBody');
     const w = (maxDepth + 1) * COL_W;
     const h = (maxRow + 2) * ROW_H;
     svg.setAttribute('width', w);
@@ -1007,10 +1073,11 @@ function drawLine(svg, fromMatch, toId, className, allMatches) {
     const fRect = fromCard.getBoundingClientRect();
     const tRect = toCard.getBoundingClientRect();
 
-    const x1 = fRect.right - bRect.left;
-    const y1 = fRect.top + fRect.height / 2 - bRect.top;
-    const x2 = tRect.left - bRect.left;
-    const y2 = tRect.top + tRect.height / 2 - bRect.top;
+    // 关键修复：将屏幕像素转换为逻辑坐标，以适配 CSS transform 缩放
+    const x1 = (fRect.right - bRect.left) / zoomScale;
+    const y1 = (fRect.top + fRect.height / 2 - bRect.top) / zoomScale;
+    const x2 = (tRect.left - bRect.left) / zoomScale;
+    const y2 = (tRect.top + tRect.height / 2 - bRect.top) / zoomScale;
 
     const cp1x = x1 + (x2 - x1) * 0.5;
     const cp2x = x2 - (x2 - x1) * 0.5;
@@ -1021,7 +1088,6 @@ function drawLine(svg, fromMatch, toId, className, allMatches) {
     svg.appendChild(path);
 }
 
-// ===================== 更新类型下拉 =====================
 function updateTypeList() {
     const matches = getMatches();
     const types = [...new Set(matches.map(m => m.type))];
@@ -1033,7 +1099,6 @@ function updateTypeList() {
     });
 }
 
-// ===================== 渲染后台 =====================
 function renderAdmin() {
     const matches = getMatches();
     const tbody = document.getElementById('adminTable');
@@ -1118,7 +1183,6 @@ function showSaveStatus() {
     window._saveTimer = setTimeout(() => el.style.display = 'none', 2000);
 }
 
-// ===================== 模态框 =====================
 function openModal(id = null) {
     updateTypeList();
     const overlay = document.getElementById('modalOverlay');
@@ -1182,14 +1246,13 @@ function saveMatch() {
     else renderAdmin();
 }
 
-// ===================== 赛事管理 =====================
 function renderTournamentList() {
     const container = document.getElementById('tournamentList');
     container.innerHTML = '';
     Object.keys(tournaments).forEach(name => {
         const div = document.createElement('div');
         div.className = 'tournament-item ' + (name === currentTournament ? 'active' : '');
-        div.innerHTML = `<span class="truncate">${name}</span><button class="del-btn" onclick="event.stopPropagation();delTournament('${name.replace(/'/g,"\'")}')"><i class="fas fa-times"></i></button>`;
+        div.innerHTML = `<span class="truncate">${name}</span><button class="del-btn" onclick="event.stopPropagation();delTournament('${name.replace(/'/g,"\\'")}')"><i class="fas fa-times"></i></button>`;
         div.onclick = () => switchTournament(name);
         container.appendChild(div);
     });
@@ -1219,7 +1282,6 @@ function delTournament(name) {
     else renderTournamentList();
 }
 
-// ===================== 页面切换 =====================
 function switchPage(page) {
     currentPage = page;
     document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
@@ -1235,7 +1297,6 @@ function switchPage(page) {
 }
 function syncBracket() { renderBracket(); }
 
-// ===================== 缩放 =====================
 function zoom(delta) {
     zoomScale = Math.max(0.3, Math.min(2, zoomScale + delta));
     document.getElementById('canvas').style.transform = `scale(${zoomScale})`;
@@ -1247,7 +1308,6 @@ function zoomTo(v) {
     document.getElementById('zoomVal').textContent = Math.round(zoomScale * 100) + '%';
 }
 
-// ===================== 导入导出 =====================
 function exportData() {
     const blob = new Blob([JSON.stringify(tournaments, null, 2)], {type: 'application/json'});
     const a = document.createElement('a');
@@ -1276,7 +1336,6 @@ function importData() {
     input.click();
 }
 
-// ===================== 粒子背景 =====================
 function initParticles() {
     const container = document.getElementById('particles');
     for (let i = 0; i < 25; i++) {
@@ -1288,9 +1347,33 @@ function initParticles() {
         p.style.width = p.style.height = (2 + Math.random() * 3) + 'px';
         container.appendChild(p);
     }
+
+    const colors = ['rgba(56,189,248,0.25)', 'rgba(167,139,250,0.2)', 'rgba(251,191,36,0.2)', 'rgba(244,114,182,0.2)'];
+    for (let i = 0; i < 4; i++) {
+        const blob = document.createElement('div');
+        blob.className = 'glow-blob';
+        const size = 200 + Math.random() * 300;
+        blob.style.width = size + 'px';
+        blob.style.height = size + 'px';
+        blob.style.background = colors[i % colors.length];
+        blob.style.left = (Math.random() * 80) + '%';
+        blob.style.top = (Math.random() * 80) + '%';
+        blob.style.animationDelay = (i * 4) + 's';
+        blob.style.animationDuration = (14 + Math.random() * 8) + 's';
+        container.appendChild(blob);
+    }
+
+    for (let i = 0; i < 3; i++) {
+        const aurora = document.createElement('div');
+        aurora.className = 'aurora';
+        aurora.style.top = (20 + i * 30) + '%';
+        aurora.style.animationDelay = (i * 6) + 's';
+        aurora.style.animationDuration = (18 + Math.random() * 6) + 's';
+        aurora.style.opacity = 0.3 + Math.random() * 0.3;
+        container.appendChild(aurora);
+    }
 }
 
-// ===================== 窗口事件 =====================
 window.addEventListener('resize', () => {
     if (currentPage === 'bracket') {
         const matches = getMatches();
@@ -1308,7 +1391,6 @@ document.getElementById('modalOverlay').addEventListener('click', e => {
     if (e.target === document.getElementById('modalOverlay')) closeModal();
 });
 
-// ===================== 初始化 =====================
 loadData();
 initParticles();
 renderTournamentList();
