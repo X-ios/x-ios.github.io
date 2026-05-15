@@ -2,699 +2,934 @@
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>双败淘汰赛 · Pro</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>赛程工坊 Pro · 双败淘汰</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Noto+Sans+SC:wght@300;400;500;600;700&display=swap');
 
         :root {
-            --bg-deep: #080b14;
-            --bg-card: rgba(18, 24, 42, 0.85);
-            --bg-card-hover: rgba(26, 34, 58, 0.92);
-            --border-subtle: rgba(148, 163, 184, 0.12);
-            --border-hover: rgba(148, 163, 184, 0.28);
-            --text-primary: #e2e8f0;
-            --text-secondary: #94a3b8;
-            --text-muted: #64748b;
+            --bg: #080c18;
+            --panel: rgba(255,255,255,0.03);
+            --panel-hover: rgba(255,255,255,0.06);
+            --glass-border: rgba(255,255,255,0.06);
+            --glass-highlight: rgba(255,255,255,0.10);
+            --text: #f8fafc;
+            --text-secondary: #cbd5e1;
+            --text-muted: #94a3b8;
             --accent-gold: #fbbf24;
             --accent-cyan: #38bdf8;
             --accent-red: #f87171;
             --accent-green: #34d399;
             --accent-purple: #a78bfa;
-            --col-w: 280px;
-            --row-h: 90px;
+            --col-w: 340px;
+            --gap: 160px;
         }
 
         * { margin: 0; padding: 0; box-sizing: border-box; }
 
-        body {
+        html, body {
             font-family: 'Inter', 'Noto Sans SC', system-ui, sans-serif;
-            background: var(--bg-deep);
-            color: var(--text-primary);
-            min-height: 100vh;
-            overflow-x: hidden;
+            background: transparent;
+            color: var(--text);
+            height: 100%;
+            overflow: hidden;
         }
 
-        .bg-particles {
-            position: fixed; inset: 0; z-index: 0; pointer-events: none; overflow: hidden;
+        /* ========== 全局动态背景系统 ========== */
+        .dynamic-bg {
+            position: fixed; inset: 0; z-index: 0; pointer-events: none;
+            transition: all 0.8s cubic-bezier(0.4, 0, 0.2, 1);
         }
-        .bg-particles::before {
+
+        .bg-bright {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 25%, #f093fb 50%, #f5576c 75%, #4facfe 100%);
+            background-size: 400% 400%;
+            animation: gradientShift 15s ease infinite;
+        }
+        .bg-bright::before {
             content: ''; position: absolute; inset: 0;
-            background:
-                radial-gradient(ellipse 80% 60% at 20% 80%, rgba(56, 189, 248, 0.06) 0%, transparent 60%),
-                radial-gradient(ellipse 60% 80% at 80% 20%, rgba(167, 139, 250, 0.05) 0%, transparent 60%),
-                radial-gradient(circle at 50% 50%, rgba(251, 191, 36, 0.03) 0%, transparent 50%);
-        }
-        .bg-particles::after {
-            content: ''; position: absolute; inset: 0;
-            background:
-                radial-gradient(ellipse 60% 50% at 50% 50%, rgba(56,189,248,0.05) 0%, transparent 60%),
-                radial-gradient(ellipse 50% 60% at 30% 70%, rgba(244,114,182,0.05) 0%, transparent 50%);
-            animation: bgPulse 15s ease-in-out infinite alternate;
-            pointer-events: none;
-        }
-        @keyframes bgPulse {
-            0% { opacity: 0.6; transform: scale(1) rotate(0deg); }
-            100% { opacity: 1; transform: scale(1.15) rotate(3deg); }
-        }
-        .particle {
-            position: absolute; width: 3px; height: 3px;
-            background: rgba(255,255,255,0.25); border-radius: 50%;
-            animation: floatUp linear infinite;
-        }
-        @keyframes floatUp {
-            0% { transform: translateY(100vh) scale(0); opacity: 0; }
-            10% { opacity: 1; transform: translateY(90vh) scale(1); }
-            90% { opacity: 0.6; }
-            100% { transform: translateY(-20px) scale(0.5); opacity: 0; }
+            background: radial-gradient(circle at 20% 80%, rgba(255,255,255,0.4) 0%, transparent 50%),
+                        radial-gradient(circle at 80% 20%, rgba(255,223,128,0.3) 0%, transparent 50%);
+            animation: floatLight 8s ease-in-out infinite;
         }
 
-        .glow-blob {
-            position: absolute;
-            border-radius: 50%;
-            filter: blur(100px);
-            opacity: 0;
-            animation: blobBreathe 18s infinite ease-in-out;
-            pointer-events: none;
+        @keyframes gradientShift {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
         }
-        @keyframes blobBreathe {
-            0%, 100% { opacity: 0.2; transform: translate(0, 0) scale(1); }
-            33% { opacity: 0.45; transform: translate(40px, -30px) scale(1.15); }
-            66% { opacity: 0.35; transform: translate(-20px, 20px) scale(0.9); }
+        @keyframes floatLight {
+            0%, 100% { transform: translate(0, 0) scale(1); opacity: 0.5; }
+            33% { transform: translate(30px, -30px) scale(1.1); opacity: 0.7; }
+            66% { transform: translate(-20px, 20px) scale(0.9); opacity: 0.4; }
         }
 
-        .aurora {
-            position: absolute;
-            width: 300%;
-            height: 80px;
-            background: linear-gradient(90deg, transparent, rgba(56,189,248,0.12), rgba(167,139,250,0.12), rgba(251,191,36,0.08), transparent);
-            filter: blur(25px);
-            animation: auroraSlide 20s linear infinite;
-            pointer-events: none;
-            opacity: 0.6;
-        }
-        @keyframes auroraSlide {
-            0% { transform: translateX(-60%) skewX(-5deg); }
-            100% { transform: translateX(0%) skewX(-5deg); }
+        /* ========== 应用层级 ========== */
+        .app-layer {
+            position: relative; z-index: 1; height: 100%;
+            display: flex; flex-direction: column;
         }
 
-        .app { display: flex; flex-direction: column; min-height: 100vh; position: relative; z-index: 1; }
-
-        .sidebar {
-            width: 100%; flex-shrink: 0;
-            background: rgba(8, 11, 20, 0.6);
-            backdrop-filter: blur(30px);
-            border-bottom: 1px solid var(--border-subtle);
-            padding: 10px 20px;
-            display: flex; flex-direction: row; align-items: center; gap: 16px;
-            overflow-x: auto;
+        .app-header {
+            position: relative; z-index: 50; flex-shrink: 0; height: 56px;
+            background: linear-gradient(180deg, rgba(8,11,20,0.85) 0%, rgba(8,11,20,0.6) 100%);
+            backdrop-filter: blur(24px); -webkit-backdrop-filter: blur(24px);
+            border-bottom: 1px solid var(--glass-border);
+            display: flex; align-items: center; justify-content: space-between;
+            padding: 0 20px; gap: 16px;
         }
-        .sidebar::-webkit-scrollbar { display: none; }
-        .sidebar { -ms-overflow-style: none; scrollbar-width: none; }
-        .sidebar-brand {
-            display: flex; align-items: center; gap: 12px;
+        .header-left, .header-right { display: flex; align-items: center; gap: 12px; }
+        .brand {
+            display: flex; align-items: center; gap: 10px; font-weight: 800; font-size: 16px;
+            background: linear-gradient(135deg, #fbbf24, #f472b6); -webkit-background-clip: text; -webkit-text-fill-color: transparent;
             flex-shrink: 0;
         }
-        .sidebar-brand i { font-size: 22px; color: var(--accent-gold); }
-        .sidebar-brand span {
-            font-size: 17px; font-weight: 800;
-            background: linear-gradient(135deg, #fbbf24, #f472b6);
-            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+        .brand i { font-size: 18px; -webkit-text-fill-color: var(--accent-gold); }
+
+        .tournament-selector { position: relative; }
+        .selector-trigger {
+            display: flex; align-items: center; gap: 8px; padding: 6px 12px;
+            background: var(--panel); border: 1px solid var(--glass-border); border-radius: 10px;
+            color: var(--text-secondary); font-size: 13px; font-weight: 600; cursor: pointer;
+            transition: all .2s; white-space: nowrap;
         }
-        .section-title { display: none; }
-        .tournament-list {
-            display: flex; flex-direction: row; align-items: center; gap: 6px;
-            padding: 0; margin-bottom: 0; flex: 1; min-width: 0; overflow-x: auto;
+        .selector-trigger:hover { background: var(--panel-hover); color: var(--text); border-color: var(--glass-highlight); }
+        .selector-trigger i { font-size: 10px; color: var(--text-muted); transition: transform .2s; }
+        .selector-trigger.open i { transform: rotate(180deg); }
+        .selector-panel {
+            position: absolute; top: calc(100% + 8px); left: 0; width: 260px;
+            background: linear-gradient(180deg, rgba(18,24,42,0.98), rgba(10,14,26,0.98));
+            backdrop-filter: blur(30px); -webkit-backdrop-filter: blur(30px); border: 1px solid var(--glass-border); border-radius: 16px;
+            padding: 10px; box-shadow: 0 20px 60px rgba(0,0,0,0.6);
+            opacity: 0; pointer-events: none; transform: translateY(-6px); transition: all .2s;
         }
-        .tournament-list::-webkit-scrollbar { display: none; }
-        .tournament-list { -ms-overflow-style: none; scrollbar-width: none; }
-        .tournament-item {
-            display: flex; align-items: center; justify-content: space-between;
-            padding: 7px 14px; margin-bottom: 0;
-            border-radius: 12px; cursor: pointer;
-            border: 1px solid transparent;
-            transition: all 0.2s;
-            font-size: 13px; font-weight: 500;
-            color: var(--text-secondary);
-            white-space: nowrap;
+        .selector-panel.open { opacity: 1; pointer-events: auto; transform: translateY(0); }
+        .panel-header { display: flex; justify-content: space-between; align-items: center; padding: 4px 6px 10px; border-bottom: 1px solid var(--glass-border); margin-bottom: 6px; }
+        .panel-header span { font-size: 11px; font-weight: 700; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.1em; }
+        .panel-header button {
+            background: transparent; border: none; color: var(--accent-gold); font-size: 12px; font-weight: 600; cursor: pointer;
+            display: flex; align-items: center; gap: 4px; padding: 2px 6px; border-radius: 6px;
         }
-        .tournament-item:hover { background: rgba(255,255,255,0.04); color: var(--text-primary); }
-        .tournament-item.active {
-            background: linear-gradient(135deg, rgba(99,102,241,0.25), rgba(139,92,246,0.2));
-            border-color: rgba(139,92,246,0.3);
-            color: white; font-weight: 600;
+        .panel-header button:hover { background: rgba(251,191,36,0.08); }
+        .panel-item {
+            display: flex; justify-content: space-between; align-items: center; padding: 8px 10px;
+            border-radius: 10px; cursor: pointer; font-size: 13px; color: var(--text-secondary); transition: all .15s;
         }
-        .tournament-item .del-btn {
-            opacity: 0; width: 20px; height: 20px; border-radius: 5px;
-            border: none; background: transparent; color: var(--text-muted);
-            cursor: pointer; display: flex; align-items: center; justify-content: center;
-            transition: all 0.2s; font-size: 10px; margin-left: 8px;
+        .panel-item:hover { background: var(--panel-hover); color: var(--text); }
+        .panel-item.active { background: linear-gradient(135deg, rgba(99,102,241,0.2), rgba(139,92,246,0.15)); color: #fff; font-weight: 600; }
+        .panel-item .del-btn {
+            opacity: 0; width: 22px; height: 22px; border-radius: 6px; border: none; background: transparent;
+            color: var(--text-muted); cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all .2s;
         }
-        .tournament-item:hover .del-btn { opacity: 1; }
-        .tournament-item .del-btn:hover { background: rgba(239,68,68,0.15); color: #ef4444; }
-        .add-tournament-btn {
-            margin: 0; padding: 7px 12px;
-            background: rgba(255,255,255,0.05);
-            border: 1px dashed var(--border-subtle);
-            border-radius: 10px; color: var(--text-muted);
-            font-size: 12px; cursor: pointer; transition: all 0.2s;
-            display: flex; align-items: center; gap: 6px;
-            flex-shrink: 0;
+        .panel-item:hover .del-btn { opacity: 1; }
+        .panel-item .del-btn:hover { background: rgba(239,68,68,0.12); color: #ef4444; }
+
+        .header-nav { display: flex; align-items: center; gap: 4px; background: rgba(0,0,0,0.25); padding: 3px; border-radius: 12px; }
+        .nav-item {
+            padding: 6px 14px; border-radius: 10px; border: none; background: transparent;
+            color: var(--text-muted); font-size: 13px; font-weight: 600; cursor: pointer;
+            display: flex; align-items: center; gap: 6px; transition: all .2s;
         }
-        .add-tournament-btn:hover {
-            border-color: var(--accent-gold); color: var(--accent-gold);
-            background: rgba(251,191,36,0.05);
+        .nav-item:hover { color: var(--text); }
+        .nav-item.active {
+            background: linear-gradient(135deg, rgba(99,102,241,0.35), rgba(139,92,246,0.25));
+            color: #fff; box-shadow: 0 2px 10px rgba(99,102,241,0.2);
         }
 
-        .main { flex: 1; min-width: 0; padding: 16px 24px; }
-        .page-header {
-            display: flex; justify-content: space-between; align-items: flex-start;
-            margin-bottom: 16px;
+        .header-right .btn-icon {
+            width: 32px; height: 32px; border-radius: 8px; border: none; background: var(--panel);
+            color: var(--text-muted); cursor: pointer; display: flex; align-items: center; justify-content: center;
+            transition: all .2s; border: 1px solid transparent;
         }
-        .page-title h1 {
-            font-size: 24px; font-weight: 800;
-            background: linear-gradient(135deg, #fbbf24, #f472b6, #a78bfa);
-            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
-            margin-bottom: 4px;
-        }
-        .page-title p { color: var(--text-muted); font-size: 13px; }
-
-        .top-bar {
-            display: flex; align-items: center; justify-content: space-between;
-            background: rgba(8, 11, 20, 0.55);
-            backdrop-filter: blur(24px);
-            border: 1px solid rgba(255,255,255,0.08);
-            border-radius: 16px; padding: 8px 14px;
-            margin-bottom: 16px;
-            gap: 12px; flex-wrap: wrap;
-            box-shadow: 0 4px 24px rgba(0,0,0,0.3), inset 0 1px 0 rgba(255,255,255,0.04);
-        }
-        .tab-group {
-            display: flex; gap: 4px;
-            background: rgba(0,0,0,0.3);
-            border-radius: 12px; padding: 3px;
-        }
-        .tab-btn {
-            padding: 7px 16px; border-radius: 10px;
-            border: none; background: transparent;
-            color: var(--text-muted); font-size: 13px; font-weight: 600;
-            cursor: pointer; transition: all 0.2s;
-            display: flex; align-items: center; gap: 6px;
-        }
-        .tab-btn:hover { color: var(--text-primary); }
-        .tab-btn.active {
-            background: linear-gradient(135deg, rgba(99,102,241,0.3), rgba(139,92,246,0.25));
-            color: white; box-shadow: 0 2px 8px rgba(99,102,241,0.2);
-        }
-        .zoom-group {
-            display: flex; align-items: center; gap: 6px;
-            background: rgba(0,0,0,0.3);
-            border-radius: 12px; padding: 3px 10px;
-        }
-        .zoom-btn {
-            width: 26px; height: 26px; border-radius: 8px;
-            border: none; background: rgba(255,255,255,0.06);
-            color: var(--text-muted); cursor: pointer;
-            display: flex; align-items: center; justify-content: center;
-            transition: all 0.2s; font-size: 11px;
-        }
-        .zoom-btn:hover { background: rgba(255,255,255,0.12); color: white; }
-        .zoom-val { min-width: 40px; text-align: center; font-size: 12px; font-weight: 700; color: var(--text-primary); }
-        .action-group { display: flex; gap: 8px; }
-        .btn {
-            display: inline-flex; align-items: center; gap: 6px;
-            padding: 7px 14px; border-radius: 10px;
-            font-size: 12px; font-weight: 600; cursor: pointer;
-            border: 1px solid transparent; transition: all 0.2s;
-        }
+        .header-right .btn-icon:hover { background: var(--panel-hover); color: var(--text); border-color: var(--glass-border); }
         .btn-primary {
-            background: linear-gradient(135deg, #6366f1, #8b5cf6);
-            color: white; box-shadow: 0 2px 10px rgba(99,102,241,0.25);
+            padding: 6px 14px; border-radius: 10px; border: none; background: linear-gradient(135deg, #6366f1, #8b5cf6);
+            color: #fff; font-size: 12px; font-weight: 700; cursor: pointer; display: inline-flex; align-items: center; gap: 6px;
+            box-shadow: 0 2px 10px rgba(99,102,241,0.25); transition: all .2s;
         }
         .btn-primary:hover { transform: translateY(-1px); box-shadow: 0 4px 14px rgba(99,102,241,0.35); }
-        .btn-ghost {
-            background: rgba(255,255,255,0.05);
-            border-color: var(--border-subtle);
-            color: var(--text-secondary);
+        .btn-success {
+            padding: 6px 14px; border-radius: 10px; border: none; background: linear-gradient(135deg, #10b981, #059669);
+            color: #fff; font-size: 12px; font-weight: 700; cursor: pointer; display: inline-flex; align-items: center; gap: 6px;
+            box-shadow: 0 2px 10px rgba(16,185,129,0.25); transition: all .2s;
         }
-        .btn-ghost:hover {
-            background: rgba(255,255,255,0.1);
-            border-color: var(--border-hover);
-            color: var(--text-primary);
+        .btn-success:hover { transform: translateY(-1px); box-shadow: 0 4px 14px rgba(16,185,129,0.35); }
+        .btn-warning {
+            padding: 6px 14px; border-radius: 10px; border: none; background: linear-gradient(135deg, #f59e0b, #d97706);
+            color: #fff; font-size: 12px; font-weight: 700; cursor: pointer; display: inline-flex; align-items: center; gap: 6px;
+            box-shadow: 0 2px 10px rgba(245,158,11,0.25); transition: all .2s;
+        }
+        .btn-warning:hover { transform: translateY(-1px); box-shadow: 0 4px 14px rgba(245,158,11,0.35); }
+        .zoom-group-h {
+            display: flex; align-items: center; gap: 4px; background: rgba(0,0,0,0.25); padding: 2px 8px; border-radius: 10px;
+        }
+        .zoom-group-h button {
+            width: 22px; height: 22px; border-radius: 6px; border: none; background: transparent;
+            color: var(--text-muted); cursor: pointer; font-size: 10px; display: flex; align-items: center; justify-content: center;
+        }
+        .zoom-group-h button:hover { background: rgba(255,255,255,0.08); color: var(--text); }
+        .zoom-group-h span { font-size: 11px; font-weight: 700; color: var(--text-secondary); min-width: 32px; text-align: center; }
+
+        .app-main {
+            flex: 1; position: relative; z-index: 1;
+            min-height: 0; overflow: hidden;
+            display: flex; flex-direction: column;
+        }
+        .view {
+            display: none; flex: 1; flex-direction: column;
+            min-height: 0; overflow: hidden;
+            padding: 16px 20px 20px;
+        }
+        .view.active { display: flex; }
+
+        .page-title-bar {
+            display: flex; justify-content: space-between; align-items: flex-end;
+            margin-bottom: 12px; flex-shrink: 0;
+        }
+        .page-title-bar h2 {
+            font-size: 20px; font-weight: 800;
+            background: linear-gradient(135deg, #fbbf24, #f472b6, #a78bfa); -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+        }
+        .page-title-bar p { font-size: 12px; color: var(--text-muted); margin-top: 2px; }
+        .page-actions { display: flex; gap: 8px; }
+
+        /* ========== 对阵图区域 ========== */
+        .bracket-viewport {
+            flex: 1;
+            overflow: hidden;
+            border-radius: 20px;
+            min-height: 0;
+            background: rgba(0,0,0,0.15);
+            backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+            border: 1px solid var(--glass-border);
+            box-shadow: inset 0 1px 0 rgba(255,255,255,0.03), 0 8px 32px rgba(0,0,0,0.25);
+            position: relative;
+            display: flex;
+            flex-direction: column;
         }
 
-        .bracket-viewport {
-            overflow: auto; border-radius: 20px;
-            background: rgba(0,0,0,0.12);
-            backdrop-filter: blur(16px);
-            border: 1px solid rgba(255,255,255,0.06);
-            padding: 20px;
-            box-shadow: inset 0 1px 0 rgba(255,255,255,0.03), 0 8px 32px rgba(0,0,0,0.2);
+        .bracket-header-fixed {
+            flex-shrink: 0;
+            padding: 12px 20px 0px;
+            border-bottom: 1px solid var(--glass-border);
+            background: rgba(8,11,20,0.4);
+            backdrop-filter: blur(8px);
+            z-index: 10;
+            overflow-x: auto;
+            overflow-y: hidden;
+            scrollbar-width: none;
         }
+        .bracket-header-fixed::-webkit-scrollbar { display: none; }
+
+        .bracket-scroll-area {
+            flex: 1;
+            overflow: auto;
+            min-height: 0;
+            padding: 16px 20px 20px;
+            scrollbar-width: thin;
+            scrollbar-color: transparent transparent;
+            transition: scrollbar-color 0.3s;
+        }
+        .bracket-scroll-area:hover,
+        .bracket-scroll-area:active,
+        .bracket-scroll-area:focus-within {
+            scrollbar-color: rgba(255,255,255,0.08) transparent;
+        }
+        .bracket-scroll-area::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+        .bracket-scroll-area::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        .bracket-scroll-area::-webkit-scrollbar-thumb {
+            background: transparent;
+            border-radius: 4px;
+            transition: background 0.3s;
+        }
+        .bracket-scroll-area:hover::-webkit-scrollbar-thumb,
+        .bracket-scroll-area:active::-webkit-scrollbar-thumb {
+            background: rgba(255,255,255,0.12);
+        }
+        .bracket-scroll-area::-webkit-scrollbar-thumb:hover {
+            background: rgba(255,255,255,0.2);
+        }
+
         .bracket-canvas {
             position: relative;
-            transform-origin: top left;
-            transition: transform 0.15s ease;
-            min-width: fit-content;
+            display: block;
+            width: fit-content;
+            height: fit-content;
+            min-width: 100%;
+            min-height: 100%;
         }
 
-        .grid-header {
-            display: flex;
-            margin-bottom: 12px;
-            padding-left: 10px;
-        }
+        .grid-header { display: flex; padding-left: 10px; }
         .col-header {
-            width: var(--col-w);
-            flex-shrink: 0;
-            text-align: center;
-            font-size: 12px;
-            font-weight: 700;
-            color: var(--accent-gold);
-            letter-spacing: 0.08em;
-            padding: 6px 0;
-            border-bottom: 1px solid rgba(251,191,36,0.12);
+            width: var(--col-w); flex-shrink: 0; text-align: center; font-size: 12px;
+            font-weight: 700; color: var(--accent-gold); letter-spacing: 0.08em;
+            padding: 6px 0; border-bottom: 1px solid rgba(251,191,36,0.12);
         }
-
-        .grid-body {
-            position: relative;
-        }
-
-        .svg-layer {
-            position: absolute; top: 0; left: 0;
-            pointer-events: none; z-index: 0;
-        }
+        .grid-body { position: relative; }
+        .svg-layer { position: absolute; top: 0; left: 0; pointer-events: none; z-index: 0; }
         .svg-layer path {
-            fill: none; stroke-width: 2.5;
-            stroke-linecap: round; stroke-linejoin: round;
-            opacity: 0.5;
-            transition: opacity 0.3s, stroke-width 0.3s;
+            fill: none; stroke-width: 3; stroke-linecap: round; stroke-linejoin: round;
+            opacity: 0.7; transition: opacity 0.3s, stroke-width 0.3s;
         }
         .svg-layer path:hover { opacity: 0.85; stroke-width: 3.5; }
         .svg-layer .win-path { stroke: url(#gradWin); }
         .svg-layer .lose-path { stroke: url(#gradLose); }
 
+        /* ========== Glass Card 比赛卡片 ========== */
         .match-card {
-            position: absolute;
-            width: 250px;
-            background: linear-gradient(160deg, rgba(22,30,52,0.88) 0%, rgba(14,20,38,0.92) 100%);
-            backdrop-filter: blur(12px);
-            border: 1px solid rgba(255,255,255,0.08);
-            border-radius: 14px;
-            overflow: visible;
-            cursor: pointer;
-            transition: all 0.25s cubic-bezier(0.4,0,0.2,1);
-            box-shadow: 0 2px 8px rgba(0,0,0,0.3), inset 0 1px 0 rgba(255,255,255,0.05);
+            position: absolute; width: 250px; height: auto; min-height: 82px;
+            padding: 10px;
+            background: linear-gradient(135deg, rgba(255,255,255,0.18) 0%, rgba(255,255,255,0.08) 100%);
+            backdrop-filter: blur(24px) saturate(1.4);
+            border: 1px solid rgba(255,255,255,0.18);
+            border-radius: 16px;
+            overflow: visible; cursor: pointer; transition: all 0.25s cubic-bezier(0.4,0,0.2,1);
+            box-shadow: 0 8px 32px rgba(0,0,0,0.2), inset 0 1px 0 rgba(255,255,255,0.15);
             z-index: 1;
         }
         .match-card::before {
-            content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px;
-            opacity: 0.7; transition: opacity 0.3s;
+            content: ''; position: absolute; top: 0; left: 16px; right: 16px; height: 2px; opacity: 0.7; transition: opacity 0.3s;
+            border-radius: 2px;
         }
-        .match-card.type-winners::before,
-        .match-card.type-胜者组::before,
-        .match-card.type-晋级赛::before,
-        .match-card.type-小组赛::before {
+        .match-card.type-winners::before, .match-card.type-胜者组::before, .match-card.type-晋级赛::before, .match-card.type-小组赛::before {
             background: linear-gradient(90deg, transparent, var(--accent-cyan), transparent);
         }
-        .match-card.type-losers::before,
-        .match-card.type-败者组::before {
+        .match-card.type-losers::before, .match-card.type-败者组::before {
             background: linear-gradient(90deg, transparent, var(--accent-red), transparent);
         }
-        .match-card.type-final::before,
-        .match-card.type-总决赛::before,
-        .match-card.type-决赛::before,
-        .match-card.type-半决赛::before {
+        .match-card.type-final::before, .match-card.type-总决赛::before, .match-card.type-决赛::before, .match-card.type-半决赛::before {
             background: linear-gradient(90deg, transparent, var(--accent-gold), transparent);
         }
         .match-card:hover {
             transform: translateY(-2px) scale(1.02);
-            background: linear-gradient(160deg, rgba(30,40,68,0.95) 0%, rgba(20,28,50,0.98) 100%);
-            border-color: var(--border-hover);
-            box-shadow: 0 10px 24px rgba(0,0,0,0.4), inset 0 1px 0 rgba(255,255,255,0.08);
+            background: linear-gradient(135deg, rgba(255,255,255,0.24) 0%, rgba(255,255,255,0.14) 100%);
+            border-color: rgba(255,255,255,0.28);
+            box-shadow: 0 16px 40px rgba(0,0,0,0.35), inset 0 1px 0 rgba(255,255,255,0.2);
             z-index: 10;
         }
         .match-card:hover::before { opacity: 1; }
-
-        /* 总决赛特殊光晕 */
         .match-card.is-final {
-            border-color: rgba(251,191,36,0.3);
-            box-shadow: 0 0 30px rgba(251,191,36,0.08), 0 2px 8px rgba(0,0,0,0.3), inset 0 1px 0 rgba(255,255,255,0.05);
+            border-color: rgba(251,191,36,0.4);
+            box-shadow: 0 0 30px rgba(251,191,36,0.12), 0 8px 32px rgba(0,0,0,0.2), inset 0 1px 0 rgba(255,255,255,0.15);
         }
         .match-card.is-final:hover {
-            border-color: rgba(251,191,36,0.5);
-            box-shadow: 0 0 40px rgba(251,191,36,0.15), 0 10px 24px rgba(0,0,0,0.4), inset 0 1px 0 rgba(255,255,255,0.08);
+            border-color: rgba(251,191,36,0.6);
+            box-shadow: 0 0 45px rgba(251,191,36,0.22), 0 16px 40px rgba(0,0,0,0.35), inset 0 1px 0 rgba(255,255,255,0.2);
         }
-
-        /* 皇冠图标 */
         .finals-crown {
-            position: absolute;
-            top: -16px;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 32px;
-            height: 32px;
-            background: linear-gradient(135deg, #fbbf24, #f59e0b);
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 14px;
-            color: #fff;
-            box-shadow: 0 0 24px rgba(251,191,36,0.6), 0 4px 12px rgba(0,0,0,0.4);
-            z-index: 5;
-            border: 2px solid rgba(255,255,255,0.3);
-            pointer-events: none;
-            animation: crownFloat 3s ease-in-out infinite;
+            position: absolute; top: -18px; left: 50%; transform: translateX(-50%);
+            width: 34px; height: 34px; background: linear-gradient(135deg, #fbbf24, #f59e0b);
+            border-radius: 50%; display: flex; align-items: center; justify-content: center;
+            font-size: 14px; color: #fff; border: 2px solid rgba(255,255,255,0.35);
+            box-shadow: 0 0 28px rgba(251,191,36,0.6), 0 4px 12px rgba(0,0,0,0.4);
+            z-index: 5; pointer-events: none; animation: crownFloat 3s ease-in-out infinite;
         }
-        @keyframes crownFloat {
-            0%, 100% { transform: translateX(-50%) translateY(0); }
-            50% { transform: translateX(-50%) translateY(-4px); }
-        }
+        @keyframes crownFloat { 0%,100%{transform:translateX(-50%) translateY(0)} 50%{transform:translateX(-50%) translateY(-5px)} }
 
         .match-card-header {
             display: flex; justify-content: space-between; align-items: center;
-            padding: 7px 10px 5px;
-            border-bottom: 1px solid rgba(255,255,255,0.03);
+            padding: 0 0 4px; border-bottom: 1px solid rgba(255,255,255,0.06);
         }
         .match-meta { display: flex; align-items: center; gap: 6px; }
         .match-id-tag {
-            font-family: 'Inter', monospace; font-size: 10px; font-weight: 800;
-            padding: 1px 6px; border-radius: 10px;
+            font-family: 'Inter', monospace; font-size: 10px; font-weight: 800; padding: 1px 6px; border-radius: 10px;
         }
         .match-id-tag.w-tag { color: var(--accent-cyan); background: rgba(56,189,248,0.1); }
         .match-id-tag.l-tag { color: var(--accent-red); background: rgba(248,113,113,0.1); }
         .match-id-tag.f-tag { color: var(--accent-gold); background: rgba(251,191,36,0.1); }
         .match-round-tag { font-size: 10px; font-weight: 500; color: var(--text-muted); }
         .match-status {
-            font-size: 9px; font-weight: 700; letter-spacing: 0.03em;
-            padding: 2px 6px; border-radius: 10px;
+            font-size: 9px; font-weight: 700; letter-spacing: 0.03em; padding: 2px 6px; border-radius: 10px;
         }
-        .match-status.done {
-            background: rgba(52,211,153,0.12); color: var(--accent-green);
-            border: 1px solid rgba(52,211,153,0.18);
-        }
-        .match-status.wait {
-            background: rgba(148,163,184,0.08); color: var(--text-muted);
-            border: 1px solid rgba(148,163,184,0.12);
-        }
-        .match-status.unk {
-            background: rgba(100,116,139,0.08); color: var(--text-muted);
-            border: 1px solid rgba(100,116,139,0.1);
-        }
+        .match-status.done { background: rgba(52,211,153,0.12); color: var(--accent-green); border: 1px solid rgba(52,211,153,0.18); }
+        .match-status.wait { background: rgba(148,163,184,0.08); color: var(--text-muted); border: 1px solid rgba(148,163,184,0.12); }
+        .match-status.unk { background: rgba(100,116,139,0.08); color: var(--text-muted); border: 1px solid rgba(100,116,139,0.1); }
 
         .match-body {
-            display: flex; align-items: center; justify-content: space-between;
-            padding: 8px 10px;
-            gap: 8px;
+            display: flex; align-items: center; justify-content: space-between; padding: 6px 0; gap: 4px;
         }
-        .team-side {
-            display: flex; align-items: center; gap: 7px;
-            flex: 1; min-width: 0;
-        }
+        .team-side { display: flex; align-items: center; gap: 7px; flex: 1; min-width: 0; }
         .team-side.right { justify-content: flex-end; }
         .team-avatar {
-            width: 26px; height: 26px; border-radius: 8px; flex-shrink: 0;
+            width: 22px; height: 22px; border-radius: 6px; flex-shrink: 0;
             display: flex; align-items: center; justify-content: center;
-            font-size: 11px; font-weight: 700;
+            font-size: 11px; font-weight: 700; overflow: hidden;
             background: linear-gradient(135deg, rgba(99,102,241,0.2), rgba(168,85,247,0.15));
-            border: 1px solid rgba(255,255,255,0.08);
-            color: #c7d2fe;
+            border: 1px solid rgba(255,255,255,0.08); color: #c7d2fe;
         }
+        .team-avatar img { width: 100%; height: 100%; object-fit: cover; }
         .team-avatar.winner {
             background: linear-gradient(135deg, rgba(52,211,153,0.25), rgba(45,212,191,0.2));
-            border-color: rgba(52,211,153,0.3);
-            color: #6ee7b7;
-            box-shadow: 0 0 10px rgba(52,211,153,0.12);
+            border-color: rgba(52,211,153,0.3); color: #6ee7b7; box-shadow: 0 0 10px rgba(52,211,153,0.12);
         }
-        .team-avatar.loser {
-            background: rgba(100,116,139,0.1);
-            border-color: rgba(100,116,139,0.15);
-            color: var(--text-muted);
-        }
-        .team-name {
-            font-size: 13px; font-weight: 600;
-            white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
-        }
+        .team-avatar.loser { background: rgba(100,116,139,0.1); border-color: rgba(100,116,139,0.15); color: var(--text-muted); }
+        .team-name { font-size: 12px; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
         .team-name.win { color: var(--accent-green); text-shadow: 0 0 8px rgba(52,211,153,0.15); }
         .team-name.lose { color: var(--text-muted); text-decoration: line-through; text-decoration-color: rgba(248,113,113,0.35); text-decoration-thickness: 1.5px; }
         .team-name.pending { color: var(--text-secondary); }
 
+        /* ========== 比分样式 ========== */
         .score-center {
-            font-family: 'Inter', monospace; font-weight: 800; font-size: 15px;
-            min-width: 42px; text-align: center; letter-spacing: 0.05em;
-            flex-shrink: 0;
+            font-family: 'Inter', monospace; font-weight: 800; font-size: 14px; min-width: 42px; text-align: center; letter-spacing: 0.05em; flex-shrink: 0;
         }
         .score-center.vs { color: var(--text-muted); font-size: 12px; font-weight: 600; }
-        .score-center.done {
-            background: linear-gradient(135deg, #fbbf24, #f59e0b);
-            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+        .score-win {
+            font-size: 16px;
+            background: linear-gradient(135deg, #34d399, #2dd4bf);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            font-weight: 800;
+        }
+        .score-lose {
+            font-size: 13px;
+            color: var(--text-muted);
+            opacity: 0.4;
+            text-decoration: line-through;
+            text-decoration-color: rgba(248,113,113,0.3);
+            text-decoration-thickness: 1.5px;
+            font-weight: 500;
+        }
+        .score-sep {
+            margin: 0 3px;
+            color: var(--text-muted);
+            font-size: 12px;
+            opacity: 0.5;
+            font-weight: 600;
         }
 
         .match-footer {
-            display: flex; justify-content: space-between; align-items: center;
-            padding: 5px 10px 8px;
-            border-top: 1px solid rgba(255,255,255,0.02);
+            display: flex; justify-content: space-between; align-items: center; padding: 4px 0 0; border-top: 1px solid rgba(255,255,255,0.04);
         }
-        .match-time {
-            font-size: 10px; color: var(--text-muted);
-            display: flex; align-items: center; gap: 4px;
-        }
-        .match-links {
-            display: flex; gap: 8px; font-size: 10px;
-        }
-        .match-link {
-            display: flex; align-items: center; gap: 2px;
-        }
+        .match-time { font-size: 10px; color: var(--text-secondary); display: flex; align-items: center; gap: 4px; }
+        .match-links { display: flex; gap: 8px; font-size: 10px; }
+        .match-link { display: flex; align-items: center; gap: 2px; }
         .match-link.win-link { color: rgba(56,189,248,0.5); }
         .match-link.lose-link { color: rgba(248,113,113,0.5); }
 
-        .admin-table-wrap {
-            overflow-x: auto; border-radius: 16px;
-            background: rgba(0,0,0,0.1);
-            backdrop-filter: blur(16px);
-            border: 1px solid rgba(255,255,255,0.06);
-            box-shadow: 0 8px 32px rgba(0,0,0,0.2);
+        .admin-wrap {
+            flex: 1; overflow: auto; border-radius: 16px; min-height: 0;
+            background: rgba(0,0,0,0.12); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+            border: 1px solid var(--glass-border); padding: 16px;
         }
-        table { width: 100%; min-width: 1100px; border-collapse: collapse; }
-        th {
-            background: rgba(255,255,255,0.03);
-            font-size: 11px; font-weight: 700; letter-spacing: 0.05em;
-            color: var(--text-muted); text-transform: uppercase;
-            padding: 12px 10px; text-align: left;
-            border-bottom: 1px solid var(--border-subtle);
+        .admin-table { width: 100%; border-collapse: collapse; min-width: 1100px; }
+        .admin-table th {
+            background: rgba(255,255,255,0.03); font-size: 11px; font-weight: 700; letter-spacing: 0.05em;
+            color: var(--text-muted); text-transform: uppercase; padding: 10px; text-align: left; border-bottom: 1px solid var(--glass-border);
         }
-        td {
-            padding: 10px; font-size: 13px;
-            border-bottom: 1px solid rgba(255,255,255,0.03);
-            color: var(--text-secondary);
+        .admin-table td { padding: 8px 10px; font-size: 13px; border-bottom: 1px solid rgba(255,255,255,0.03); color: var(--text-secondary); vertical-align: middle; }
+        .admin-table tr:hover td { background: rgba(255,255,255,0.02); }
+        .admin-table .team-chip { display: inline-flex; align-items: center; gap: 6px; }
+        .admin-table .team-chip .mini-avatar {
+            width: 20px; height: 20px; border-radius: 6px; font-size: 10px; font-weight: 700;
+            display: flex; align-items: center; justify-content: center; overflow: hidden;
         }
-        tr:hover td { background: rgba(255,255,255,0.02); }
+        .admin-table .team-chip .mini-avatar img { width: 100%; height: 100%; object-fit: cover; }
         .admin-input {
-            background: rgba(0,0,0,0.4);
-            border: 1px solid var(--border-subtle);
-            border-radius: 8px; padding: 6px 10px;
-            color: var(--text-primary); font-size: 13px;
-            width: 100%; outline: none; transition: all 0.2s;
+            background: rgba(0,0,0,0.35); border: 1px solid var(--glass-border); border-radius: 8px; padding: 6px 10px;
+            color: var(--text); font-size: 13px; width: 100%; outline: none; transition: all .2s;
         }
-        .admin-input:focus {
-            border-color: var(--accent-cyan);
-            box-shadow: 0 0 0 3px rgba(56,189,248,0.1);
-        }
+        .admin-input:focus { border-color: var(--accent-cyan); box-shadow: 0 0 0 3px rgba(56,189,248,0.08); }
         .admin-input[type="number"] { width: 70px; }
-        .del-row-btn {
-            width: 28px; height: 28px; border-radius: 8px;
-            border: none; background: transparent;
-            color: var(--text-muted); cursor: pointer;
-            transition: all 0.2s;
+        .del-btn { width: 26px; height: 26px; border-radius: 6px; border: none; background: transparent; color: var(--text-muted); cursor: pointer; transition: all .2s; }
+        .del-btn:hover { background: rgba(239,68,68,0.12); color: #ef4444; }
+
+        /* ========== 战队库：横向毛玻璃卡片 ========== */
+        .teams-grid {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            align-content: flex-start;
+            flex: 1;
+            overflow: auto;
+            padding-right: 4px;
         }
-        .del-row-btn:hover { background: rgba(239,68,68,0.12); color: #ef4444; }
-        .status-pill {
-            display: inline-flex; align-items: center; gap: 6px;
-            background: rgba(251,191,36,0.1);
-            border: 1px solid rgba(251,191,36,0.25);
-            color: var(--accent-gold);
-            padding: 6px 14px; border-radius: 12px;
-            font-size: 12px; font-weight: 600;
+        .team-card {
+            flex: 0 0 auto;
+            width: auto;
+            min-width: 170px;
+            max-width: 240px;
+            background: linear-gradient(135deg, rgba(255,255,255,0.14) 0%, rgba(255,255,255,0.06) 100%);
+            backdrop-filter: blur(16px) saturate(1.2);
+            border: 1px solid rgba(255,255,255,0.12);
+            border-radius: 12px;
+            padding: 8px 12px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            cursor: default;
+            transition: all .2s;
+            position: relative;
+            box-shadow: 0 4px 16px rgba(0,0,0,0.15), inset 0 1px 0 rgba(255,255,255,0.08);
         }
+        .team-card:hover {
+            background: linear-gradient(135deg, rgba(255,255,255,0.18) 0%, rgba(255,255,255,0.10) 100%);
+            border-color: rgba(255,255,255,0.2);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 24px rgba(0,0,0,0.25), inset 0 1px 0 rgba(255,255,255,0.12);
+        }
+        .team-card .t-avatar {
+            width: 32px; height: 32px; border-radius: 8px; flex-shrink: 0;
+            display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 800; overflow: hidden;
+            background: linear-gradient(135deg, rgba(99,102,241,0.2), rgba(168,85,247,0.15)); border: 1px solid rgba(255,255,255,0.08); color: #c7d2fe;
+        }
+        .team-card .t-avatar img { width: 100%; height: 100%; object-fit: cover; }
+        .team-card .t-info { flex: 1; min-width: 0; }
+        .team-card .t-name { font-size: 13px; font-weight: 700; color: var(--text); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .team-card .t-short { font-size: 10px; color: var(--text-muted); margin-top: 2px; }
+        .team-card .t-color { width: 12px; height: 12px; border-radius: 50%; border: 2px solid rgba(255,255,255,0.2); flex-shrink: 0; }
+        .team-card .t-actions { display: flex; gap: 4px; opacity: 0; transition: opacity .2s; }
+        .team-card:hover .t-actions { opacity: 1; }
+        .t-actions button { width: 24px; height: 24px; border-radius: 6px; border: none; background: transparent; color: var(--text-muted); cursor: pointer; display: flex; align-items: center; justify-content: center; }
+        .t-actions button:hover { background: var(--panel-hover); color: var(--text); }
+        .empty-state { text-align: center; color: var(--text-muted); padding: 60px 20px; font-size: 14px; }
 
         .modal-overlay {
-            position: fixed; inset: 0; z-index: 100;
-            background: rgba(0,0,0,0.7);
-            backdrop-filter: blur(12px);
-            display: none; align-items: center; justify-content: center;
+            position: fixed; inset: 0; z-index: 200; background: rgba(0,0,0,0.7); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+            display: none; align-items: center; justify-content: center; padding: 20px;
         }
         .modal-overlay.show { display: flex; }
         .modal {
-            background: linear-gradient(160deg, rgba(22,30,52,0.92) 0%, rgba(14,20,38,0.95) 100%);
-            backdrop-filter: blur(40px);
-            border: 1px solid rgba(255,255,255,0.12);
-            border-radius: 24px; padding: 28px;
-            width: 520px; max-width: 92vw;
-            max-height: 88vh; overflow-y: auto;
-            box-shadow: 0 24px 80px rgba(0,0,0,0.6), inset 0 1px 0 rgba(255,255,255,0.06);
+            background: linear-gradient(160deg, rgba(24,32,56,0.96), rgba(14,20,38,0.98));
+            backdrop-filter: blur(40px); -webkit-backdrop-filter: blur(40px); border: 1px solid var(--glass-border); border-radius: 24px;
+            width: 520px; max-width: 100%; max-height: 88vh; overflow-y: auto;
+            padding: 28px; box-shadow: 0 24px 80px rgba(0,0,0,0.6), inset 0 1px 0 rgba(255,255,255,0.05);
         }
-        .modal h3 { font-size: 18px; font-weight: 700; margin-bottom: 20px; }
+        .modal h3 { font-size: 18px; font-weight: 700; margin-bottom: 20px; display: flex; align-items: center; gap: 8px; }
         .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-bottom: 20px; }
-        .form-group label {
-            display: block; font-size: 12px; font-weight: 600;
-            color: var(--text-muted); margin-bottom: 6px;
-        }
+        .form-group label { display: block; font-size: 12px; font-weight: 600; color: var(--text-muted); margin-bottom: 6px; }
         .form-group input, .form-group select {
-            width: 100%; padding: 9px 12px;
-            background: rgba(0,0,0,0.4);
-            border: 1px solid var(--border-subtle);
-            border-radius: 10px; color: var(--text-primary);
-            font-size: 14px; outline: none; transition: all 0.2s;
+            width: 100%; padding: 9px 12px; background: rgba(0,0,0,0.4); border: 1px solid var(--glass-border);
+            border-radius: 10px; color: var(--text); font-size: 14px; outline: none; transition: all .2s;
         }
-        .form-group input:focus, .form-group select:focus {
-            border-color: var(--accent-cyan);
-            box-shadow: 0 0 0 3px rgba(56,189,248,0.1);
-        }
+        .form-group input:focus, .form-group select:focus { border-color: var(--accent-cyan); box-shadow: 0 0 0 3px rgba(56,189,248,0.08); }
+        .form-group input[type="color"] { padding: 4px; height: 38px; cursor: pointer; }
         .modal-actions { display: flex; gap: 10px; }
         .modal-actions .btn { flex: 1; justify-content: center; }
+        .btn-ghost {
+            padding: 8px 16px; border-radius: 10px; border: 1px solid var(--glass-border); background: transparent;
+            color: var(--text-secondary); font-size: 13px; font-weight: 600; cursor: pointer; transition: all .2s; display: inline-flex; align-items: center; justify-content: center; gap: 6px;
+        }
+        .btn-ghost:hover { background: var(--panel-hover); color: var(--text); border-color: var(--glass-highlight); }
 
-        .page { display: none; }
-        .page.active { display: block; }
-
-        ::-webkit-scrollbar { width: 4px; height: 4px; }
+        /* 全局滚动条默认隐藏 */
+        ::-webkit-scrollbar { width: 8px; height: 8px; }
         ::-webkit-scrollbar-track { background: transparent; }
-        ::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 4px; }
-        ::-webkit-scrollbar-thumb:hover { background: rgba(255,255,255,0.2); }
+        ::-webkit-scrollbar-thumb { background: transparent; border-radius: 4px; }
+
+        /* ========== 导出模式（只读） ========== */
+        .export-mode .btn-icon,
+        .export-mode .btn-primary,
+        .export-mode .btn-success,
+        .export-mode .btn-warning,
+        .export-mode .btn-ghost,
+        .export-mode .del-btn,
+        .export-mode .t-actions,
+        .export-mode .panel-header button,
+        .export-mode .panel-item .del-btn,
+        .export-mode .page-actions,
+        .export-mode .modal-overlay,
+        .export-mode .selector-trigger i,
+        .export-mode .zoom-group-h {
+            display: none !important;
+        }
+        .export-mode .admin-input,
+        .export-mode .admin-table input {
+            pointer-events: none !important;
+            background: transparent !important;
+            border: none !important;
+            box-shadow: none !important;
+        }
+        .export-mode .match-card { cursor: default !important; }
+        .export-mode .tournament-selector { pointer-events: none; }
+        .export-mode .nav-item { pointer-events: none; }
+        .export-mode .nav-item.active { pointer-events: auto; }
+    
+        /* ========== 移动端适配 ========== */
+        @media (max-width: 768px) {
+            .app-header {
+                height: auto;
+                min-height: 48px;
+                padding: 8px 12px;
+                flex-wrap: wrap;
+                gap: 8px;
+            }
+            .brand {
+                font-size: 14px;
+            }
+            .header-nav {
+                order: 3;
+                width: 100%;
+                justify-content: center;
+            }
+            .nav-item {
+                padding: 4px 10px;
+                font-size: 12px;
+            }
+            .header-right {
+                gap: 4px;
+                flex-wrap: wrap;
+                justify-content: flex-end;
+            }
+            .header-right .btn-icon {
+                width: 28px;
+                height: 28px;
+            }
+            .btn-primary, .btn-success, .btn-warning {
+                padding: 4px 10px;
+                font-size: 11px;
+            }
+            .zoom-group-h {
+                padding: 1px 4px;
+                border-radius: 8px;
+            }
+            .zoom-group-h button {
+                width: 20px;
+                height: 20px;
+                font-size: 9px;
+            }
+            .zoom-group-h span {
+                font-size: 10px;
+                min-width: 28px;
+            }
+            .selector-trigger {
+                padding: 4px 8px;
+                font-size: 12px;
+            }
+            .selector-panel {
+                width: 220px;
+            }
+
+            .view {
+                padding: 8px 12px 12px;
+            }
+            .page-title-bar h2 {
+                font-size: 16px;
+            }
+            .page-title-bar p {
+                font-size: 11px;
+            }
+
+            /* 对阵图移动端优化 */
+            .bracket-viewport {
+                border-radius: 12px;
+            }
+            .bracket-header-fixed {
+                padding: 8px 12px 0px;
+            }
+            .col-header {
+                font-size: 10px;
+                padding: 4px 0;
+            }
+            .bracket-scroll-area {
+                padding: 8px 12px 12px;
+            }
+
+            /* 卡片移动端缩小 */
+            .match-card {
+                width: 200px;
+                padding: 6px 8px;
+                border-radius: 12px;
+            }
+            .match-card-header {
+                padding-bottom: 2px;
+            }
+            .match-id-tag {
+                font-size: 9px;
+                padding: 0px 4px;
+            }
+            .match-round-tag {
+                font-size: 9px;
+            }
+            .match-status {
+                font-size: 8px;
+                padding: 1px 4px;
+            }
+            .team-avatar {
+                width: 18px;
+                height: 18px;
+                border-radius: 4px;
+                font-size: 9px;
+            }
+            .team-name {
+                font-size: 10px;
+            }
+            .score-center {
+                font-size: 12px;
+                min-width: 32px;
+            }
+            .score-win {
+                font-size: 14px;
+            }
+            .score-lose {
+                font-size: 11px;
+            }
+            .match-footer {
+                padding-top: 2px;
+            }
+            .match-time {
+                font-size: 9px;
+            }
+            .match-links {
+                font-size: 8px;
+            }
+            .finals-crown {
+                width: 26px;
+                height: 26px;
+                font-size: 11px;
+                top: -14px;
+            }
+
+            /* 管理页移动端 */
+            .admin-wrap {
+                padding: 10px;
+                border-radius: 12px;
+            }
+            .admin-table th {
+                font-size: 10px;
+                padding: 6px 4px;
+            }
+            .admin-table td {
+                font-size: 11px;
+                padding: 6px 4px;
+            }
+            .admin-input {
+                padding: 4px 6px;
+                font-size: 11px;
+            }
+
+            /* 战队库移动端 */
+            .teams-grid {
+                gap: 6px;
+            }
+            .team-card {
+                min-width: 140px;
+                padding: 6px 10px;
+            }
+            .team-card .t-avatar {
+                width: 26px;
+                height: 26px;
+            }
+            .team-card .t-name {
+                font-size: 12px;
+            }
+            .team-card .t-short {
+                font-size: 9px;
+            }
+
+            /* 模态框移动端 */
+            .modal {
+                width: 92vw;
+                padding: 20px;
+                border-radius: 16px;
+            }
+            .modal h3 {
+                font-size: 16px;
+                margin-bottom: 16px;
+            }
+            .form-grid {
+                grid-template-columns: 1fr;
+                gap: 10px;
+                margin-bottom: 16px;
+            }
+            .form-group input, .form-group select {
+                padding: 7px 10px;
+                font-size: 13px;
+            }
+        }
+
+        /* 超小屏手机 */
+        @media (max-width: 480px) {
+            .app-header {
+                padding: 6px 8px;
+            }
+            .brand {
+                font-size: 13px;
+            }
+            .brand i {
+                font-size: 15px;
+            }
+            .nav-item {
+                padding: 3px 8px;
+                font-size: 11px;
+            }
+            .header-right .btn-icon {
+                width: 26px;
+                height: 26px;
+            }
+            .match-card {
+                width: 170px;
+                padding: 5px 7px;
+            }
+            .team-name {
+                font-size: 9px;
+            }
+            .score-center {
+                font-size: 11px;
+            }
+        }
+
+        /* 触摸设备优化 */
+        @media (pointer: coarse) {
+            .match-card:hover {
+                transform: none;
+            }
+            .match-card:active {
+                transform: scale(0.98);
+            }
+            .team-card:hover {
+                transform: none;
+            }
+            .team-card:active {
+                transform: scale(0.98);
+            }
+            ::-webkit-scrollbar {
+                width: 4px;
+                height: 4px;
+            }
+        }
+
     </style>
+<base target="_blank">
 <base target="_blank">
 <base target="_blank">
 </head>
 <body>
-    <div class="bg-particles" id="particles"></div>
+    <!-- 动态背景：默认启用彩色渐变撞色 -->
+    <div class="dynamic-bg bg-bright" id="dynamicBg"></div>
 
-    <div class="app">
-        <aside class="sidebar">
-            <div class="sidebar-brand">
-                <i class="fas fa-trophy"></i>
-                <span>赛程工坊 Pro</span>
+    <!-- 应用层 -->
+    <div class="app-layer">
+        <header class="app-header">
+            <div class="header-left">
+                <div class="brand"><i class="fas fa-trophy"></i> 赛程工坊 Pro</div>
+                <div class="tournament-selector">
+                    <button class="selector-trigger" id="tournamentTrigger" onclick="toggleTournamentPanel()">
+                        <span id="currentTournamentName">赛事名称</span>
+                        <i class="fas fa-chevron-down"></i>
+                    </button>
+                    <div class="selector-panel" id="tournamentPanel">
+                        <div class="panel-header">
+                            <span>我的赛事</span>
+                            <button onclick="addTournament()"><i class="fas fa-plus"></i> 新建</button>
+                        </div>
+                        <div class="panel-list" id="tournamentPanelList"></div>
+                    </div>
+                </div>
             </div>
-            <div class="tournament-list" id="tournamentList"></div>
-            <button class="add-tournament-btn" onclick="addTournament()">
-                <i class="fas fa-plus"></i> 新增赛事
-            </button>
-        </aside>
 
-        <main class="main">
-            <div class="page active" id="page-bracket">
-                <div class="page-header">
-                    <div class="page-title">
-                        <h1 id="tournamentName">赛事名称</h1>
-                        <p>双败淘汰赛 · 点击卡片编辑 · Ctrl+滚轮缩放</p>
-                    </div>
+            <nav class="header-nav">
+                <button class="nav-item active" onclick="switchView('bracket')" id="nav-bracket">
+                    <i class="fas fa-sitemap"></i> 对阵图
+                </button>
+                <button class="nav-item" onclick="switchView('admin')" id="nav-admin">
+                    <i class="fas fa-database"></i> 赛程数据
+                </button>
+                <button class="nav-item" onclick="switchView('teams')" id="nav-teams">
+                    <i class="fas fa-shield-alt"></i> 战队库
+                </button>
+            </nav>
+
+            <div class="header-right">
+                <div class="zoom-group-h" id="zoomControl" style="display:none;">
+                    <button onclick="zoom(-0.1)"><i class="fas fa-minus"></i></button>
+                    <span id="zoomVal">100%</span>
+                    <button onclick="zoom(0.1)"><i class="fas fa-plus"></i></button>
+                    <button onclick="zoomTo(1)" title="重置"><i class="fas fa-compress"></i></button>
                 </div>
+                <button class="btn-icon" onclick="syncBracket()" title="刷新对阵图"><i class="fas fa-sync-alt"></i></button>
+                <button class="btn-icon" onclick="importData()" title="导入 JSON"><i class="fas fa-upload"></i></button>
+                <button class="btn-icon" onclick="exportData()" title="导出 JSON"><i class="fas fa-download"></i></button>
+                <button class="btn-success" onclick="exportExcel()" title="导出 Excel"><i class="fas fa-file-excel"></i> Excel</button>
+                <button class="btn-success" onclick="importExcel()" title="导入 Excel" style="padding:6px 10px;"><i class="fas fa-file-import"></i></button>
+                <button class="btn-warning" onclick="exportFullSite()" title="保存全站 HTML"><i class="fas fa-globe"></i> 保存全站</button>
+                <button class="btn-primary" onclick="openMatchModal()"><i class="fas fa-plus"></i> 比赛</button>
+            </div>
+        </header>
 
-                <div class="top-bar">
-                    <div class="tab-group">
-                        <button class="tab-btn active" onclick="switchPage('bracket')" id="tab-bracket">
-                            <i class="fas fa-sitemap"></i> 对阵图
-                        </button>
-                        <button class="tab-btn" onclick="switchPage('admin')" id="tab-admin">
-                            <i class="fas fa-database"></i> 数据管理
-                        </button>
-                    </div>
-                    <div class="zoom-group">
-                        <button class="zoom-btn" onclick="zoom(-0.1)"><i class="fas fa-minus"></i></button>
-                        <span class="zoom-val" id="zoomVal">100%</span>
-                        <button class="zoom-btn" onclick="zoom(0.1)"><i class="fas fa-plus"></i></button>
-                        <button class="zoom-btn" onclick="zoomTo(1)" title="重置"><i class="fas fa-compress"></i></button>
-                    </div>
-                    <div class="action-group">
-                        <button class="btn btn-ghost" onclick="syncBracket()">
-                            <i class="fas fa-sync-alt"></i> 刷新
-                        </button>
-                        <button class="btn btn-ghost" onclick="importData()">
-                            <i class="fas fa-upload"></i> 导入
-                        </button>
-                        <button class="btn btn-ghost" onclick="exportData()">
-                            <i class="fas fa-download"></i> 导出
-                        </button>
-                        <button class="btn btn-primary" onclick="openModal()">
-                            <i class="fas fa-plus"></i> 添加比赛
-                        </button>
-                    </div>
-                </div>
-
+        <main class="app-main">
+            <section class="view active" id="view-bracket">
                 <div class="bracket-viewport" id="viewport">
-                    <div class="bracket-canvas" id="canvas">
+                    <!-- 固定头部：横向滚动与下方同步 -->
+                    <div class="bracket-header-fixed" id="bracketHeaderFixed">
                         <div class="grid-header" id="gridHeader"></div>
-                        <div class="grid-body" id="gridBody">
-                            <svg class="svg-layer" id="svgLayer">
-                                <defs>
-                                    <linearGradient id="gradWin" x1="0%" y1="0%" x2="100%" y2="0%">
-                                        <stop offset="0%" stop-color="#38bdf8" stop-opacity="0.3"/>
-                                        <stop offset="100%" stop-color="#38bdf8" stop-opacity="0.8"/>
-                                    </linearGradient>
-                                    <linearGradient id="gradLose" x1="0%" y1="0%" x2="100%" y2="0%">
-                                        <stop offset="0%" stop-color="#f87171" stop-opacity="0.3"/>
-                                        <stop offset="100%" stop-color="#f87171" stop-opacity="0.8"/>
-                                    </linearGradient>
-                                </defs>
-                            </svg>
+                    </div>
+                    <!-- 滚动区域 -->
+                    <div class="bracket-scroll-area" id="bracketScrollArea">
+                        <div class="bracket-canvas" id="canvas">
+                            <div class="grid-body" id="gridBody">
+                                <svg class="svg-layer" id="svgLayer">
+                                    <defs>
+                                        <linearGradient id="gradWin" x1="0%" y1="0%" x2="100%" y2="0%">
+                                            <stop offset="0%" stop-color="#38bdf8" stop-opacity="0.3"/>
+                                            <stop offset="100%" stop-color="#38bdf8" stop-opacity="0.8"/>
+                                        </linearGradient>
+                                        <linearGradient id="gradLose" x1="0%" y1="0%" x2="100%" y2="0%">
+                                            <stop offset="0%" stop-color="#f87171" stop-opacity="0.3"/>
+                                            <stop offset="100%" stop-color="#f87171" stop-opacity="0.8"/>
+                                        </linearGradient>
+                                    </defs>
+                                </svg>
+                            </div>
                         </div>
                     </div>
                 </div>
-            </div>
+            </section>
 
-            <div class="page" id="page-admin">
-                <div class="page-header">
-                    <div class="page-title">
-                        <h1>数据管理</h1>
-                        <p id="adminSubTitle">直接编辑表格，改动即时生效</p>
+            <section class="view" id="view-admin">
+                <div class="page-title-bar">
+                    <div>
+                        <h2>赛程数据</h2>
+                        <p>编辑比分、时间与晋级关系，改动即时生效</p>
+                    </div>
+                    <div class="page-actions">
+                        <button class="btn-ghost" onclick="openMatchModal()"><i class="fas fa-plus"></i> 新增比赛</button>
                     </div>
                 </div>
-                <div class="top-bar">
-                    <div class="tab-group">
-                        <button class="tab-btn" onclick="switchPage('bracket')" id="tab-admin-bracket">
-                            <i class="fas fa-sitemap"></i> 对阵图
-                        </button>
-                        <button class="tab-btn active" onclick="switchPage('admin')" id="tab-admin-admin">
-                            <i class="fas fa-database"></i> 数据管理
-                        </button>
-                    </div>
-                    <div class="action-group">
-                        <span class="status-pill" id="adminStatus" style="display:none;">
-                            <i class="fas fa-check-circle"></i> 已自动保存
-                        </span>
-                        <button class="btn btn-ghost" onclick="importData()">
-                            <i class="fas fa-upload"></i> 导入
-                        </button>
-                        <button class="btn btn-ghost" onclick="exportData()">
-                            <i class="fas fa-download"></i> 导出
-                        </button>
-                        <button class="btn btn-primary" onclick="openModal()">
-                            <i class="fas fa-plus"></i> 新增比赛
-                        </button>
-                    </div>
-                </div>
-                <div class="admin-table-wrap">
-                    <table>
+                <div class="admin-wrap">
+                    <table class="admin-table">
                         <thead>
                             <tr>
-                                <th>ID</th><th>类型</th><th>轮次</th><th>战队A</th><th>战队B</th>
-                                <th>比分</th><th>日期</th><th>时间</th><th>胜晋ID</th><th>败落ID</th><th></th>
+                                <th>ID</th><th>类型</th><th>轮次</th><th>战队 A</th><th>战队 B</th><th>比分</th>
+                                <th>日期</th><th>时间</th><th>胜晋 ID</th><th>败落 ID</th><th></th>
                             </tr>
                         </thead>
                         <tbody id="adminTable"></tbody>
                     </table>
                 </div>
-            </div>
+            </section>
+
+            <section class="view" id="view-teams">
+                <div class="page-title-bar">
+                    <div>
+                        <h2>战队库</h2>
+                        <p>集中维护战队资料，对阵图卡片会自动引用图标与主题色</p>
+                    </div>
+                    <div class="page-actions">
+                        <button class="btn-primary" onclick="openTeamModal()"><i class="fas fa-plus"></i> 添加战队</button>
+                    </div>
+                </div>
+                <div class="teams-grid" id="teamsGrid">
+                    <div class="empty-state">暂无战队数据，点击右上角添加</div>
+                </div>
+            </section>
         </main>
     </div>
 
-    <div class="modal-overlay" id="modalOverlay">
+    <div class="modal-overlay" id="matchModalOverlay">
         <div class="modal">
-            <h3 id="modalTitle">添加比赛</h3>
-            <input type="hidden" id="editId">
+            <h3><i class="fas fa-gamepad" style="color:var(--accent-cyan)"></i> <span id="matchModalTitle">添加比赛</span></h3>
+            <input type="hidden" id="editMatchId">
             <div class="form-grid">
                 <div class="form-group">
                     <label>比赛类型</label>
-                    <input type="text" id="mType" list="typeList" placeholder="如：胜者组、12进8">
+                    <input type="text" id="mType" list="typeList" placeholder="胜者组 / 败者组 / 总决赛">
                     <datalist id="typeList"></datalist>
                 </div>
                 <div class="form-group">
@@ -703,11 +938,11 @@
                 </div>
                 <div class="form-group">
                     <label>战队 A</label>
-                    <input type="text" id="mTeamA" placeholder="队伍名称">
+                    <input type="text" id="mTeamA" list="teamList" placeholder="输入战队名">
                 </div>
                 <div class="form-group">
                     <label>战队 B</label>
-                    <input type="text" id="mTeamB" placeholder="队伍名称">
+                    <input type="text" id="mTeamB" list="teamList" placeholder="输入战队名">
                 </div>
                 <div class="form-group">
                     <label>比分 A</label>
@@ -727,66 +962,213 @@
                 </div>
                 <div class="form-group">
                     <label>胜者晋级到 ID</label>
-                    <input type="number" id="mWinNext" placeholder="目标比赛ID">
+                    <input type="number" id="mWinNext" placeholder="目标比赛 ID">
                 </div>
                 <div class="form-group">
                     <label>败者落位到 ID</label>
-                    <input type="number" id="mLoseNext" placeholder="目标比赛ID">
+                    <input type="number" id="mLoseNext" placeholder="目标比赛 ID">
                 </div>
             </div>
             <div class="modal-actions">
-                <button class="btn btn-primary" onclick="saveMatch()">保存</button>
-                <button class="btn btn-ghost" onclick="closeModal()">取消</button>
+                <button class="btn-primary" onclick="saveMatch()">保存</button>
+                <button class="btn-ghost" onclick="closeMatchModal()">取消</button>
             </div>
         </div>
     </div>
 
+    <div class="modal-overlay" id="teamModalOverlay">
+        <div class="modal" style="width:420px;">
+            <h3><i class="fas fa-shield-alt" style="color:var(--accent-purple)"></i> <span id="teamModalTitle">添加战队</span></h3>
+            <input type="hidden" id="editTeamKey">
+            <div class="form-grid" style="grid-template-columns:1fr;">
+                <div class="form-group">
+                    <label>战队标识名（唯一键）</label>
+                    <input type="text" id="tKey" placeholder="如：BLG、T1（比赛数据中将引用此名）">
+                </div>
+                <div class="form-group">
+                    <label>显示名称</label>
+                    <input type="text" id="tName" placeholder="如：Bilibili Gaming">
+                </div>
+                <div class="form-group">
+                    <label>缩写 / 简称</label>
+                    <input type="text" id="tShort" placeholder="卡片上显示的字，如：BLG">
+                </div>
+                <div class="form-group">
+                    <label>图标 URL（可选）</label>
+                    <input type="text" id="tIcon" placeholder="https://... 留空则使用首字母色块">
+                </div>
+                <div class="form-group">
+                    <label>主题色</label>
+                    <input type="color" id="tColor" value="#6366f1">
+                </div>
+            </div>
+            <div class="modal-actions">
+                <button class="btn-primary" onclick="saveTeam()">保存</button>
+                <button class="btn-ghost" onclick="closeTeamModal()">取消</button>
+            </div>
+        </div>
+    </div>
+
+    <datalist id="teamList"></datalist>
+
 <script>
-let tournaments = {};
+// ===================== 数据核心 =====================
+let appData = { tournaments: {}, teams: {}, settings: { currentTournament: '' } };
 let currentTournament = '';
-let currentPage = 'bracket';
+let currentView = 'bracket';
 let zoomScale = 1;
-const COL_W = 280, ROW_H = 90;
-const STORAGE_KEY = 'bracket_pro_v7';
+const COL_W = 340, GAP = 160;
+const STORAGE_KEY = 'bracket_pro_v11';
+const IS_EXPORT_MODE = false; // 导出时会替换为 true
 
 function loadData() {
-    const raw = localStorage.getItem(STORAGE_KEY);
-    if (raw) { try { tournaments = JSON.parse(raw); } catch(e) { tournaments = {}; } }
-    if (!Object.keys(tournaments).length) { tournaments = createDefaultData(); saveData(); }
-    currentTournament = Object.keys(tournaments)[0];
+    // 检查是否是导出模式
+    if (document.body.classList.contains('export-mode')) {
+        return;
+    }
+
+    // 数据版本号 - 每次数据结构变更时递增
+    const DATA_VERSION = 'v5';
+    const VERSION_KEY = 'bracket_pro_version';
+
+    let storageAvailable = false;
+    try {
+        const test = '__storage_test__';
+        localStorage.setItem(test, test);
+        localStorage.removeItem(test);
+        storageAvailable = true;
+    } catch (e) {
+        console.warn('localStorage not available (file:// or private mode):', e);
+    }
+
+    if (storageAvailable) {
+        try {
+            const savedVersion = localStorage.getItem(VERSION_KEY);
+            const raw = localStorage.getItem(STORAGE_KEY);
+
+            // 如果版本不匹配或没有数据，使用默认数据
+            if (savedVersion !== DATA_VERSION || !raw) {
+                console.log('Data version mismatch or no data, using default');
+                appData = createDefaultData();
+                currentTournament = appData.settings.currentTournament;
+                saveData();
+                localStorage.setItem(VERSION_KEY, DATA_VERSION);
+                return;
+            }
+
+            if (raw) {
+                const parsed = JSON.parse(raw);
+                if (parsed && typeof parsed === 'object' && parsed.tournaments && typeof parsed.teams === 'object') {
+                    appData = parsed;
+                    currentTournament = (appData.settings && appData.settings.currentTournament) || Object.keys(appData.tournaments)[0] || '';
+                    if (!currentTournament) throw new Error('No tournament');
+                    return;
+                }
+            }
+        } catch (e) {
+            console.warn('Data load failed, resetting:', e);
+            try { localStorage.removeItem(STORAGE_KEY); localStorage.removeItem(VERSION_KEY); } catch (_) {}
+        }
+    }
+    appData = createDefaultData();
+    currentTournament = appData.settings.currentTournament;
 }
-function saveData() { localStorage.setItem(STORAGE_KEY, JSON.stringify(tournaments)); }
-function getMatches() { return tournaments[currentTournament] || []; }
-function setMatches(matches) { tournaments[currentTournament] = matches; saveData(); }
+function saveData() {
+    if (IS_EXPORT_MODE) return;
+    appData.settings.currentTournament = currentTournament;
+    try {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(appData));
+    } catch (e) {
+        console.warn('Save failed (localStorage unavailable):', e);
+    }
+}
+
+function getMatches() { return appData.tournaments[currentTournament] || []; }
+function setMatches(matches) { appData.tournaments[currentTournament] = matches; saveData(); }
 function getNextId() {
     const matches = getMatches();
     return matches.length === 0 ? 1 : Math.max(...matches.map(m => m.id)) + 1;
+}
+function getTeam(name) {
+    if (!name) return { name: '', short: '?', color: null, icon: null };
+    return appData.teams[name] || { name, short: name.charAt(0), color: null, icon: null };
 }
 
 function isLoserType(t) { return /败者|loser|losers/i.test(t); }
 function isFinalType(t) { return /总决赛|final|决赛(?!半)/i.test(t); }
 function isSemiType(t) { return /半决赛|semi/i.test(t); }
 
+function createDefaultTeams() {
+    const teams = {};
+    const add = (k, n, s, icon) => { teams[k] = { name: n, short: s, color: null, icon: icon }; };
+    add('AL', "Anyone's Legend", 'AL', 'https://esports-cdn.namitiyu.com/lol/team/FjBYl_bpqXM4Thw2Z2WYxwDIOJx1');
+    add('BLG', 'Bilibili Gaming', 'BLG', 'https://esports-cdn.namitiyu.com/lol/team/FuQ-HVlJW08a3QSsFNrwgDSrV-kn');
+    add('EDG', 'EDward Gaming', 'EDG', 'https://esports-cdn.namitiyu.com/lol/team/2f6a16771b9e8f03507e7f8a7307ab4e.png');
+    add('IG', 'Invictus Gaming', 'IG', 'https://esports-cdn.namitiyu.com/lol/team/8e0be89305eafd6f37503187a6fc4c53.png');
+    add('JDG', 'JD Gaming', 'JDG', 'https://esports-cdn.namitiyu.com/lol/team/FjTJM1hEw1EE9T_fTiz7W2efVrxU');
+    add('LGD', 'LGD Gaming', 'LGD', 'https://esports-cdn.namitiyu.com/lol/team/Fg_MRnJU_nJIN_fhBFBAoLoAscP5');
+    add('LNG', 'LNG Esports', 'LNG', 'https://esports-cdn.namitiyu.com/lol/team/5b00639e9203f5adac6655d783e11d88.png');
+    add('NIP', 'Ninjas in Pyjamas', 'NIP', 'https://esports-cdn.namitiyu.com/lol/team/FqCjTdpLzs0aJwMyocEK7zI1DTOi');
+    add('OMG', 'Oh My God', 'OMG', 'https://esports-cdn.namitiyu.com/lol/team/Fk1q1UZDRzxHTV8Eeqm47Z9djiPl');
+    add('TES', 'Top Esports', 'TES', 'https://esports-cdn.namitiyu.com/lol/team/1139c61f11e06147a05b9180b9ce064a.png');
+    add('TT', 'ThunderTalk Gaming', 'TT', 'https://esports-cdn.namitiyu.com/lol/team/Fi06LtV6yXZji05FCa8wywt68Zzm');
+    add('UP', 'Ultra Prime', 'UP', 'https://esports-cdn.namitiyu.com/lol/team/Fu4KY4VW4cFXNWhjpi3uyW5mCruN');
+    add('WBG', 'Weibo Gaming', 'WBG', 'https://esports-cdn.namitiyu.com/lol/team/FsGLCKNVEaNUowzakjbT75oqQIsY');
+    add('WE', 'Team WE', 'WE', 'https://esports-cdn.namitiyu.com/lol/team/a5e8b721fa3495424ab2f7f813ccfd9e.png');
+    add('FNC', 'Fnatic', 'FNC', 'https://esports-cdn.namitiyu.com/lol/team/FrCa25cDJVB_9-p2TJuiDysDDTlk');
+    add('G2', 'G2 Esports', 'G2', 'https://esports-cdn.namitiyu.com/lol/team/Fn8KDMp7ktyLFpTuoe4B7-WCxOAb');
+    add('GX', 'GIANTX', 'GX', 'https://esports-cdn.namitiyu.com/lol/team/FtWMTXjgkQnUmEq5zZ9NhXMK5zue');
+    add('KC', 'Karmine Corp', 'KC', 'https://esports-cdn.namitiyu.com/lol/team/FpvzFLOCAur7cd59-22EEQlzsSw0');
+    add('MKOI', 'Movistar KOI', 'MKOI', 'https://esports-cdn.namitiyu.com/lol/team/Fr-ZkZMxhVaAqqhW3bfj8oYTfSWR');
+    add('NAVI', 'Natus Vincere', 'NAVI', 'https://esports-cdn.namitiyu.com/lol/team/FlnX65PdxHfOuzVgTINE3CsooFku');
+    add('SK', 'SK Gaming', 'SK', 'https://esports-cdn.namitiyu.com/lol/team/FuLdUgOfQ3cPQGwVnVbuwev51wpV');
+    add('Shifters', 'Shifters', 'SFT', 'https://esports-cdn.namitiyu.com/lol/team/FsXALvZzwk09wnpYEQ-1SAy1jR29');
+    add('THRT', 'Team Heretics', 'THRT', 'https://esports-cdn.namitiyu.com/lol/team/FjUxNX1hCw0weLAFpDjuBphIwo5N');
+    add('VIT', 'Team Vitality', 'VIT', 'https://esports-cdn.namitiyu.com/lol/team/Foqt6-SaT1Zx6VcY0og9gEM4MMm7');
+    add('BFX', 'Brion Freditas', 'BFX', 'https://esports-cdn.namitiyu.com/lol/team/FlycExNPh_FPU6tqsmvMotdwigIt');
+    add('BRO', 'OK BRION', 'BRO', 'https://esports-cdn.namitiyu.com/lol/team/FlFdQU07TgJrOF4wvMOGFRJzg8KK');
+    add('DK', 'Dplus KIA', 'DK', 'https://esports-cdn.namitiyu.com/lol/team/Fg1Z7jhh5zluHsCcrWC2vOiiEo7s');
+    add('DNS', 'DN Freecs', 'DNS', 'https://esports-cdn.namitiyu.com/lol/team/FiREL-9p9kEsrBd0LMbO_gmBv6qC');
+    add('GEN', 'Gen.G', 'GEN', 'https://esports-cdn.namitiyu.com/lol/team/FmS7NLx8b7zRARpNmDkvDrhjKx0w');
+    add('HLE', 'Hanwha Life Esports', 'HLE', 'https://esports-cdn.namitiyu.com/lol/team/FosSfN6KzBxq4oiU_Xi7z_DJ4rMF');
+    add('KRX', 'Kwangdong Freecs', 'KRX', 'https://esports-cdn.namitiyu.com/lol/team/Fu9CGMGeE2DOMTzrpB8GeHI_jEZ5');
+    add('KT', 'KT Rolster', 'KT', 'https://esports-cdn.namitiyu.com/lol/team/Fqw0V_AbDcoKj78Xxm1tbGMYP0o2');
+    add('NS', 'Nongshim RedForce', 'NS', 'https://esports-cdn.namitiyu.com/lol/team/FgXx-XxZb5L3_QPcFFJAFKWVrHhE');
+    add('SLY', 'Sollty', 'SLY', 'https://esports-cdn.namitiyu.com/lol/team/Fg6VubPjFscWupO8_m8iO3bSKjfD');
+    add('Galions', 'Galions', 'GLN', 'https://esports-cdn.namitiyu.com/lol/team/FnLohItderar_lOc1tTBN2ZR0Tvd');
+    add('T1', 'T1', 'T1', 'https://esports-cdn.namitiyu.com/lol/team/FvlF-KaNF_aUW28gaY0-Uw5ITFoW');
+    return teams;
+}
+
 function createDefaultData() {
-    const data = {};
+    const data = { tournaments: {}, teams: createDefaultTeams(), settings: { currentTournament: '' } };
     const lpl = [];
     const add = (id, type, round, a, b, sa, sb, date, time, wn, ln) => {
         lpl.push({ id, type, roundName: round, teamA: a, teamB: b, scoreA: sa, scoreB: sb, date, time, winNextId: wn, loseNextId: ln });
     };
+    // 胜者组R1 (depth=0)
     add(1, '胜者组', '胜者组 R1', 'BLG', 'TES', 2, 1, '2026-05-12', '17:00', 5, 7);
     add(2, '胜者组', '胜者组 R1', 'JDG', 'WBG', 2, 0, '2026-05-12', '19:00', 5, 8);
     add(3, '胜者组', '胜者组 R1', 'NIP', 'LNG', 1, 2, '2026-05-13', '17:00', 6, 7);
     add(4, '胜者组', '胜者组 R1', 'IG',  'AL',  2, 1, '2026-05-13', '19:00', 6, 8);
+    // 胜者组R2 (depth=1)
     add(5, '胜者组', '胜者组 R2', null, null, 0, 0, '2026-05-14', '17:00', 11, 9);
     add(6, '胜者组', '胜者组 R2', null, null, 0, 0, '2026-05-15', '19:00', 11, 10);
+    // 败者组R1 (depth=0) - 接收胜者组R1的败者
     add(7, '败者组', '败者组 R1', null, null, 0, 0, '2026-05-16', '15:00', 9, null);
     add(8, '败者组', '败者组 R1', null, null, 0, 0, '2026-05-17', '17:00', 10, null);
+    // 败者组R2 (depth=1) - 接收败者组R1的晋级者
     add(9, '败者组', '败者组 R2', null, null, 0, 0, '2026-05-20', '16:00', 12, null);
     add(10, '败者组', '败者组 R2', null, null, 0, 0, '2026-05-21', '18:00', 12, null);
-    add(11, '胜者组', '胜者组 R3', null, null, 0, 0, '2026-05-22', '18:00', 13, 12);
+    // 胜者组R3 (depth=2) - 胜者组决赛
+    add(11, '胜者组', '胜者组 R3', null, null, 0, 0, '2026-05-22', '18:00', 14, 13);
+    // 败者组R3 (depth=2) - 接收败者组R2的晋级者
     add(12, '败者组', '败者组 R3', null, null, 0, 0, '2026-05-23', '17:00', 13, null);
-    add(13, '总决赛', '总决赛', null, null, 0, 0, '2026-05-24', '18:00', null, null);
-    data['LPL 夏季赛 2026'] = lpl;
+    // 败者组R4 (depth=3) - 败者组决赛，接收败者组R3和胜者组R3的败者
+    add(13, '败者组', '败者组 R4', null, null, 0, 0, '2026-05-24', '16:00', 14, null);
+    // 总决赛 (depth=4) - 接收胜者组R3胜者和败者组R4胜者
+    add(14, '总决赛', '总决赛', null, null, 0, 0, '2026-05-25', '18:00', null, null);
+    data.tournaments['LPL 夏季赛 2026'] = lpl;
 
     const lck = [];
     const add2 = (id, type, round, a, b, sa, sb, date, time, wn, ln) => {
@@ -799,11 +1181,11 @@ function createDefaultData() {
     add2(3, '胜者组', '胜者组 R2', null, null, 0, 0, '2026-05-25', '18:00', 8, 7);
     add2(7, '败者组', '败者组 R2', null, null, 0, 0, '2026-05-28', '17:00', 8, null);
     add2(8, '总决赛', '总决赛', null, null, 0, 0, '2026-06-02', '18:00', null, null);
-    data['LCK 夏季赛 2026'] = lck;
-    data['MSI 2026'] = [];
+    data.tournaments['LCK 夏季赛 2026'] = lck;
+    data.tournaments['MSI 2026'] = [];
+    data.settings.currentTournament = 'LPL 夏季赛 2026';
     return data;
 }
-
 function propagate() {
     const matches = getMatches();
     matches.forEach(m => { m.winner = null; m.loser = null; m.isCompleted = false;
@@ -835,6 +1217,7 @@ function fillSlot(match, team) {
     return false;
 }
 
+// ===================== 布局算法 =====================
 function computeDepth(matches) {
     matches.forEach(m => m.depth = null);
     const hasParent = new Set();
@@ -857,58 +1240,113 @@ function computeDepth(matches) {
         });
     }
     matches.forEach(m => { if (m.depth === null) m.depth = 0; });
-    const nonFinalMatches = matches.filter(m => !isFinalType(m.type));
-    const maxNonFinalDepth = nonFinalMatches.length > 0 ? Math.max(...nonFinalMatches.map(m => m.depth)) : 0;
-    matches.filter(m => isFinalType(m.type)).forEach(m => { m.depth = maxNonFinalDepth + 1; });
 }
 
 function computeRows(matches) {
-    matches.forEach(m => m.idealRow = null);
-    const sources = matches.filter(m => m.depth === 0);
-    const upperSources = sources.filter(m => !isLoserType(m.type));
-    const lowerSources = sources.filter(m => isLoserType(m.type));
-    upperSources.sort((a,b) => a.id - b.id).forEach((m, i) => m.idealRow = i * 2);
-    lowerSources.sort((a,b) => a.id - b.id).forEach((m, i) => m.idealRow = i * 2);
+    const BASE_Y = 10;           // 对阵图起始 Y 坐标
+    const MATCH_GAP = 160;       // 同轮比赛之间的垂直间距
+    const LOSER_STEP = 50;       // 败者组每轮向上的阶梯步长
 
-    let changed = true;
-    while (changed) {
-        changed = false;
-        matches.forEach(m => {
-            if (m.idealRow !== null) return;
-            const parents = matches.filter(p => p.winNextId === m.id || p.loseNextId === m.id);
-            const ready = parents.filter(p => p.idealRow !== null);
-            if (ready.length === parents.length && parents.length > 0) {
-                m.idealRow = ready.reduce((s, p) => s + p.idealRow, 0) / ready.length;
-                changed = true;
+    // 分类：胜者组、败者组、总决赛
+    const winners = matches.filter(m => !isLoserType(m.type) && !isFinalType(m.type));
+    const losers = matches.filter(m => isLoserType(m.type));
+    const finals = matches.filter(m => isFinalType(m.type));
+
+    // 辅助：按晋级关系（winNextId）将比赛分层
+    function groupRounds(items, nextField) {
+        if (items.length === 0) return [];
+        const pointed = new Set();
+        items.forEach(m => {
+            if (m[nextField]) {
+                const next = items.find(x => x.id === m[nextField]);
+                if (next) pointed.add(next.id);
             }
         });
+        const rounds = [];
+        let current = items.filter(m => !pointed.has(m.id));
+        while (current.length > 0) {
+            rounds.push([...current]);
+            const nextIds = new Set();
+            current.forEach(m => {
+                if (m[nextField]) {
+                    const next = items.find(x => x.id === m[nextField]);
+                    if (next) {
+                        let alreadyIn = false;
+                        for (const r of rounds) {
+                            if (r.includes(next)) { alreadyIn = true; break; }
+                        }
+                        if (!alreadyIn) nextIds.add(next.id);
+                    }
+                }
+            });
+            current = items.filter(m => nextIds.has(m.id));
+        }
+        return rounds;
     }
 
-    const maxDepth = Math.max(...matches.map(m => m.depth));
-    for (let d = 0; d <= maxDepth; d++) {
-        const colMatches = matches.filter(m => m.depth === d);
-        const upper = colMatches.filter(m => !isLoserType(m.type));
-        const lower = colMatches.filter(m => isLoserType(m.type));
-
-        upper.sort((a,b) => a.idealRow - b.idealRow);
-        let currentRow = 0;
-        upper.forEach((m, i) => {
-            if (i === 0) m.gridRow = Math.max(0, Math.round(m.idealRow));
-            else m.gridRow = Math.max(currentRow + 2, Math.round(m.idealRow));
-            currentRow = m.gridRow;
+    // ========== 胜者组：横向金字塔进阶 ==========
+    // 规则：R1 垂直均匀分布；R2+ 位于子比赛垂直中点；
+    //       最顶层（决胜轮）向下偏移 LOSER_STEP，便于与总决赛/败者组连线对齐
+    const wRounds = groupRounds(winners, 'winNextId');
+    if (wRounds.length > 0) {
+        wRounds[0].sort((a, b) => a.id - b.id);
+        wRounds[0].forEach((m, i) => {
+            m.gridRow = BASE_Y + i * MATCH_GAP;
         });
+    }
+    for (let r = 1; r < wRounds.length; r++) {
+        const round = wRounds[r];
+        for (const m of round) {
+            const children = wRounds[r - 1].filter(child => child.winNextId === m.id);
+            if (children.length > 0) {
+                let avgY = children.reduce((sum, c) => sum + c.gridRow, 0) / children.length;
+                // 最顶层向下微调，使连线更协调
+                if (r === wRounds.length - 1 && wRounds.length >= 2) {
+                    avgY += LOSER_STEP;
+                }
+                m.gridRow = Math.round(avgY);
+            }
+        }
+    }
 
-        const base = upper.length > 0 ? Math.max(...upper.map(m => m.gridRow)) + 4 : 0;
-        lower.sort((a,b) => a.idealRow - b.idealRow);
-        currentRow = base;
-        lower.forEach((m, i) => {
-            if (i === 0) m.gridRow = Math.max(base, Math.round(m.idealRow));
-            else m.gridRow = Math.max(currentRow + 2, Math.round(m.idealRow));
-            currentRow = m.gridRow;
+    // ========== 败者组：阶梯上的进阶 ==========
+    // 规则：从胜者组 R1 底部下方 MATCH_GAP 处开始，
+    //       每往右一轮（进阶），整体向上抬升 LOSER_STEP
+    const winnerMaxY = (wRounds.length > 0 && wRounds[0].length > 0)
+        ? BASE_Y + (wRounds[0].length - 1) * MATCH_GAP
+        : BASE_Y;
+    const loserBaseY = winnerMaxY + MATCH_GAP;
+
+    const lRounds = groupRounds(losers, 'winNextId');
+    for (let r = 0; r < lRounds.length; r++) {
+        const round = lRounds[r];
+        round.sort((a, b) => a.id - b.id);
+        const roundOffset = r * LOSER_STEP;
+        round.forEach((m, i) => {
+            m.gridRow = loserBaseY - roundOffset + i * MATCH_GAP;
         });
+    }
+
+    // ========== 总决赛：最高和最低中间 ==========
+    // 规则：垂直位置 = 除总决赛外所有卡片的 (最高位置 + 最低位置) / 2
+    if (finals.length > 0) {
+        const allYs = matches
+            .filter(m => !isFinalType(m.type) && m.gridRow !== undefined)
+            .map(m => m.gridRow);
+        if (allYs.length > 0) {
+            const minY = Math.min(...allYs);
+            const maxY = Math.max(...allYs);
+            const centerY = Math.round((minY + maxY) / 2);
+            finals.forEach(m => {
+                m.gridRow = centerY;
+            });
+        } else {
+            finals.forEach(m => {
+                m.gridRow = BASE_Y;
+            });
+        }
     }
 }
-
 function getColName(matches, depth) {
     const colMatches = matches.filter(m => m.depth === depth);
     const finals = colMatches.find(m => isFinalType(m.type));
@@ -921,7 +1359,6 @@ function getColName(matches, depth) {
     if (lower.length > 0) return lower[0].roundName;
     return '';
 }
-
 function displayId(match) {
     if (isFinalType(match.type)) return 'FINALS';
     return 'GAME' + match.id;
@@ -941,12 +1378,39 @@ function safeTypeClass(type) {
     return type.replace(/[^a-zA-Z0-9一-龥]/g, '');
 }
 
+// ===================== 渲染对阵图 =====================
 function renderBracket() {
     propagate();
     const matches = getMatches();
+    const canvas = document.getElementById('canvas');
+    const scrollArea = document.getElementById('bracketScrollArea');
+
     if (matches.length === 0) {
         document.getElementById('gridHeader').innerHTML = '<div style="text-align:center;color:var(--text-muted);padding:40px;">暂无比赛数据</div>';
-        document.getElementById('gridBody').innerHTML = '<svg class="svg-layer" id="svgLayer"><defs><linearGradient id="gradWin"><stop offset="0%" stop-color="#38bdf8" stop-opacity="0.3"/><stop offset="100%" stop-color="#38bdf8" stop-opacity="0.8"/></linearGradient><linearGradient id="gradLose"><stop offset="0%" stop-color="#f87171" stop-opacity="0.3"/><stop offset="100%" stop-color="#f87171" stop-opacity="0.8"/></linearGradient></defs></svg>';
+        const emptyBody = document.getElementById('gridBody');
+        emptyBody.innerHTML = '';
+        const emptySvg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+        emptySvg.setAttribute('class', 'svg-layer');
+        emptySvg.setAttribute('id', 'svgLayer');
+        const emptyDefs = document.createElementNS('http://www.w3.org/2000/svg', 'defs');
+        const gWin = document.createElementNS('http://www.w3.org/2000/svg', 'linearGradient');
+        gWin.setAttribute('id', 'gradWin');
+        const sW1 = document.createElementNS('http://www.w3.org/2000/svg', 'stop');
+        sW1.setAttribute('offset', '0%'); sW1.setAttribute('stop-color', '#38bdf8'); sW1.setAttribute('stop-opacity', '0.3');
+        const sW2 = document.createElementNS('http://www.w3.org/2000/svg', 'stop');
+        sW2.setAttribute('offset', '100%'); sW2.setAttribute('stop-color', '#38bdf8'); sW2.setAttribute('stop-opacity', '0.8');
+        gWin.appendChild(sW1); gWin.appendChild(sW2);
+        const gLose = document.createElementNS('http://www.w3.org/2000/svg', 'linearGradient');
+        gLose.setAttribute('id', 'gradLose');
+        const sL1 = document.createElementNS('http://www.w3.org/2000/svg', 'stop');
+        sL1.setAttribute('offset', '0%'); sL1.setAttribute('stop-color', '#f87171'); sL1.setAttribute('stop-opacity', '0.3');
+        const sL2 = document.createElementNS('http://www.w3.org/2000/svg', 'stop');
+        sL2.setAttribute('offset', '100%'); sL2.setAttribute('stop-color', '#f87171'); sL2.setAttribute('stop-opacity', '0.8');
+        gLose.appendChild(sL1); gLose.appendChild(sL2);
+        emptyDefs.appendChild(gWin); emptyDefs.appendChild(gLose);
+        emptySvg.appendChild(emptyDefs);
+        emptyBody.appendChild(emptySvg);
+        if (canvas) { canvas.style.width = ''; canvas.style.height = ''; }
         return;
     }
 
@@ -955,7 +1419,9 @@ function renderBracket() {
 
     const maxDepth = Math.max(...matches.map(m => m.depth));
     const maxRow = Math.max(...matches.map(m => m.gridRow || 0));
+    const totalWidth = ((maxDepth + 1) * COL_W) + 'px';
 
+    // 渲染固定头部
     const headerEl = document.getElementById('gridHeader');
     headerEl.innerHTML = '';
     for (let d = 0; d <= maxDepth; d++) {
@@ -964,23 +1430,51 @@ function renderBracket() {
         div.textContent = getColName(matches, d);
         headerEl.appendChild(div);
     }
+    headerEl.style.width = totalWidth;
+    headerEl.style.zoom = zoomScale;
 
+    // 渲染滚动内容
     const bodyEl = document.getElementById('gridBody');
+    const cards = bodyEl.querySelectorAll('.match-card');
+    cards.forEach(c => c.remove());
     const svgEl = document.getElementById('svgLayer');
-    bodyEl.innerHTML = '';
-    bodyEl.appendChild(svgEl);
-    bodyEl.style.height = ((maxRow + 2) * ROW_H) + 'px';
-    bodyEl.style.width = ((maxDepth + 1) * COL_W) + 'px';
+    if (!svgEl) {
+        const newSvg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+        newSvg.setAttribute('class', 'svg-layer');
+        newSvg.setAttribute('id', 'svgLayer');
+        bodyEl.insertBefore(newSvg, bodyEl.firstChild);
+    }
+    bodyEl.style.height = (maxRow + GAP + 100) + 'px';
+    bodyEl.style.width = totalWidth;
+
+    if (canvas) {
+        const maxCardRight = Math.max(...matches.map(m => (m.depth || 0) * COL_W + 15 + 250));
+        const maxCardBottom = Math.max(...matches.map(m => (m.gridRow || 0) + 100));
+        const canvasWidth = Math.max(maxCardRight + 30, (scrollArea ? scrollArea.clientWidth * 1.5 : 0));
+        const canvasHeight = Math.max(maxCardBottom + 30, (scrollArea ? scrollArea.clientHeight * 3 : 0));
+        canvas.style.width = canvasWidth + 'px';
+        canvas.style.height = canvasHeight + 'px';
+    }
 
     matches.forEach(m => {
         if (m.depth === undefined || m.gridRow === undefined) return;
         const card = createCard(m, matches);
-        card.style.left = (m.depth * COL_W + 15) + 'px';
-        card.style.top = (m.gridRow * ROW_H + 4) + 'px';
+        card.style.left = (m.depth * COL_W + 45) + 'px';
+        card.style.top = m.gridRow + 'px';
         bodyEl.appendChild(card);
     });
 
-    requestAnimationFrame(() => drawConnections(matches, maxDepth, maxRow));
+    requestAnimationFrame(() => drawConnections(matches));
+}
+
+function renderTeamAvatar(teamName, isWinner, isLoser) {
+    const team = getTeam(teamName);
+    const cls = `team-avatar ${isWinner ? 'winner' : ''} ${isLoser ? 'loser' : ''}`;
+    if (team.icon) {
+        return `<div class="${cls}" style="background:${team.color || 'transparent'}"><img src="${team.icon}" alt=""></div>`;
+    }
+    const style = team.color ? `background:${team.color}20;border-color:${team.color}40;color:${team.color};` : '';
+    return `<div class="${cls}" style="${style}">${team.short || '?'}</div>`;
 }
 
 function createCard(match, allMatches) {
@@ -988,7 +1482,9 @@ function createCard(match, allMatches) {
     const card = document.createElement('div');
     card.className = `match-card type-${safeTypeClass(match.type)} ${isFinal ? 'is-final' : ''}`;
     card.dataset.id = match.id;
-    card.onclick = () => openModal(match.id);
+    if (!IS_EXPORT_MODE) {
+        card.onclick = () => openMatchModal(match.id);
+    }
 
     const teamA = match.teamA || '待定';
     const teamB = match.teamB || '待定';
@@ -996,15 +1492,23 @@ function createCard(match, allMatches) {
 
     const clsA = match.winner === match.teamA ? 'win' : (match.loser === match.teamA ? 'lose' : 'pending');
     const clsB = match.winner === match.teamB ? 'win' : (match.loser === match.teamB ? 'lose' : 'pending');
-    const avaA = match.winner === match.teamA ? 'winner' : (match.loser === match.teamA ? 'loser' : '');
-    const avaB = match.winner === match.teamB ? 'winner' : (match.loser === match.teamB ? 'loser' : '');
 
     const status = done ? '<span class="match-status done">已结束</span>' :
                    (match.teamA && match.teamB ? '<span class="match-status wait">未开始</span>' :
                    '<span class="match-status unk">待定</span>');
 
-    const scoreCls = done ? 'done' : 'vs';
-    const scoreText = done ? `${match.scoreA} : ${match.scoreB}` : 'VS';
+    let scoreHtml;
+    if (done) {
+        const aWin = match.scoreA > match.scoreB;
+        const bWin = match.scoreB > match.scoreA;
+        scoreHtml = `<div class="score-center done">
+            <span class="${aWin ? 'score-win' : 'score-lose'}">${match.scoreA}</span>
+            <span class="score-sep">-</span>
+            <span class="${bWin ? 'score-win' : 'score-lose'}">${match.scoreB}</span>
+        </div>`;
+    } else {
+        scoreHtml = `<div class="score-center vs">VS</div>`;
+    }
 
     const winRef = match.winNextId ? displayRefId(match.winNextId, allMatches) : '';
     const loseRef = match.loseNextId ? displayRefId(match.loseNextId, allMatches) : '';
@@ -1022,13 +1526,13 @@ function createCard(match, allMatches) {
         </div>
         <div class="match-body">
             <div class="team-side">
-                <div class="team-avatar ${avaA}">${teamA.charAt(0)}</div>
+                ${renderTeamAvatar(match.teamA, match.winner === match.teamA, match.loser === match.teamA)}
                 <span class="team-name ${clsA}">${teamA}</span>
             </div>
-            <div class="score-center ${scoreCls}">${scoreText}</div>
+            ${scoreHtml}
             <div class="team-side right">
                 <span class="team-name ${clsB}">${teamB}</span>
-                <div class="team-avatar ${avaB}">${teamB.charAt(0)}</div>
+                ${renderTeamAvatar(match.teamB, match.winner === match.teamB, match.loser === match.teamB)}
             </div>
         </div>
         <div class="match-footer">
@@ -1044,17 +1548,64 @@ function createCard(match, allMatches) {
     return card;
 }
 
-function drawConnections(matches, maxDepth, maxRow) {
+// ===================== 连线绘制 =====================
+function drawConnections(matches) {
     const svg = document.getElementById('svgLayer');
-    const w = (maxDepth + 1) * COL_W;
-    const h = (maxRow + 2) * ROW_H;
-    svg.setAttribute('width', w);
-    svg.setAttribute('height', h);
-    svg.style.width = w + 'px';
-    svg.style.height = h + 'px';
+    if (!svg) return;
 
-    const defs = svg.querySelector('defs');
-    svg.innerHTML = '';
+    // 获取所有卡片的实际边界，计算 SVG 所需尺寸
+    const cards = document.querySelectorAll('.match-card');
+    let maxRight = 0, maxBottom = 0;
+    cards.forEach(card => {
+        const rect = card.getBoundingClientRect();
+        const gridBody = document.getElementById('gridBody');
+        if (gridBody) {
+            const gridRect = gridBody.getBoundingClientRect();
+            const right = (rect.left - gridRect.left) + rect.width + 100; // +100 余量
+            const bottom = (rect.top - gridRect.top) + rect.height + 100;
+            maxRight = Math.max(maxRight, right);
+            maxBottom = Math.max(maxBottom, bottom);
+        }
+    });
+
+    // 如果没有卡片，使用数据模型作为后备
+    if (maxRight === 0) {
+        const maxDepth = Math.max(...matches.map(m => m.depth || 0), 0);
+        const maxRow = Math.max(...matches.map(m => m.gridRow || 0), 0);
+        maxRight = (maxDepth + 1) * COL_W;
+        maxBottom = maxRow + GAP + 100;
+    }
+
+    svg.setAttribute('width', maxRight);
+    svg.setAttribute('height', maxBottom);
+    svg.style.width = maxRight + 'px';
+    svg.style.height = maxBottom + 'px';
+
+    // 清空现有路径，保留 defs
+    let defs = svg.querySelector('defs');
+    while (svg.firstChild) { svg.removeChild(svg.firstChild); }
+    if (!defs) {
+        defs = document.createElementNS('http://www.w3.org/2000/svg', 'defs');
+        const gradWin = document.createElementNS('http://www.w3.org/2000/svg', 'linearGradient');
+        gradWin.setAttribute('id', 'gradWin');
+        gradWin.setAttribute('x1', '0%'); gradWin.setAttribute('y1', '0%');
+        gradWin.setAttribute('x2', '100%'); gradWin.setAttribute('y2', '0%');
+        const stopW1 = document.createElementNS('http://www.w3.org/2000/svg', 'stop');
+        stopW1.setAttribute('offset', '0%'); stopW1.setAttribute('stop-color', '#38bdf8'); stopW1.setAttribute('stop-opacity', '0.3');
+        const stopW2 = document.createElementNS('http://www.w3.org/2000/svg', 'stop');
+        stopW2.setAttribute('offset', '100%'); stopW2.setAttribute('stop-color', '#38bdf8'); stopW2.setAttribute('stop-opacity', '0.8');
+        gradWin.appendChild(stopW1); gradWin.appendChild(stopW2);
+        const gradLose = document.createElementNS('http://www.w3.org/2000/svg', 'linearGradient');
+        gradLose.setAttribute('id', 'gradLose');
+        gradLose.setAttribute('x1', '0%'); gradLose.setAttribute('y1', '0%');
+        gradLose.setAttribute('x2', '100%'); gradLose.setAttribute('y2', '0%');
+        const stopL1 = document.createElementNS('http://www.w3.org/2000/svg', 'stop');
+        stopL1.setAttribute('offset', '0%'); stopL1.setAttribute('stop-color', '#f87171'); stopL1.setAttribute('stop-opacity', '0.3');
+        const stopL2 = document.createElementNS('http://www.w3.org/2000/svg', 'stop');
+        stopL2.setAttribute('offset', '100%'); stopL2.setAttribute('stop-color', '#f87171'); stopL2.setAttribute('stop-opacity', '0.8');
+        gradLose.appendChild(stopL1); gradLose.appendChild(stopL2);
+        defs.appendChild(gradWin); defs.appendChild(gradLose);
+    }
     svg.appendChild(defs);
 
     matches.forEach(m => {
@@ -1062,46 +1613,148 @@ function drawConnections(matches, maxDepth, maxRow) {
         if (m.loseNextId) drawLine(svg, m, m.loseNextId, 'lose-path', matches);
     });
 }
-
 function drawLine(svg, fromMatch, toId, className, allMatches) {
+    const toMatch = allMatches.find(m => m.id === toId);
+    if (!toMatch) return;
+
+    // 通过 DOM 查询获取卡片的实际位置
     const fromCard = document.querySelector(`.match-card[data-id="${fromMatch.id}"]`);
-    const toCard = document.querySelector(`.match-card[data-id="${toId}"]`);
+    const toCard = document.querySelector(`.match-card[data-id="${toMatch.id}"]`);
     if (!fromCard || !toCard) return;
 
-    const body = document.getElementById('gridBody');
-    const bRect = body.getBoundingClientRect();
-    const fRect = fromCard.getBoundingClientRect();
-    const tRect = toCard.getBoundingClientRect();
+    // 获取相对于 gridBody 的位置
+    const gridBody = document.getElementById('gridBody');
+    if (!gridBody) return;
+    const gridRect = gridBody.getBoundingClientRect();
+    const fromRect = fromCard.getBoundingClientRect();
+    const toRect = toCard.getBoundingClientRect();
 
-    // 关键修复：将屏幕像素转换为逻辑坐标，以适配 CSS transform 缩放
-    const x1 = (fRect.right - bRect.left) / zoomScale;
-    const y1 = (fRect.top + fRect.height / 2 - bRect.top) / zoomScale;
-    const x2 = (tRect.left - bRect.left) / zoomScale;
-    const y2 = (tRect.top + tRect.height / 2 - bRect.top) / zoomScale;
+    // 计算相对于 gridBody 的坐标
+    const x1 = (fromRect.left - gridRect.left) + fromRect.width;
+    const y1 = (fromRect.top - gridRect.top) + fromRect.height / 2;
+    const x2 = (toRect.left - gridRect.left);
+    const y2 = (toRect.top - gridRect.top) + toRect.height / 2;
 
-    const cp1x = x1 + (x2 - x1) * 0.5;
-    const cp2x = x2 - (x2 - x1) * 0.5;
+    const gap = x2 - x1;
+    const extend = Math.max(gap * 0.5, 40);
+    const cp1x = x1 + extend;
+    const cp2x = x2 - extend;
+
+    const dy = y2 - y1;
+    let cp1y = y1 + dy * 0.3;
+    let cp2y = y2 - dy * 0.3;
+
+    if (Math.abs(dy) < 1) {
+        const offset = Math.min(gap * 0.15, 25);
+        cp1y = y1 + offset;
+        cp2y = y2 - offset;
+    }
 
     const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
-    path.setAttribute('d', `M ${x1} ${y1} C ${cp1x} ${y1}, ${cp2x} ${y2}, ${x2} ${y2}`);
+    path.setAttribute('d', `M ${x1} ${y1} C ${cp1x} ${cp1y}, ${cp2x} ${cp2y}, ${x2} ${y2}`);
     path.setAttribute('class', className);
     svg.appendChild(path);
 }
-
-function updateTypeList() {
-    const matches = getMatches();
-    const types = [...new Set(matches.map(m => m.type))];
-    const datalist = document.getElementById('typeList');
-    datalist.innerHTML = '';
-    const defaults = ['胜者组', '败者组', '半决赛', '总决赛'];
-    [...defaults, ...types.filter(t => !defaults.includes(t))].forEach(t => {
-        const opt = document.createElement('option'); opt.value = t; datalist.appendChild(opt);
+function renderTournamentPanel() {
+    const container = document.getElementById('tournamentPanelList');
+    if (!container) return;
+    container.innerHTML = '';
+    Object.keys(appData.tournaments).forEach(name => {
+        const div = document.createElement('div');
+        div.className = 'panel-item ' + (name === currentTournament ? 'active' : '');
+        div.innerHTML = `<span>${name}</span><button class="del-btn" onclick="event.stopPropagation();delTournament('${name.replace(/'/g,"\'")}')"><i class="fas fa-trash"></i></button>`;
+        div.onclick = () => { switchTournament(name); toggleTournamentPanel(false); };
+        container.appendChild(div);
     });
+    const nameEl = document.getElementById('currentTournamentName');
+    if (nameEl) nameEl.textContent = currentTournament;
+}
+function toggleTournamentPanel(forceState) {
+    const trigger = document.getElementById('tournamentTrigger');
+    const panel = document.getElementById('tournamentPanel');
+    if (!panel || !trigger) return;
+    const isOpen = forceState !== undefined ? !forceState : panel.classList.contains('open');
+    if (isOpen) {
+        panel.classList.remove('open'); trigger.classList.remove('open');
+    } else {
+        renderTournamentPanel(); panel.classList.add('open'); trigger.classList.add('open');
+    }
+}
+function switchTournament(name) {
+    currentTournament = name;
+    const nameEl = document.getElementById('currentTournamentName');
+    if (nameEl) nameEl.textContent = name;
+    if (currentView === 'bracket') renderBracket();
+    else if (currentView === 'admin') renderAdmin();
+}
+function addTournament() {
+    const name = prompt('新赛事名称:', '新赛事 ' + (Object.keys(appData.tournaments).length + 1));
+    if (!name || appData.tournaments[name]) return;
+    appData.tournaments[name] = [];
+    saveData(); renderTournamentPanel(); switchTournament(name);
+}
+function delTournament(name) {
+    if (!confirm(`删除赛事 "${name}"？`)) return;
+    delete appData.tournaments[name];
+    saveData();
+    const keys = Object.keys(appData.tournaments);
+    if (keys.length === 0) { appData.tournaments['默认赛事'] = []; saveData(); }
+    if (currentTournament === name) switchTournament(Object.keys(appData.tournaments)[0]);
+    else renderTournamentPanel();
 }
 
+// ===================== 视图切换 =====================
+function switchView(view) {
+    currentView = view;
+    document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+    const viewEl = document.getElementById('view-' + view);
+    if (viewEl) viewEl.classList.add('active');
+    document.querySelectorAll('.nav-item').forEach(b => b.classList.remove('active'));
+    const navEl = document.getElementById('nav-' + view);
+    if (navEl) navEl.classList.add('active');
+
+    const zoomControl = document.getElementById('zoomControl');
+    if (zoomControl) zoomControl.style.display = (view === 'bracket') ? 'flex' : 'none';
+
+    if (view === 'bracket') renderBracket();
+    else if (view === 'admin') renderAdmin();
+    else if (view === 'teams') renderTeams();
+}
+function syncBracket() { if (currentView === 'bracket') renderBracket(); }
+
+// ===================== 缩放（Header 同步） =====================
+function zoom(delta) {
+    zoomScale = Math.max(0.3, Math.min(2, zoomScale + delta));
+    const canvas = document.getElementById('canvas');
+    const zoomVal = document.getElementById('zoomVal');
+    const gridHeader = document.getElementById('gridHeader');
+    if (canvas) {
+        canvas.style.zoom = zoomScale;
+    }
+    if (gridHeader) {
+        gridHeader.style.zoom = zoomScale;
+    }
+    if (zoomVal) zoomVal.textContent = Math.round(zoomScale * 100) + '%';
+}
+function zoomTo(v) {
+    zoomScale = v;
+    const canvas = document.getElementById('canvas');
+    const zoomVal = document.getElementById('zoomVal');
+    const gridHeader = document.getElementById('gridHeader');
+    if (canvas) {
+        canvas.style.zoom = zoomScale;
+    }
+    if (gridHeader) {
+        gridHeader.style.zoom = zoomScale;
+    }
+    if (zoomVal) zoomVal.textContent = Math.round(zoomScale * 100) + '%';
+}
+
+// ===================== 赛程数据页 =====================
 function renderAdmin() {
     const matches = getMatches();
     const tbody = document.getElementById('adminTable');
+    if (!tbody) return;
     tbody.innerHTML = '';
 
     matches.sort((a,b) => a.id - b.id).forEach(m => {
@@ -1110,23 +1763,21 @@ function renderAdmin() {
             <td><b>${displayId(m)}</b></td>
             <td><input class="admin-input" value="${m.type}" onchange="updateField(${m.id},'type',this.value)" style="width:100px" list="adminTypeList"></td>
             <td><input class="admin-input" value="${m.roundName||''}" onchange="updateField(${m.id},'roundName',this.value)"></td>
-            <td><input class="admin-input" value="${m.teamA||''}" onchange="updateField(${m.id},'teamA',this.value)"></td>
-            <td><input class="admin-input" value="${m.teamB||''}" onchange="updateField(${m.id},'teamB',this.value)"></td>
+            <td>${teamChip(m.teamA)}</td>
+            <td>${teamChip(m.teamB)}</td>
             <td><input class="admin-input" value="${m.scoreA}:${m.scoreB}" onchange="updateScore(${m.id},this.value)" style="width:70px"></td>
             <td><input class="admin-input" type="date" value="${m.date||''}" onchange="updateField(${m.id},'date',this.value)" style="width:120px"></td>
             <td><input class="admin-input" type="time" value="${m.time||''}" onchange="updateField(${m.id},'time',this.value)" style="width:90px"></td>
             <td><input class="admin-input" type="number" value="${m.winNextId||''}" onchange="updateField(${m.id},'winNextId',this.value?parseInt(this.value):null)" style="width:70px"></td>
             <td><input class="admin-input" type="number" value="${m.loseNextId||''}" onchange="updateField(${m.id},'loseNextId',this.value?parseInt(this.value):null)" style="width:70px"></td>
-            <td><button class="del-row-btn" onclick="deleteMatch(${m.id})"><i class="fas fa-trash"></i></button></td>
+            <td><button class="del-btn" onclick="deleteMatch(${m.id})"><i class="fas fa-trash"></i></button></td>
         `;
         tbody.appendChild(tr);
     });
 
     let adminDatalist = document.getElementById('adminTypeList');
     if (!adminDatalist) {
-        adminDatalist = document.createElement('datalist');
-        adminDatalist.id = 'adminTypeList';
-        document.body.appendChild(adminDatalist);
+        adminDatalist = document.createElement('datalist'); adminDatalist.id = 'adminTypeList'; document.body.appendChild(adminDatalist);
     }
     adminDatalist.innerHTML = '';
     const types = [...new Set(matches.map(m => m.type))];
@@ -1134,18 +1785,21 @@ function renderAdmin() {
     [...defaults, ...types.filter(t => !defaults.includes(t))].forEach(t => {
         const opt = document.createElement('option'); opt.value = t; adminDatalist.appendChild(opt);
     });
-
-    document.getElementById('adminSubTitle').textContent = `${currentTournament} · ${matches.length} 场比赛`;
 }
-
+function teamChip(name) {
+    if (!name) return '<span style="color:var(--text-muted)">待定</span>';
+    const t = getTeam(name);
+    const style = t.color ? `background:${t.color}20;color:${t.color};border-color:${t.color}30;` : '';
+    const avatar = t.icon ? `<img src="${t.icon}" style="width:100%;height:100%;object-fit:cover;">` : (t.short || name.charAt(0));
+    return `<span class="team-chip"><span class="mini-avatar" style="${style}">${avatar}</span>${name}</span>`;
+}
 function updateField(id, field, value) {
     const matches = getMatches();
     const m = matches.find(x => x.id === id);
     if (!m) return;
     m[field] = value;
     setMatches(matches);
-    showSaveStatus();
-    if (currentPage === 'bracket') renderBracket();
+    if (currentView === 'bracket') renderBracket();
 }
 function updateScore(id, val) {
     const parts = val.split(':');
@@ -1155,8 +1809,7 @@ function updateScore(id, val) {
         m.scoreA = parseInt(parts[0]) || 0;
         m.scoreB = parseInt(parts[1]) || 0;
         setMatches(matches);
-        showSaveStatus();
-        if (currentPage === 'bracket') renderBracket();
+        if (currentView === 'bracket') renderBracket();
     }
 }
 function deleteMatch(id) {
@@ -1174,20 +1827,106 @@ function deleteMatch(id) {
     });
     setMatches(matches);
     renderAdmin();
-    if (currentPage === 'bracket') renderBracket();
-}
-function showSaveStatus() {
-    const el = document.getElementById('adminStatus');
-    el.style.display = 'inline-flex';
-    clearTimeout(window._saveTimer);
-    window._saveTimer = setTimeout(() => el.style.display = 'none', 2000);
+    if (currentView === 'bracket') renderBracket();
 }
 
-function openModal(id = null) {
-    updateTypeList();
-    const overlay = document.getElementById('modalOverlay');
-    const title = document.getElementById('modalTitle');
-    const editId = document.getElementById('editId');
+// ===================== 战队库 =====================
+function renderTeams() {
+    const grid = document.getElementById('teamsGrid');
+    if (!grid) return;
+    const names = Object.keys(appData.teams || {});
+    if (names.length === 0) {
+        grid.innerHTML = '<div class="empty-state">暂无战队数据，点击右上角添加</div>'; return;
+    }
+    grid.innerHTML = '';
+    names.forEach(key => {
+        const t = appData.teams[key];
+        const card = document.createElement('div');
+        card.className = 'team-card';
+        const avatar = t.icon ? `<img src="${t.icon}" alt="">` : (t.short || key.charAt(0));
+        const bg = t.color ? `background:${t.color}20;border-color:${t.color}35;color:${t.color};` : '';
+        card.innerHTML = `
+            <div class="t-avatar" style="${bg}">${avatar}</div>
+            <div class="t-info">
+                <div class="t-name">${t.name || key}</div>
+                <div class="t-short">${key} · ${t.short || '-'}</div>
+            </div>
+            <div class="t-color" style="background:${t.color || 'var(--text-muted)'}"></div>
+            <div class="t-actions">
+                <button onclick="openTeamModal('${key.replace(/'/g,"\'")}')" title="编辑"><i class="fas fa-pen"></i></button>
+                <button onclick="deleteTeam('${key.replace(/'/g,"\'")}')" title="删除"><i class="fas fa-trash"></i></button>
+            </div>
+        `;
+        grid.appendChild(card);
+    });
+    updateTeamDatalist();
+}
+function updateTeamDatalist() {
+    const dl = document.getElementById('teamList');
+    if (!dl) return;
+    dl.innerHTML = '';
+    Object.keys(appData.teams || {}).forEach(k => {
+        const opt = document.createElement('option'); opt.value = k; dl.appendChild(opt);
+    });
+}
+function openTeamModal(key = null) {
+    const overlay = document.getElementById('teamModalOverlay');
+    const title = document.getElementById('teamModalTitle');
+    if (!overlay || !title) return;
+    document.getElementById('editTeamKey').value = key || '';
+    if (key && appData.teams[key]) {
+        const t = appData.teams[key];
+        title.textContent = '编辑战队';
+        document.getElementById('tKey').value = key;
+        document.getElementById('tName').value = t.name || '';
+        document.getElementById('tShort').value = t.short || '';
+        document.getElementById('tIcon').value = t.icon || '';
+        document.getElementById('tColor').value = t.color || '#6366f1';
+    } else {
+        title.textContent = '添加战队';
+        document.getElementById('tKey').value = '';
+        document.getElementById('tName').value = '';
+        document.getElementById('tShort').value = '';
+        document.getElementById('tIcon').value = '';
+        document.getElementById('tColor').value = '#6366f1';
+    }
+    overlay.classList.add('show');
+}
+function closeTeamModal() {
+    const el = document.getElementById('teamModalOverlay');
+    if (el) el.classList.remove('show');
+}
+function saveTeam() {
+    const editKey = document.getElementById('editTeamKey').value;
+    const key = document.getElementById('tKey').value.trim();
+    if (!key) { alert('请输入战队标识名'); return; }
+    const team = {
+        name: document.getElementById('tName').value.trim() || key,
+        short: document.getElementById('tShort').value.trim() || key.charAt(0),
+        icon: document.getElementById('tIcon').value.trim(),
+        color: document.getElementById('tColor').value
+    };
+    if (editKey && editKey !== key) { delete appData.teams[editKey]; }
+    appData.teams[key] = team;
+    saveData(); closeTeamModal(); renderTeams();
+    if (currentView === 'bracket') renderBracket();
+    else if (currentView === 'admin') renderAdmin();
+}
+function deleteTeam(key) {
+    if (!confirm(`删除战队 "${key}"？`)) return;
+    delete appData.teams[key];
+    saveData(); renderTeams();
+    if (currentView === 'bracket') renderBracket();
+    else if (currentView === 'admin') renderAdmin();
+}
+
+// ===================== 比赛模态框 =====================
+function openMatchModal(id = null) {
+    updateTypeList(); updateTeamDatalist();
+    const overlay = document.getElementById('matchModalOverlay');
+    const title = document.getElementById('matchModalTitle');
+    const editId = document.getElementById('editMatchId');
+    if (!overlay || !title) return;
 
     if (id) {
         const m = getMatches().find(x => x.id === id);
@@ -1208,17 +1947,21 @@ function openModal(id = null) {
         title.textContent = '添加比赛';
         editId.value = '';
         document.getElementById('mType').value = '胜者组';
-        ['mRound','mTeamA','mTeamB','mDate','mTime','mWinNext','mLoseNext'].forEach(id => document.getElementById(id).value = '');
+        ['mRound','mTeamA','mTeamB','mDate','mTime','mWinNext','mLoseNext'].forEach(id => {
+            const el = document.getElementById(id);
+            if (el) el.value = '';
+        });
         document.getElementById('mScoreA').value = 0;
         document.getElementById('mScoreB').value = 0;
     }
     overlay.classList.add('show');
 }
-function closeModal() {
-    document.getElementById('modalOverlay').classList.remove('show');
+function closeMatchModal() {
+    const el = document.getElementById('matchModalOverlay');
+    if (el) el.classList.remove('show');
 }
 function saveMatch() {
-    const editId = document.getElementById('editId').value;
+    const editId = document.getElementById('editMatchId').value;
     const matches = getMatches();
     const newMatch = {
         id: editId ? parseInt(editId) : getNextId(),
@@ -1241,78 +1984,28 @@ function saveMatch() {
         matches.push(newMatch);
     }
     setMatches(matches);
-    closeModal();
-    if (currentPage === 'bracket') renderBracket();
-    else renderAdmin();
+    closeMatchModal();
+    if (currentView === 'bracket') renderBracket();
+    else if (currentView === 'admin') renderAdmin();
 }
-
-function renderTournamentList() {
-    const container = document.getElementById('tournamentList');
-    container.innerHTML = '';
-    Object.keys(tournaments).forEach(name => {
-        const div = document.createElement('div');
-        div.className = 'tournament-item ' + (name === currentTournament ? 'active' : '');
-        div.innerHTML = `<span class="truncate">${name}</span><button class="del-btn" onclick="event.stopPropagation();delTournament('${name.replace(/'/g,"\\'")}')"><i class="fas fa-times"></i></button>`;
-        div.onclick = () => switchTournament(name);
-        container.appendChild(div);
+function updateTypeList() {
+    const matches = getMatches();
+    const types = [...new Set(matches.map(m => m.type))];
+    const datalist = document.getElementById('typeList');
+    if (!datalist) return;
+    datalist.innerHTML = '';
+    const defaults = ['胜者组', '败者组', '半决赛', '总决赛'];
+    [...defaults, ...types.filter(t => !defaults.includes(t))].forEach(t => {
+        const opt = document.createElement('option'); opt.value = t; datalist.appendChild(opt);
     });
 }
-function switchTournament(name) {
-    currentTournament = name;
-    renderTournamentList();
-    document.getElementById('tournamentName').textContent = name;
-    if (currentPage === 'bracket') renderBracket();
-    else renderAdmin();
-}
-function addTournament() {
-    const name = prompt('新赛事名称:', '新赛事 ' + (Object.keys(tournaments).length + 1));
-    if (!name || tournaments[name]) return;
-    tournaments[name] = [];
-    saveData();
-    renderTournamentList();
-    switchTournament(name);
-}
-function delTournament(name) {
-    if (!confirm(`删除赛事 "${name}"？`)) return;
-    delete tournaments[name];
-    saveData();
-    const keys = Object.keys(tournaments);
-    if (keys.length === 0) { tournaments['默认赛事'] = []; saveData(); }
-    if (currentTournament === name) switchTournament(Object.keys(tournaments)[0]);
-    else renderTournamentList();
-}
 
-function switchPage(page) {
-    currentPage = page;
-    document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-    document.getElementById('page-' + page).classList.add('active');
-    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-    const tabId = page === 'bracket' ? 'tab-bracket' : 'tab-admin-admin';
-    const el = document.getElementById(tabId);
-    if (el) el.classList.add('active');
-    const el2 = document.getElementById(page === 'bracket' ? 'tab-admin-bracket' : 'tab-admin');
-    if (el2) el2.classList.add('active');
-    if (page === 'bracket') renderBracket();
-    else renderAdmin();
-}
-function syncBracket() { renderBracket(); }
-
-function zoom(delta) {
-    zoomScale = Math.max(0.3, Math.min(2, zoomScale + delta));
-    document.getElementById('canvas').style.transform = `scale(${zoomScale})`;
-    document.getElementById('zoomVal').textContent = Math.round(zoomScale * 100) + '%';
-}
-function zoomTo(v) {
-    zoomScale = v;
-    document.getElementById('canvas').style.transform = `scale(${zoomScale})`;
-    document.getElementById('zoomVal').textContent = Math.round(zoomScale * 100) + '%';
-}
-
+// ===================== 导入导出 JSON =====================
 function exportData() {
-    const blob = new Blob([JSON.stringify(tournaments, null, 2)], {type: 'application/json'});
+    const blob = new Blob([JSON.stringify(appData, null, 2)], {type: 'application/json'});
     const a = document.createElement('a');
     a.href = URL.createObjectURL(blob);
-    a.download = 'tournaments_backup.json';
+    a.download = 'bracket_backup.json';
     a.click();
     URL.revokeObjectURL(a.href);
 }
@@ -1324,78 +2017,410 @@ function importData() {
         const reader = new FileReader();
         reader.onload = ev => {
             try {
-                tournaments = JSON.parse(ev.target.result);
+                const parsed = JSON.parse(ev.target.result);
+                if (parsed && typeof parsed === 'object' && parsed.tournaments) {
+                    appData = parsed;
+                } else if (parsed && typeof parsed === 'object') {
+                    appData = { tournaments: parsed, teams: {}, settings: {} };
+                } else {
+                    throw new Error('Invalid format');
+                }
                 saveData();
-                renderTournamentList();
-                switchTournament(Object.keys(tournaments)[0]);
+                currentTournament = (appData.settings && appData.settings.currentTournament) || Object.keys(appData.tournaments)[0] || '';
+                renderTournamentPanel();
+                switchView(currentView || 'bracket');
                 alert('导入成功');
-            } catch { alert('文件格式错误'); }
+            } catch (err) {
+                alert('文件格式错误: ' + err.message);
+            }
         };
         reader.readAsText(file);
     };
     input.click();
 }
 
-function initParticles() {
-    const container = document.getElementById('particles');
-    for (let i = 0; i < 25; i++) {
-        const p = document.createElement('div');
-        p.className = 'particle';
-        p.style.left = Math.random() * 100 + '%';
-        p.style.animationDuration = (8 + Math.random() * 8) + 's';
-        p.style.animationDelay = Math.random() * 10 + 's';
-        p.style.width = p.style.height = (2 + Math.random() * 3) + 'px';
-        container.appendChild(p);
-    }
+// ===================== Excel 导入导出 =====================
+function exportExcel() {
+    const matches = getMatches();
+    const teams = appData.teams || {};
 
-    const colors = ['rgba(56,189,248,0.25)', 'rgba(167,139,250,0.2)', 'rgba(251,191,36,0.2)', 'rgba(244,114,182,0.2)'];
-    for (let i = 0; i < 4; i++) {
-        const blob = document.createElement('div');
-        blob.className = 'glow-blob';
-        const size = 200 + Math.random() * 300;
-        blob.style.width = size + 'px';
-        blob.style.height = size + 'px';
-        blob.style.background = colors[i % colors.length];
-        blob.style.left = (Math.random() * 80) + '%';
-        blob.style.top = (Math.random() * 80) + '%';
-        blob.style.animationDelay = (i * 4) + 's';
-        blob.style.animationDuration = (14 + Math.random() * 8) + 's';
-        container.appendChild(blob);
-    }
+    // 赛程数据工作表
+    const matchHeaders = ['ID', '类型', '轮次', '战队A', '战队B', '比分A', '比分B', '日期', '时间', '胜晋ID', '败落ID'];
+    const matchData = matches.map(m => [
+        m.id, m.type, m.roundName || '', m.teamA || '', m.teamB || '',
+        m.scoreA, m.scoreB, m.date || '', m.time || '',
+        m.winNextId || '', m.loseNextId || ''
+    ]);
+    const matchWs = XLSX.utils.aoa_to_sheet([matchHeaders, ...matchData]);
 
-    for (let i = 0; i < 3; i++) {
-        const aurora = document.createElement('div');
-        aurora.className = 'aurora';
-        aurora.style.top = (20 + i * 30) + '%';
-        aurora.style.animationDelay = (i * 6) + 's';
-        aurora.style.animationDuration = (18 + Math.random() * 6) + 's';
-        aurora.style.opacity = 0.3 + Math.random() * 0.3;
-        container.appendChild(aurora);
+    // 设置列宽
+    const matchWscols = [
+        {wch: 6}, {wch: 12}, {wch: 16}, {wch: 14}, {wch: 14},
+        {wch: 6}, {wch: 6}, {wch: 12}, {wch: 8}, {wch: 8}, {wch: 8}
+    ];
+    matchWs['!cols'] = matchWscols;
+
+    // 战队库工作表
+    const teamHeaders = ['标识名', '显示名称', '缩写', '图标URL', '主题色'];
+    const teamData = Object.entries(teams).map(([k, t]) => [
+        k, t.name || '', t.short || '', t.icon || '', t.color || ''
+    ]);
+    const teamWs = XLSX.utils.aoa_to_sheet([teamHeaders, ...teamData]);
+    teamWs['!cols'] = [{wch: 12}, {wch: 20}, {wch: 8}, {wch: 50}, {wch: 10}];
+
+    const wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, matchWs, '赛程数据');
+    XLSX.utils.book_append_sheet(wb, teamWs, '战队库');
+
+    const tournamentName = currentTournament || '赛事';
+    XLSX.writeFile(wb, `${tournamentName}_赛程数据.xlsx`);
+}
+
+function importExcel() {
+    const input = document.createElement('input');
+    input.type = 'file';
+    input.accept = '.xlsx,.xls,.csv';
+    input.onchange = e => {
+        const file = e.target.files[0];
+        if (!file) return;
+        const reader = new FileReader();
+        reader.onload = ev => {
+            try {
+                const data = new Uint8Array(ev.target.result);
+                const workbook = XLSX.read(data, { type: 'array' });
+
+                // 解析赛程数据
+                const matchSheet = workbook.Sheets['赛程数据'] || workbook.Sheets[workbook.SheetNames[0]];
+                const matchJson = XLSX.utils.sheet_to_json(matchSheet, { header: 1 });
+
+                if (matchJson.length > 1) {
+                    const headers = matchJson[0];
+                    const fieldMap = {};
+                    headers.forEach((h, i) => {
+                        const lower = String(h).trim().toLowerCase();
+                        if (/id|编号|序号/.test(lower)) fieldMap.id = i;
+                        else if (/类型|type|分组/.test(lower)) fieldMap.type = i;
+                        else if (/轮次|round|阶段/.test(lower)) fieldMap.roundName = i;
+                        else if (/战队a|队伍a|teama|team_a|a队/.test(lower)) fieldMap.teamA = i;
+                        else if (/战队b|队伍b|teamb|team_b|b队/.test(lower)) fieldMap.teamB = i;
+                        else if (/比分a|scorea|score_a|a分/.test(lower)) fieldMap.scoreA = i;
+                        else if (/比分b|scoreb|score_b|b分/.test(lower)) fieldMap.scoreB = i;
+                        else if (/日期|date|时间/.test(lower)) fieldMap.date = i;
+                        else if (/时间|time/.test(lower) && !fieldMap.date) fieldMap.time = i;
+                        else if (/胜晋|晋级|winnext|win_next|胜者/.test(lower)) fieldMap.winNextId = i;
+                        else if (/败落|淘汰|losenext|lose_next|败者/.test(lower)) fieldMap.loseNextId = i;
+                    });
+
+                    const newMatches = [];
+                    for (let i = 1; i < matchJson.length; i++) {
+                        const row = matchJson[i];
+                        if (!row || row.length === 0) continue;
+                        const getVal = (field) => {
+                            const idx = fieldMap[field];
+                            if (idx === undefined) return undefined;
+                            const val = row[idx];
+                            if (val === undefined || val === null || val === '') return null;
+                            return val;
+                        };
+
+                        const id = parseInt(getVal('id'));
+                        if (!id || isNaN(id)) continue;
+
+                        newMatches.push({
+                            id: id,
+                            type: getVal('type') || '未分类',
+                            roundName: getVal('roundName') || '',
+                            teamA: getVal('teamA') || null,
+                            teamB: getVal('teamB') || null,
+                            scoreA: parseInt(getVal('scoreA')) || 0,
+                            scoreB: parseInt(getVal('scoreB')) || 0,
+                            date: getVal('date') || '',
+                            time: getVal('time') || '',
+                            winNextId: getVal('winNextId') ? parseInt(getVal('winNextId')) : null,
+                            loseNextId: getVal('loseNextId') ? parseInt(getVal('loseNextId')) : null
+                        });
+                    }
+
+                    if (newMatches.length > 0) {
+                        appData.tournaments[currentTournament] = newMatches;
+                    }
+                }
+
+                // 解析战队库（如果有）
+                const teamSheet = workbook.Sheets['战队库'];
+                if (teamSheet) {
+                    const teamJson = XLSX.utils.sheet_to_json(teamSheet, { header: 1 });
+                    if (teamJson.length > 1) {
+                        const tHeaders = teamJson[0];
+                        const tMap = {};
+                        tHeaders.forEach((h, i) => {
+                            const lower = String(h).trim().toLowerCase();
+                            if (/标识|key|id|名称/.test(lower)) tMap.key = i;
+                            else if (/显示|name|全称/.test(lower)) tMap.name = i;
+                            else if (/缩写|short|简称/.test(lower)) tMap.short = i;
+                            else if (/图标|icon|url|头像/.test(lower)) tMap.icon = i;
+                            else if (/颜色|color|主题/.test(lower)) tMap.color = i;
+                        });
+
+                        for (let i = 1; i < teamJson.length; i++) {
+                            const row = teamJson[i];
+                            if (!row || row.length === 0) continue;
+                            const getVal = (field) => {
+                                const idx = tMap[field];
+                                if (idx === undefined) return undefined;
+                                return row[idx] || '';
+                            };
+                            const key = getVal('key');
+                            if (!key) continue;
+                            appData.teams[key] = {
+                                name: getVal('name') || key,
+                                short: getVal('short') || key.charAt(0),
+                                icon: getVal('icon') || '',
+                                color: getVal('color') || '#6366f1'
+                            };
+                        }
+                    }
+                }
+
+                saveData();
+                renderTournamentPanel();
+                if (currentView === 'bracket') renderBracket();
+                else if (currentView === 'admin') renderAdmin();
+                else if (currentView === 'teams') renderTeams();
+                alert(`导入成功！共 ${getMatches().length} 场比赛`);
+            } catch (err) {
+                console.error(err);
+                alert('Excel 解析失败: ' + err.message);
+            }
+        };
+        reader.readAsArrayBuffer(file);
+    };
+    input.click();
+}
+
+// ===================== 全站 HTML 导出 =====================
+function exportFullSite() {
+    // 获取当前 HTML 内容
+    let html = document.documentElement.outerHTML;
+
+    // 将当前数据序列化并嵌入到 HTML 中
+    const dataScript = `
+<script>
+    window.__EXPORT_DATA__ = ${JSON.stringify(appData)};
+    window.__EXPORT_TOURNAMENT__ = ${JSON.stringify(currentTournament)};
+    window.__EXPORT_VIEW__ = ${JSON.stringify(currentView)};
+<\/script>`;
+
+    // 在 </body> 前插入数据
+    html = html.replace('</body>', dataScript + '</body>');
+
+    // 添加导出模式标记和只读逻辑
+    const exportModeScript = `
+<script>
+    document.body.classList.add('export-mode');
+    // 覆盖数据加载函数，使用内联数据
+    const _origLoad = loadData;
+    loadData = function() {
+        if (window.__EXPORT_DATA__) {
+            appData = window.__EXPORT_DATA__;
+            currentTournament = window.__EXPORT_TOURNAMENT__ || Object.keys(appData.tournaments)[0] || '';
+            currentView = window.__EXPORT_VIEW__ || 'bracket';
+        } else {
+            _origLoad();
+        }
+    };
+    // 禁用所有保存操作
+    saveData = function() {};
+    // 禁用编辑功能
+    openMatchModal = function() {};
+    openTeamModal = function() {};
+    addTournament = function() {};
+    delTournament = function() {};
+    deleteMatch = function() {};
+    deleteTeam = function() {};
+    saveMatch = function() {};
+    saveTeam = function() {};
+    updateField = function() {};
+    updateScore = function() {};
+    importData = function() {};
+    exportData = function() {};
+    exportExcel = function() {};
+    importExcel = function() {};
+    exportFullSite = function() {};
+    zoom = function() {};
+    zoomTo = function() {};
+<\/script>`;
+
+    html = html.replace('</body>', exportModeScript + '</body>');
+
+    // 下载文件
+    const blob = new Blob([html], { type: 'text/html; charset=utf-8' });
+    const a = document.createElement('a');
+    const tournamentName = currentTournament || '赛事';
+    a.href = URL.createObjectURL(blob);
+    a.download = `${tournamentName}_赛程快照_${new Date().toISOString().slice(0,10)}.html`;
+    a.click();
+    URL.revokeObjectURL(a.href);
+}
+
+// ===================== 动态背景初始化 =====================
+function initEffects() {
+    const container = document.getElementById('dynamicBg');
+    if (!container) return;
+
+    container.querySelectorAll('.lightning, .particle, .snowflake, .ember').forEach(el => el.remove());
+
+    if (container.classList.contains('bg-storm')) {
+        for (let i = 0; i < 5; i++) {
+            const el = document.createElement('div');
+            el.className = 'lightning';
+            el.style.left = (15 + Math.random() * 70) + '%';
+            el.style.top = (5 + Math.random() * 50) + '%';
+            el.style.height = (80 + Math.random() * 100) + 'px';
+            el.style.animationDelay = (Math.random() * 4) + 's';
+            el.style.animationDuration = (3 + Math.random() * 3) + 's';
+            container.appendChild(el);
+        }
+    } else if (container.classList.contains('bg-dark')) {
+        for (let i = 0; i < 40; i++) {
+            const p = document.createElement('div');
+            p.className = 'particle';
+            p.style.left = Math.random() * 100 + '%';
+            p.style.top = Math.random() * 100 + '%';
+            p.style.animationDuration = (6 + Math.random() * 14) + 's';
+            p.style.animationDelay = Math.random() * 10 + 's';
+            p.style.width = p.style.height = (2 + Math.random() * 4) + 'px';
+            p.style.opacity = Math.random() * 0.4 + 0.1;
+            container.appendChild(p);
+        }
+    } else if (container.classList.contains('bg-frost')) {
+        for (let i = 0; i < 25; i++) {
+            const s = document.createElement('div');
+            s.className = 'snowflake';
+            s.innerHTML = '❄';
+            s.style.left = Math.random() * 100 + '%';
+            s.style.animationDuration = (4 + Math.random() * 12) + 's';
+            s.style.animationDelay = Math.random() * 5 + 's';
+            s.style.fontSize = (8 + Math.random() * 12) + 'px';
+            container.appendChild(s);
+        }
+    } else if (container.classList.contains('bg-fire')) {
+        for (let i = 0; i < 20; i++) {
+            const e = document.createElement('div');
+            e.className = 'ember';
+            e.style.left = Math.random() * 100 + '%';
+            e.style.animationDuration = (3 + Math.random() * 7) + 's';
+            e.style.animationDelay = Math.random() * 5 + 's';
+            e.style.width = e.style.height = (3 + Math.random() * 6) + 'px';
+            container.appendChild(e);
+        }
     }
 }
 
-window.addEventListener('resize', () => {
-    if (currentPage === 'bracket') {
-        const matches = getMatches();
-        if (matches.length > 0) {
-            const maxDepth = Math.max(...matches.map(m => m.depth || 0));
-            const maxRow = Math.max(...matches.map(m => m.gridRow || 0));
-            drawConnections(matches, maxDepth, maxRow);
-        }
+function setBgTheme(themeClass) {
+    const container = document.getElementById('dynamicBg');
+    if (!container) return;
+    container.className = 'dynamic-bg ' + themeClass;
+    initEffects();
+}
+
+// ===================== 事件 =====================
+
+
+document.addEventListener('DOMContentLoaded', function() {
+    const scrollArea = document.getElementById('bracketScrollArea');
+    const headerFixed = document.getElementById('bracketHeaderFixed');
+    if (scrollArea && headerFixed) {
+        scrollArea.addEventListener('scroll', () => {
+            headerFixed.scrollLeft = scrollArea.scrollLeft;
+        });
     }
-});
-document.getElementById('viewport').addEventListener('wheel', e => {
-    if (e.ctrlKey) { e.preventDefault(); zoom(e.deltaY > 0 ? -0.05 : 0.05); }
-}, {passive: false});
-document.getElementById('modalOverlay').addEventListener('click', e => {
-    if (e.target === document.getElementById('modalOverlay')) closeModal();
+
+    const scrollArea2 = document.getElementById('bracketScrollArea');
+    if (scrollArea2) {
+        // 双指/触控板缩放支持
+        scrollArea2.addEventListener('wheel', e => {
+            if (e.ctrlKey || e.metaKey) {
+                e.preventDefault();
+                zoom(e.deltaY > 0 ? -0.05 : 0.05);
+            }
+        }, {passive: false});
+
+        // 移动端双指缩放
+        let initialPinchDistance = 0;
+        let initialZoomScale = 1;
+        scrollArea2.addEventListener('touchstart', e => {
+            if (e.touches.length === 2) {
+                initialPinchDistance = Math.hypot(
+                    e.touches[0].pageX - e.touches[1].pageX,
+                    e.touches[0].pageY - e.touches[1].pageY
+                );
+                initialZoomScale = zoomScale;
+            }
+        }, {passive: true});
+
+        scrollArea2.addEventListener('touchmove', e => {
+            if (e.touches.length === 2) {
+                e.preventDefault();
+                const currentDistance = Math.hypot(
+                    e.touches[0].pageX - e.touches[1].pageX,
+                    e.touches[0].pageY - e.touches[1].pageY
+                );
+                const scale = (currentDistance / initialPinchDistance) * initialZoomScale;
+                zoomTo(Math.max(0.3, Math.min(2, scale)));
+            }
+        }, {passive: false});
+    }
+
+    document.addEventListener('click', e => {
+        const panel = document.getElementById('tournamentPanel');
+        const trigger = document.getElementById('tournamentTrigger');
+        if (panel && trigger && panel.classList.contains('open') && !panel.contains(e.target) && !trigger.contains(e.target)) {
+            toggleTournamentPanel(false);
+        }
+        if (e.target.classList.contains('modal-overlay')) {
+            e.target.classList.remove('show');
+        }
+    });
+
+    loadData();
+    initEffects();
+    renderTournamentPanel();
+    switchView('bracket');
+
+    // 自动计算初始缩放比例
+    autoFitZoom();
 });
 
-loadData();
-initParticles();
-renderTournamentList();
-document.getElementById('tournamentName').textContent = currentTournament;
-renderBracket();
+// 自动适配缩放
+function autoFitZoom() {
+    const viewport = document.getElementById('viewport');
+    const canvas = document.getElementById('canvas');
+    if (!viewport || !canvas) return;
+
+    // 等待渲染完成
+    setTimeout(() => {
+        const viewportWidth = viewport.clientWidth - 40; // 减去 padding
+        const canvasWidth = canvas.scrollWidth;
+        if (canvasWidth > viewportWidth) {
+            const fitScale = Math.max(0.3, (viewportWidth / canvasWidth) * 0.95);
+            zoomTo(Math.round(fitScale * 100) / 100);
+        }
+    }, 100);
+}
+
+// 窗口大小变化时重新适配
+let resizeTimer;
+window.addEventListener('resize', () => {
+    clearTimeout(resizeTimer);
+    resizeTimer = setTimeout(() => {
+        if (currentView === 'bracket') {
+            autoFitZoom();
+            const matches = getMatches();
+            if (matches.length > 0) drawConnections(matches);
+        }
+    }, 200);
+});
 </script>
 </body>
 </html>
