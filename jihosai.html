@@ -1257,8 +1257,8 @@ function computeDepth(matches) {
 
 function computeRows(matches) {
     const BASE_Y = 10;           // 对阵图起始 Y 坐标
-    const MATCH_GAP = 160;       // 同轮比赛之间的垂直间距
-    const LOSER_STEP = 50;       // 败者组每轮向上的阶梯步长
+    const MATCH_GAP = 140;       // 同轮比赛之间的垂直间距
+    const LOSER_STEP = 30;       // 败者组每轮向上的阶梯步长
 
     // 分类：胜者组、败者组、总决赛
     const winners = matches.filter(m => !isLoserType(m.type) && !isFinalType(m.type));
