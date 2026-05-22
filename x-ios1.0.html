@@ -705,6 +705,7 @@
         }
     </style>
 <base target="_blank">
+<base target="_blank">
 </head>
 <body>
 
@@ -1812,17 +1813,17 @@
         // ==================== 赛区标签配色 ====================
         function getRegionStyle(region, context = 'admin') {
             const predefined = {
-                'LPL':  { admin: 'background:#fecaca;color:#7f1d1d;border:1px solid #f87171', home: 'region-lpl' },
-                'LCK':  { admin: 'background:#bfdbfe;color:#1e3a8a;border:1px solid #60a5fa', home: 'region-lck' },
-                'LEC':  { admin: 'background:#a7f3d0;color:#064e3b;border:1px solid #34d399', home: 'region-lec' },
-                'LCS':  { admin: 'background:#fde68a;color:#78350f;border:1px solid #fbbf24', home: 'region-lcs' },
-                'MSI':  { admin: 'background:#ddd6fe;color:#4c1d95;border:1px solid #a78bfa', home: 'region-msi' },
-                'Worlds':{ admin: 'background:#fbcfe8;color:#831843;border:1px solid #f472b6', home: 'region-worlds' }
+                'LPL':  { admin: 'background:#fecaca;color:#7f1d1d;border:1px solid #f87171', home: 'background:rgba(254,202,202,0.25);color:#fecaca;border:1px solid rgba(248,113,113,0.4)' },
+                'LCK':  { admin: 'background:#bfdbfe;color:#1e3a8a;border:1px solid #60a5fa', home: 'background:rgba(191,219,254,0.25);color:#bfdbfe;border:1px solid rgba(96,165,250,0.4)' },
+                'LEC':  { admin: 'background:#a7f3d0;color:#064e3b;border:1px solid #34d399', home: 'background:rgba(167,243,208,0.25);color:#a7f3d0;border:1px solid rgba(52,211,153,0.4)' },
+                'LCS':  { admin: 'background:#fde68a;color:#78350f;border:1px solid #fbbf24', home: 'background:rgba(253,230,138,0.25);color:#fde68a;border:1px solid rgba(251,191,36,0.4)' },
+                'MSI':  { admin: 'background:#ddd6fe;color:#4c1d95;border:1px solid #a78bfa', home: 'background:rgba(221,214,254,0.25);color:#ddd6fe;border:1px solid rgba(167,139,250,0.4)' },
+                'Worlds':{ admin: 'background:#fbcfe8;color:#831843;border:1px solid #f472b6', home: 'background:rgba(251,207,232,0.25);color:#fbcfe8;border:1px solid rgba(244,114,182,0.4)' }
             };
 
             if (predefined[region]) {
                 if (context === 'admin') return { style: predefined[region].admin, class: 'px-2 py-1 rounded-lg text-xs font-bold inline-block' };
-                return { class: `region-tag-home ${predefined[region].home}` };
+                return { style: predefined[region].home, class: 'px-2 py-0.5 rounded-lg text-xs font-medium inline-block' };
             }
 
             let hash = 0;
@@ -1836,8 +1837,8 @@
                 };
             }
             return { 
-                style: `background:hsla(${h},80%,50%,0.35);color:hsl(${h},95%,90%);border:1px solid hsla(${h},80%,60%,0.5)`, 
-                class: 'region-tag-home' 
+                style: `background:hsla(${h},80%,50%,0.25);color:hsl(${h},95%,90%);border:1px solid hsla(${h},80%,60%,0.4)`, 
+                class: 'px-2 py-0.5 rounded-lg text-xs font-medium inline-block' 
             };
         }
 
@@ -2056,7 +2057,7 @@
                 hasMatch = true;
                 const isToday = dateStr === today;
                 const dateObj = parseDateLocal(dateStr);
-                const weekDay = ['周一', '周二', '周三', '周四', '周五', '周六', '周日'][dateObj.getDay()];
+                const weekDay = ['周日', '周一', '周二', '周三', '周四', '周五', '周六'][dateObj.getDay()];
                 const dateGroup = document.createElement('div');
                 dateGroup.className = 'mb-4';
                 let matchesHtml = '';
@@ -2128,6 +2129,7 @@
             const month = calendarDate.getMonth();
             const firstDayOfMonth = new Date(year, month, 1);
             const firstDay = firstDayOfMonth.getDay();
+            const startOffset = (firstDay + 6) % 7;
             const daysInMonth = new Date(year, month + 1, 0).getDate();
             const daysInPrevMonth = new Date(year, month, 0).getDate();
             const today = getTodayLocal();
@@ -2135,7 +2137,7 @@
             document.getElementById('month-display').textContent = `${year}年${month + 1}月`;
             document.getElementById('calendar-month-label').textContent = `${year}年${month + 1}月`;
 
-            for (let i = firstDay - 1; i >= 0; i--) {
+            for (let i = startOffset - 1; i >= 0; i--) {
                 const day = daysInPrevMonth - i;
                 const dateStr = formatDateLocal(new Date(year, month - 1, day));
                 const cell = createDayCell(day, dateStr, today, true);
@@ -2148,7 +2150,7 @@
                 grid.appendChild(cell);
             }
 
-            const remainingCells = 42 - (firstDay + daysInMonth);
+            const remainingCells = 42 - (startOffset + daysInMonth);
             for (let day = 1; day <= remainingCells; day++) {
                 const dateStr = formatDateLocal(new Date(year, month + 1, day));
                 const cell = createDayCell(day, dateStr, today, true);
