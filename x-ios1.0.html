@@ -20,11 +20,9 @@
             overflow-x: hidden;
             touch-action: manipulation;
             -webkit-font-smoothing: antialiased;
-            /* 关键修复：body 背景必须透明，让 dynamic-bg 透出来 */
             background: transparent;
         }
 
-        /* ========== 全局动态背景系统 ========== */
         .dynamic-bg {
             position: fixed;
             inset: 0;
@@ -161,7 +159,6 @@
             100% { transform: translateY(-100px) scale(0); opacity: 0; }
         }
 
-        /* ========== 导航栏 ========== */
         .nav-glass {
             position: fixed;
             top: 0;
@@ -213,7 +210,6 @@
             border-radius: 3px;
         }
 
-        /* ========== 毛玻璃卡片 ========== */
         .glass-card {
             background: rgba(255, 255, 255, 0.07);
             backdrop-filter: blur(16px) saturate(180%);
@@ -230,7 +226,6 @@
             border-color: rgba(255, 255, 255, 0.2);
         }
 
-        /* ========== 日历 ========== */
         .calendar-container {
             min-height: 100%;
             overflow: hidden;
@@ -394,7 +389,6 @@
         }
         .float-animation { animation: float 6s ease-in-out infinite; }
 
-        /* 管理页 */
         .admin-layout {
             display: flex;
             min-height: 100%;
@@ -430,48 +424,6 @@
         }
         .hidden-page { display: none !important; }
 
-        /* 走势线条图 */
-        .trend-line-container {
-            position: relative;
-            height: 180px;
-            width: 100%;
-        }
-        .trend-line-svg {
-            width: 100%;
-            height: 100%;
-            overflow: visible;
-        }
-        .trend-line-path {
-            fill: none;
-            stroke-width: 3;
-            stroke-linecap: round;
-            stroke-linejoin: round;
-            filter: drop-shadow(0 0 8px currentColor);
-        }
-        .trend-line-area {
-            stroke: none;
-            opacity: 0.15;
-        }
-        .trend-dot {
-            transition: all 0.3s ease;
-            cursor: pointer;
-        }
-        .trend-dot:hover {
-            r: 6;
-            filter: drop-shadow(0 0 6px currentColor);
-        }
-        .trend-label {
-            font-size: 11px;
-            font-weight: 600;
-            fill: rgba(255,255,255,0.7);
-        }
-        .trend-grid {
-            stroke: rgba(255,255,255,0.05);
-            stroke-width: 1;
-            stroke-dasharray: 4,4;
-        }
-
-        /* 批量操作栏 */
         .batch-bar {
             background: linear-gradient(90deg, rgba(99,102,241,0.2), rgba(168,85,247,0.2));
             border: 1px solid rgba(99,102,241,0.3);
@@ -487,7 +439,6 @@
         }
         .batch-bar::-webkit-scrollbar { display: none; }
 
-        /* 战队实力榜赛区分组 */
         .region-group { margin-bottom: 24px; }
         .region-group-header {
             display: flex;
@@ -531,7 +482,6 @@
             gap: 12px;
         }
 
-        /* 热度标签 */
         .heat-high {
             background: linear-gradient(135deg, rgba(239,68,68,0.3), rgba(220,38,38,0.2));
             color: #fecaca;
@@ -553,7 +503,6 @@
             border: 1px solid rgba(255,255,255,0.1);
         }
 
-        /* ========== 战队图标样式 ========== */
         .team-icon {
             width: 40px;
             height: 40px;
@@ -606,7 +555,55 @@
         .admin-table-wrap { display: block; }
         .mobile-card-list { display: none; }
 
-        /* ========== 响应式断点 ========== */
+        /* ========== 新闻通知样式 ========== */
+        .news-card {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 16px;
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            padding: 16px;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+        }
+        .news-card:hover {
+            background: rgba(255, 255, 255, 0.1);
+            transform: translateX(4px);
+            border-color: rgba(255, 255, 255, 0.2);
+        }
+        .news-card.priority-high {
+            border-left: 3px solid #fbbf24;
+            background: rgba(251, 191, 36, 0.05);
+        }
+        .news-card.priority-high:hover {
+            background: rgba(251, 191, 36, 0.1);
+        }
+        .news-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            padding: 2px 8px;
+            border-radius: 6px;
+            font-size: 11px;
+            font-weight: 600;
+        }
+        .news-badge-high {
+            background: rgba(251, 191, 36, 0.2);
+            color: #fbbf24;
+            border: 1px solid rgba(251, 191, 36, 0.3);
+        }
+        .news-badge-normal {
+            background: rgba(255, 255, 255, 0.1);
+            color: rgba(255, 255, 255, 0.7);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+        }
+        .news-expiry-soon {
+            color: #f87171;
+        }
+        .news-expiry-normal {
+            color: rgba(255, 255, 255, 0.4);
+        }
+
         @media (max-width: 1200px) {
             .top5-grid { grid-template-columns: repeat(3, 1fr); }
         }
@@ -661,8 +658,6 @@
                 flex-shrink: 0;
             }
             
-            .trend-line-container { height: 140px; }
-            
             .team-icon { width: 36px; height: 36px; }
             .team-icon-lg { width: 48px; height: 48px; }
             .team-icon-sm { width: 24px; height: 24px; }
@@ -695,7 +690,6 @@
             }
         }
 
-        /* 性能降级：减少动画 */
         @media (prefers-reduced-motion: reduce) {
             *, *::before, *::after {
                 animation-duration: 0.01ms !important;
@@ -798,19 +792,24 @@
             </div>
 
             <div class="max-w-7xl mx-auto px-4 sm:px-6 py-8 sm:py-12 space-y-6 sm:space-y-8">
-                <!-- 赛区活跃度走势 + 赛区分布 -->
+                <!-- 联盟新闻通知 + 赛区分布 -->
                 <div class="grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-6">
+                    <!-- 联盟新闻通知（占2列） -->
                     <div class="lg:col-span-2 glass-card p-4 sm:p-6">
                         <div class="flex flex-col sm:flex-row sm:items-center justify-between mb-4 sm:mb-6 gap-3">
-                            <h3 class="text-lg sm:text-xl font-bold text-white">赛区活跃度走势</h3>
+                            <h3 class="text-lg sm:text-xl font-bold text-white flex items-center gap-2">
+                                <i class="fas fa-bullhorn text-yellow-400"></i>联盟新闻通知
+                                <span class="text-xs sm:text-sm font-normal text-white/50" id="news-count-badge">0 条</span>
+                            </h3>
                             <div class="flex gap-2">
-                                <button onclick="setTrendPeriod(7)" class="trend-period-btn px-3 py-1.5 rounded-lg text-xs font-medium bg-white/20 text-white" data-days="7">近7天</button>
-                                <button onclick="setTrendPeriod(30)" class="trend-period-btn px-3 py-1.5 rounded-lg text-xs font-medium text-white/50 hover:bg-white/10" data-days="30">近30天</button>
-                                <button onclick="setTrendPeriod(90)" class="trend-period-btn px-3 py-1.5 rounded-lg text-xs font-medium text-white/50 hover:bg-white/10" data-days="90">近90天</button>
+                                <button onclick="setNewsFilter('all')" class="news-filter-btn px-3 py-1.5 rounded-lg text-xs font-medium bg-white/20 text-white" data-filter="all">全部</button>
+                                <button onclick="setNewsFilter('high')" class="news-filter-btn px-3 py-1.5 rounded-lg text-xs font-medium text-white/50 hover:bg-white/10" data-filter="high">重要</button>
+                                <button onclick="setNewsFilter('region')" class="news-filter-btn px-3 py-1.5 rounded-lg text-xs font-medium text-white/50 hover:bg-white/10" data-filter="region">本赛区</button>
                             </div>
                         </div>
-                        <div class="trend-line-container" id="trend-chart-container"></div>
-                        <div class="flex justify-center gap-4 sm:gap-6 mt-4 text-xs sm:text-sm text-white/60 flex-wrap" id="trend-legend"></div>
+                        <div class="space-y-3 max-h-[400px] overflow-y-auto pr-1" id="news-list-container">
+                            <!-- 新闻列表由JS渲染 -->
+                        </div>
                     </div>
                     <div class="glass-card p-4 sm:p-6">
                         <h3 class="text-lg sm:text-xl font-bold text-white mb-4 sm:mb-6">赛区分布</h3>
@@ -972,6 +971,9 @@
                         <button onclick="showAdminSection('teams')" class="admin-nav-item w-auto lg:w-full flex items-center gap-2 sm:gap-3 px-3 sm:px-4 py-2 sm:py-3 rounded-xl text-gray-400 hover:text-white hover:bg-white/10 transition-all flex-shrink-0">
                             <i class="fas fa-users w-4 sm:w-5 text-center"></i><span class="text-sm sm:text-base">战队管理</span>
                         </button>
+                        <button onclick="showAdminSection('news')" class="admin-nav-item w-auto lg:w-full flex items-center gap-2 sm:gap-3 px-3 sm:px-4 py-2 sm:py-3 rounded-xl text-gray-400 hover:text-white hover:bg-white/10 transition-all flex-shrink-0">
+                            <i class="fas fa-newspaper w-4 sm:w-5 text-center"></i><span class="text-sm sm:text-base">新闻发布</span>
+                        </button>
                         <button onclick="showAdminSection('import')" class="admin-nav-item w-auto lg:w-full flex items-center gap-2 sm:gap-3 px-3 sm:px-4 py-2 sm:py-3 rounded-xl text-gray-400 hover:text-white hover:bg-white/10 transition-all flex-shrink-0">
                             <i class="fas fa-file-import w-4 sm:w-5 text-center"></i><span class="text-sm sm:text-base">批量导入</span>
                         </button>
@@ -1061,7 +1063,6 @@
                         </button>
                     </div>
 
-                    <!-- 桌面端表格 -->
                     <div class="admin-card overflow-hidden admin-table-wrap">
                         <div class="overflow-x-auto">
                             <table class="w-full text-left">
@@ -1109,7 +1110,6 @@
                         </div>
                     </div>
 
-                    <!-- 移动端卡片列表 -->
                     <div class="mobile-card-list space-y-3" id="matches-mobile-list"></div>
                 </div>
 
@@ -1202,14 +1202,64 @@
                             </div>
                         </div>
                     </div>
-
                     <div id="teams-list"></div>
+                </div>
+
+                <!-- ========== 新闻发布模块 ========== -->
+                <div id="admin-news" class="admin-section p-4 sm:p-8 hidden">
+                    <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-6 sm:mb-8 gap-4">
+                        <div>
+                            <h2 class="text-xl sm:text-2xl font-bold text-gray-800">新闻发布</h2>
+                            <p class="text-gray-500 mt-1 text-sm">管理联盟新闻通知 · 到期自动下架</p>
+                        </div>
+                        <button onclick="openNewsModal()" class="bg-blue-600 hover:bg-blue-700 text-white px-4 sm:px-5 py-2 sm:py-2.5 rounded-xl font-medium transition-all flex items-center gap-2 shadow-lg shadow-blue-600/30 text-sm">
+                            <i class="fas fa-plus"></i>发布新闻
+                        </button>
+                    </div>
+
+                    <div class="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 mb-4 sm:mb-6">
+                        <div class="admin-card p-3 sm:p-4">
+                            <div class="text-gray-500 text-xs sm:text-sm mb-1">总新闻数</div>
+                            <div class="text-xl sm:text-2xl font-bold text-gray-800" id="news-admin-total">0</div>
+                        </div>
+                        <div class="admin-card p-3 sm:p-4">
+                            <div class="text-gray-500 text-xs sm:text-sm mb-1">进行中</div>
+                            <div class="text-xl sm:text-2xl font-bold text-green-600" id="news-admin-active">0</div>
+                        </div>
+                        <div class="admin-card p-3 sm:p-4">
+                            <div class="text-gray-500 text-xs sm:text-sm mb-1">重要通知</div>
+                            <div class="text-xl sm:text-2xl font-bold text-red-600" id="news-admin-high">0</div>
+                        </div>
+                        <div class="admin-card p-3 sm:p-4">
+                            <div class="text-gray-500 text-xs sm:text-sm mb-1">已过期</div>
+                            <div class="text-xl sm:text-2xl font-bold text-gray-400" id="news-admin-expired">0</div>
+                        </div>
+                    </div>
+
+                    <div class="admin-card overflow-hidden">
+                        <div class="overflow-x-auto">
+                            <table class="w-full text-left">
+                                <thead class="bg-gray-50 border-b border-gray-200">
+                                    <tr>
+                                        <th class="px-4 sm:px-6 py-3 sm:py-4 text-xs font-semibold text-gray-500 uppercase tracking-wider">优先级</th>
+                                        <th class="px-4 sm:px-6 py-3 sm:py-4 text-xs font-semibold text-gray-500 uppercase tracking-wider">新闻标题</th>
+                                        <th class="px-4 sm:px-6 py-3 sm:py-4 text-xs font-semibold text-gray-500 uppercase tracking-wider">关联赛区</th>
+                                        <th class="px-4 sm:px-6 py-3 sm:py-4 text-xs font-semibold text-gray-500 uppercase tracking-wider">通知到期</th>
+                                        <th class="px-4 sm:px-6 py-3 sm:py-4 text-xs font-semibold text-gray-500 uppercase tracking-wider">状态</th>
+                                        <th class="px-4 sm:px-6 py-3 sm:py-4 text-xs font-semibold text-gray-500 uppercase tracking-wider text-right">操作</th>
+                                    </tr>
+                                </thead>
+                                <tbody class="divide-y divide-gray-100" id="news-table-body"></tbody>
+                            </table>
+                        </div>
+                    </div>
+                    <div class="mobile-card-list space-y-3 mt-4" id="news-mobile-list"></div>
                 </div>
             </main>
         </div>
     </div>
 
-    <!-- 模态框 -->
+    <!-- 赛事模态框 -->
     <div id="match-modal" class="fixed inset-0 z-[60] hidden">
         <div class="absolute inset-0 bg-black/50 backdrop-blur-sm" onclick="closeModal()"></div>
         <div class="absolute inset-0 flex items-center justify-center p-0 sm:p-4">
@@ -1286,6 +1336,79 @@
         </div>
     </div>
 
+    <!-- 新闻模态框 -->
+    <div id="news-modal" class="fixed inset-0 z-[60] hidden">
+        <div class="absolute inset-0 bg-black/50 backdrop-blur-sm" onclick="closeNewsModal()"></div>
+        <div class="absolute inset-0 flex items-center justify-center p-0 sm:p-4">
+            <div class="bg-white rounded-t-2xl sm:rounded-2xl shadow-2xl w-full sm:max-w-lg modal-enter overflow-hidden max-h-[90vh] overflow-y-auto">
+                <div class="px-4 sm:px-6 py-3 sm:py-4 border-b border-gray-100 flex items-center justify-between sticky top-0 bg-white z-10">
+                    <h3 class="text-base sm:text-lg font-bold text-gray-800" id="news-modal-title">发布新闻</h3>
+                    <button onclick="closeNewsModal()" class="text-gray-400 hover:text-gray-600 w-8 h-8 flex items-center justify-center rounded-full hover:bg-gray-100 transition-all">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+                <form id="news-form" class="p-4 sm:p-6 space-y-3 sm:space-y-4" onsubmit="saveNews(event)">
+                    <input type="hidden" id="news-edit-id">
+                    <div>
+                        <label class="block text-xs sm:text-sm font-medium text-gray-700 mb-1">新闻标题 <span class="text-red-500">*</span></label>
+                        <input type="text" id="news-title" required maxlength="100"
+                            class="w-full border border-gray-200 rounded-xl px-3 sm:px-4 py-2 sm:py-2.5 focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none text-sm" 
+                            placeholder="请输入新闻标题">
+                    </div>
+                    <div>
+                        <label class="block text-xs sm:text-sm font-medium text-gray-700 mb-1">新闻内容 <span class="text-red-500">*</span></label>
+                        <textarea id="news-content" required rows="5" maxlength="500"
+                            class="w-full border border-gray-200 rounded-xl px-3 sm:px-4 py-2 sm:py-2.5 focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none text-sm resize-none" 
+                            placeholder="请输入新闻内容（支持换行）"></textarea>
+                        <div class="text-right text-[10px] text-gray-400 mt-1"><span id="news-content-count">0</span>/500</div>
+                    </div>
+                    <div class="grid grid-cols-2 gap-3 sm:gap-4">
+                        <div>
+                            <label class="block text-xs sm:text-sm font-medium text-gray-700 mb-1">通知到期 <span class="text-red-500">*</span></label>
+                            <input type="date" id="news-expiry" required 
+                                class="w-full border border-gray-200 rounded-xl px-3 sm:px-4 py-2 sm:py-2.5 focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none text-sm">
+                        </div>
+                        <div>
+                            <label class="block text-xs sm:text-sm font-medium text-gray-700 mb-1">关联赛区</label>
+                            <select id="news-region" class="w-full border border-gray-200 rounded-xl px-3 sm:px-4 py-2 sm:py-2.5 focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none bg-white text-sm">
+                                <option value="">全联盟</option>
+                                <option value="LPL">LPL</option>
+                                <option value="LCK">LCK</option>
+                                <option value="LEC">LEC</option>
+                                <option value="LCS">LCS</option>
+                                <option value="MSI">MSI</option>
+                                <option value="Worlds">Worlds</option>
+                                <option value="PCS">PCS</option>
+                                <option value="VCS">VCS</option>
+                                <option value="CBLOL">CBLOL</option>
+                                <option value="EWC">EWC</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div>
+                        <label class="block text-xs sm:text-sm font-medium text-gray-700 mb-1">优先级</label>
+                        <div class="flex gap-3">
+                            <label class="flex items-center gap-2 cursor-pointer">
+                                <input type="radio" name="news-priority" value="high" class="text-blue-600 focus:ring-blue-500">
+                                <span class="text-sm text-gray-700">重要</span>
+                                <span class="text-xs px-2 py-0.5 rounded news-badge-high">紧急</span>
+                            </label>
+                            <label class="flex items-center gap-2 cursor-pointer">
+                                <input type="radio" name="news-priority" value="normal" checked class="text-blue-600 focus:ring-blue-500">
+                                <span class="text-sm text-gray-700">普通</span>
+                                <span class="text-xs px-2 py-0.5 rounded news-badge-normal">常规</span>
+                            </label>
+                        </div>
+                    </div>
+                    <div class="pt-3 sm:pt-4 flex gap-3 sticky bottom-0 bg-white pb-2">
+                        <button type="button" onclick="closeNewsModal()" class="flex-1 px-4 py-2.5 border border-gray-200 text-gray-700 rounded-xl hover:bg-gray-50 font-medium transition-all text-sm">取消</button>
+                        <button type="submit" class="flex-1 px-4 py-2.5 bg-blue-600 hover:bg-blue-700 text-white rounded-xl font-medium transition-all shadow-lg shadow-blue-600/30 text-sm">发布</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
     <!-- Toast -->
     <div id="toast" class="fixed bottom-6 right-4 sm:right-6 z-[70] transform translate-y-20 opacity-0 transition-all duration-300">
         <div class="bg-gray-800 text-white px-4 sm:px-6 py-3 rounded-xl shadow-2xl flex items-center gap-3 text-sm">
@@ -1325,6 +1448,39 @@
                     localStorage.setItem('lol_team_heats', JSON.stringify(data));
                 } catch(e) {
                     showToast('存储失败');
+                }
+            },
+            getNews() {
+                try {
+                    const stored = localStorage.getItem('lol_news');
+                    if (stored) {
+                        const data = JSON.parse(stored);
+                        return Array.isArray(data) ? data : [];
+                    }
+                    return [
+                        { id: 1, title: "LPL第二赛段季后赛公布", content: "淘汰赛5月29日-6月8日深圳举行，败决-总决赛6月13-14日武汉举行", expiryDate: "2026-06-13", region: "LPL", priority: "high", createdAt: "2026-05-19" },
+                        { id: 2, title: "LPL第二赛段季后赛售票信息公布", content: "2026年5月25日14点，开启淘汰赛5月29日至6月8日门票售卖。", expiryDate: "2026-05-25", region: "LPL", priority: "high", createdAt: "2026-05-20" },
+                        { id: 3, title: "EWC电竞世界杯", content: "赛事确定转移法国巴黎举办‌，将于7月6日开幕", expiryDate: "2026-05-20", region: "", priority: "high", createdAt: "2026-05-20" },
+                        { id: 4, title: "LEC夏季赛5月23日正式开赛", content: "CN时间5月23日23点-6月7日。", expiryDate: "2026-06-02", region: "LEC", priority: "high", createdAt: "2026-05-22" },
+                        { id: 5, title: "LCK第二赛段季后赛", content: "信息待定", expiryDate: "2026-06-01", region: "LCK", priority: "normal", createdAt: "2026-05-22" },
+                        { id: 6, title: "2026 年英雄联盟季中冠军赛（MSI）", content: "将于6月28日至7月12日在韩国大田会展中心举办‌。‌‌", expiryDate: "2026-06-28", region: "MSI", priority: "high", createdAt: "2026-03-22" }
+                    ];
+                } catch(e) {
+                    return [
+                        { id: 1, title: "LPL第二赛段季后赛公布", content: "淘汰赛5月29日-6月8日深圳举行，败决-总决赛6月13-14日武汉举行", expiryDate: "2026-06-13", region: "LPL", priority: "high", createdAt: "2026-05-19" },
+                        { id: 2, title: "LPL第二赛段季后赛售票信息公布", content: "2026年5月25日14点，开启淘汰赛5月29日至6月8日门票售卖。", expiryDate: "2026-05-25", region: "LPL", priority: "high", createdAt: "2026-05-20" },
+                        { id: 3, title: "EWC电竞世界杯", content: "赛事确定转移法国巴黎举办‌，将于7月6日开幕", expiryDate: "2026-05-20", region: "", priority: "high", createdAt: "2026-05-20" },
+                        { id: 4, title: "LEC夏季赛5月23日正式开赛", content: "CN时间5月23日23点-6月7日。", expiryDate: "2026-06-02", region: "LEC", priority: "high", createdAt: "2026-05-22" },
+                        { id: 5, title: "LCK第二赛段季后赛", content: "信息待定", expiryDate: "2026-06-01", region: "LCK", priority: "normal", createdAt: "2026-05-22" },
+                        { id: 6, title: "2026 年英雄联盟季中冠军赛（MSI）", content: "将于6月28日至7月12日在韩国大田会展中心举办‌。‌‌", expiryDate: "2026-06-28", region: "MSI", priority: "high", createdAt: "2026-03-22" }
+                    ];
+                }
+            },
+            saveNews(data) {
+                try {
+                    localStorage.setItem('lol_news', JSON.stringify(data));
+                } catch(e) {
+                    showToast('新闻存储失败');
                 }
             },
             getDefaultData() {
@@ -1621,6 +1777,7 @@
 
         let matches = DataStore.getMatches();
         let teamHeats = DataStore.getTeamHeats();
+        let newsList = DataStore.getNews();
         const defaultTeamHeats = {
             'AL': 'high',
             'BFX': 'low',
@@ -1664,13 +1821,14 @@
             DataStore.saveTeamHeats(teamHeats);
         }
         let editingId = null;
+        let editingNewsId = null;
         let currentPage = 'home';
         let calendarDate = new Date(2026, 4, 1);
         let selectedDate = formatDateLocal(new Date());
         let calendarView = 'month';
-        let trendPeriodDays = 7;
         let adminPageSize = 10;
         let adminCurrentPage = 1;
+        let newsFilter = 'all'; // all, high, region
 
         const teamIcons = {
     'AL': 'https://esports-cdn.namitiyu.com/lol/team/FjBYl_bpqXM4Thw2Z2WYxwDIOJx1',
@@ -1808,6 +1966,19 @@
             const d = new Date();
             d.setDate(d.getDate() + 1);
             return formatDateLocal(d);
+        }
+
+        function getDaysUntilExpiry(expiryDate) {
+            const today = new Date();
+            today.setHours(0,0,0,0);
+            const expiry = parseDateLocal(expiryDate);
+            expiry.setHours(0,0,0,0);
+            const diff = Math.ceil((expiry - today) / (1000 * 60 * 60 * 24));
+            return diff;
+        }
+
+        function isNewsExpired(newsItem) {
+            return getDaysUntilExpiry(newsItem.expiryDate) < 0;
         }
 
         // ==================== 赛区标签配色 ====================
@@ -2440,12 +2611,12 @@
             });
         }
 
-        // ==================== 走势线条图 ====================
-        function setTrendPeriod(days) {
-            trendPeriodDays = days;
-            document.querySelectorAll('.trend-period-btn').forEach(btn => {
-                const btnDays = parseInt(btn.dataset.days);
-                if (btnDays === days) {
+        // ==================== 新闻通知系统 ====================
+        function setNewsFilter(filter) {
+            newsFilter = filter;
+            document.querySelectorAll('.news-filter-btn').forEach(btn => {
+                const btnFilter = btn.dataset.filter;
+                if (btnFilter === filter) {
                     btn.classList.add('bg-white/20', 'text-white');
                     btn.classList.remove('text-white/50', 'hover:bg-white/10');
                 } else {
@@ -2453,129 +2624,129 @@
                     btn.classList.add('text-white/50', 'hover:bg-white/10');
                 }
             });
-            renderTrendLine();
+            renderHomeNews();
         }
 
-        function renderTrendLine() {
-            const container = document.getElementById('trend-chart-container');
-            const legend = document.getElementById('trend-legend');
+        function renderHomeNews() {
+            const container = document.getElementById('news-list-container');
+            const badge = document.getElementById('news-count-badge');
             container.innerHTML = '';
-            legend.innerHTML = '';
 
-            const allRegions = [...new Set(matches.map(m => m.region))];
-            const regionColors = {};
-            allRegions.forEach(r => {
-                const s = getRegionStyle(r, 'admin');
-                const match = s.style.match(/background:([^;]+)/);
-                regionColors[r] = match ? match[1] : '#999';
+            newsList = DataStore.getNews();
+            const today = getTodayLocal();
+            const todayDate = new Date();
+            todayDate.setHours(0,0,0,0);
+
+            // 过滤未过期的新闻
+            let activeNews = newsList.filter(n => {
+                const expiry = parseDateLocal(n.expiryDate);
+                expiry.setHours(0,0,0,0);
+                return expiry >= todayDate;
             });
 
-            const dates = [];
-            const today = new Date();
-            for (let i = trendPeriodDays - 1; i >= 0; i--) {
-                const d = new Date(today);
-                d.setDate(d.getDate() - i);
-                dates.push(formatDateLocal(d));
+            // 应用筛选器
+            if (newsFilter === 'high') {
+                activeNews = activeNews.filter(n => n.priority === 'high');
+            } else if (newsFilter === 'region') {
+                // 获取今日/近期赛事的赛区，显示相关新闻
+                const recentRegions = [...new Set(matches.filter(m => m.date >= today).map(m => m.region))];
+                activeNews = activeNews.filter(n => !n.region || recentRegions.includes(n.region));
             }
 
-            const regionData = {};
-            allRegions.forEach(region => {
-                regionData[region] = dates.map(date => {
-                    return matches.filter(m => m.region === region && m.date === date).length;
-                });
-            });
-
-            const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
-            svg.classList.add('trend-line-svg');
-            svg.setAttribute('viewBox', '0 0 800 200');
-            svg.setAttribute('preserveAspectRatio', 'none');
-
-            const padding = { top: 20, right: 30, bottom: 30, left: 30 };
-            const width = 800 - padding.left - padding.right;
-            const height = 200 - padding.top - padding.bottom;
-
-            let maxValue = 0;
-            Object.values(regionData).forEach(data => {
-                maxValue = Math.max(maxValue, ...data);
-            });
-            maxValue = Math.max(maxValue, 1);
-
-            for (let i = 0; i <= 4; i++) {
-                const y = padding.top + (height / 4) * i;
-                const line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
-                line.setAttribute('x1', padding.left);
-                line.setAttribute('y1', y);
-                line.setAttribute('x2', 800 - padding.right);
-                line.setAttribute('y2', y);
-                line.classList.add('trend-grid');
-                svg.appendChild(line);
-            }
-
-            allRegions.forEach(region => {
-                const data = regionData[region];
-                const color = regionColors[region];
-
-                const points = data.map((value, index) => {
-                    const x = padding.left + (width / (dates.length - 1)) * index;
-                    const y = padding.top + height - (value / maxValue) * height;
-                    return { x, y, value };
-                });
-
-                const areaPath = document.createElementNS('http://www.w3.org/2000/svg', 'path');
-                let areaD = `M ${points[0].x} ${padding.top + height}`;
-                points.forEach(p => areaD += ` L ${p.x} ${p.y}`);
-                areaD += ` L ${points[points.length - 1].x} ${padding.top + height} Z`;
-                areaPath.setAttribute('d', areaD);
-                areaPath.classList.add('trend-line-area');
-                areaPath.style.fill = color;
-                svg.appendChild(areaPath);
-
-                const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
-                let d = `M ${points[0].x} ${points[0].y}`;
-                points.slice(1).forEach(p => d += ` L ${p.x} ${p.y}`);
-                path.setAttribute('d', d);
-                path.classList.add('trend-line-path');
-                path.style.stroke = color;
-                svg.appendChild(path);
-
-                points.forEach((p, i) => {
-                    const circle = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
-                    circle.setAttribute('cx', p.x);
-                    circle.setAttribute('cy', p.y);
-                    circle.setAttribute('r', 4);
-                    circle.setAttribute('fill', color);
-                    circle.classList.add('trend-dot');
-
-                    const title = document.createElementNS('http://www.w3.org/2000/svg', 'title');
-                    title.textContent = `${dates[i]}: ${p.value}场`;
-                    circle.appendChild(title);
-
-                    svg.appendChild(circle);
-                });
-            });
-
-            const labelStep = Math.ceil(dates.length / 6);
-            dates.forEach((date, index) => {
-                if (index % labelStep === 0 || index === dates.length - 1) {
-                    const x = padding.left + (width / (dates.length - 1)) * index;
-                    const text = document.createElementNS('http://www.w3.org/2000/svg', 'text');
-                    text.setAttribute('x', x);
-                    text.setAttribute('y', 195);
-                    text.setAttribute('text-anchor', 'middle');
-                    text.classList.add('trend-label');
-                    const d = parseDateLocal(date);
-                    text.textContent = `${d.getMonth() + 1}/${d.getDate()}`;
-                    svg.appendChild(text);
+            // 排序：重要优先 > 到期时间近的 > 创建时间新的
+            activeNews.sort((a, b) => {
+                if (a.priority !== b.priority) {
+                    return a.priority === 'high' ? -1 : 1;
                 }
+                const daysA = getDaysUntilExpiry(a.expiryDate);
+                const daysB = getDaysUntilExpiry(b.expiryDate);
+                if (daysA !== daysB) return daysA - daysB;
+                return new Date(b.createdAt) - new Date(a.createdAt);
             });
 
-            container.appendChild(svg);
+            badge.textContent = `${activeNews.length} 条`;
 
-            allRegions.forEach(region => {
-                const dot = document.createElement('div');
-                dot.className = 'flex items-center gap-2';
-                dot.innerHTML = `<span class="w-3 h-3 rounded-full" style="background:${regionColors[region]}"></span><span class="text-white/60">${region}</span>`;
-                legend.appendChild(dot);
+            if (activeNews.length === 0) {
+                container.innerHTML = `
+                    <div class="text-center py-12 text-white/30">
+                        <i class="fas fa-bullhorn text-4xl mb-3"></i>
+                        <p class="text-sm">暂无新闻通知</p>
+                        <p class="text-xs mt-1 text-white/20">请在"数据管理 > 新闻发布"中添加</p>
+                    </div>
+                `;
+                return;
+            }
+
+            activeNews.forEach((news, index) => {
+                const daysLeft = getDaysUntilExpiry(news.expiryDate);
+                const isHigh = news.priority === 'high';
+                const isUrgent = daysLeft <= 3 && daysLeft >= 0;
+                const rStyle = news.region ? getRegionStyle(news.region, 'home') : null;
+
+                const card = document.createElement('div');
+                card.className = `news-card ${isHigh ? 'priority-high' : ''}`;
+                card.style.animationDelay = `${index * 0.05}s`;
+
+                const expiryClass = isUrgent ? 'news-expiry-soon' : 'news-expiry-normal';
+                const expiryText = daysLeft === 0 ? '今天到期' : daysLeft === 1 ? '明天到期' : `剩余 ${daysLeft} 天`;
+
+                // 内容摘要（前60字）
+                const summary = news.content.length > 60 ? news.content.substring(0, 60) + '...' : news.content;
+
+                card.innerHTML = `
+                    <div class="flex items-start gap-3">
+                        <div class="flex-shrink-0 mt-0.5">
+                            ${isHigh ? '<i class="fas fa-exclamation-circle text-yellow-400 text-lg"></i>' : '<i class="fas fa-info-circle text-blue-400 text-lg"></i>'}
+                        </div>
+                        <div class="flex-1 min-w-0">
+                            <div class="flex items-center gap-2 mb-1.5 flex-wrap">
+                                <span class="font-bold text-white text-sm sm:text-base truncate">${news.title}</span>
+                                ${isHigh ? '<span class="news-badge news-badge-high">重要</span>' : '<span class="news-badge news-badge-normal">常规</span>'}
+                                ${rStyle ? `<span class="${rStyle.class}" ${rStyle.style ? 'style="'+rStyle.style+'"' : ''}>${news.region}</span>` : ''}
+                            </div>
+                            <p class="text-white/60 text-xs sm:text-sm leading-relaxed mb-2">${summary}</p>
+                            <div class="flex items-center gap-3 text-[10px] sm:text-xs">
+                                <span class="${expiryClass} flex items-center gap-1">
+                                    <i class="fas fa-clock"></i>${expiryText}
+                                </span>
+                                <span class="text-white/30">发布于 ${news.createdAt}</span>
+                            </div>
+                        </div>
+                    </div>
+                `;
+                
+                // 点击展开完整内容
+                card.onclick = () => {
+                    const fullCard = document.createElement('div');
+                    fullCard.className = `news-card ${isHigh ? 'priority-high' : ''} mb-3`;
+                    fullCard.innerHTML = `
+                        <div class="flex items-start gap-3">
+                            <div class="flex-shrink-0 mt-0.5">
+                                ${isHigh ? '<i class="fas fa-exclamation-circle text-yellow-400 text-lg"></i>' : '<i class="fas fa-info-circle text-blue-400 text-lg"></i>'}
+                            </div>
+                            <div class="flex-1 min-w-0">
+                                <div class="flex items-center gap-2 mb-2 flex-wrap">
+                                    <span class="font-bold text-white text-base">${news.title}</span>
+                                    ${isHigh ? '<span class="news-badge news-badge-high">重要</span>' : '<span class="news-badge news-badge-normal">常规</span>'}
+                                    ${rStyle ? `<span class="${rStyle.class}" ${rStyle.style ? 'style="'+rStyle.style+'"' : ''}>${news.region}</span>` : ''}
+                                </div>
+                                <p class="text-white/70 text-sm leading-relaxed mb-3 whitespace-pre-wrap">${news.content}</p>
+                                <div class="flex items-center gap-3 text-xs">
+                                    <span class="${expiryClass} flex items-center gap-1">
+                                        <i class="fas fa-clock"></i>到期：${news.expiryDate}（${expiryText}）
+                                    </span>
+                                    <span class="text-white/30">发布于 ${news.createdAt}</span>
+                                </div>
+                                <button onclick="this.closest('.news-card').remove()" class="mt-3 text-xs text-white/40 hover:text-white/70 transition-colors">
+                                    <i class="fas fa-chevron-up mr-1"></i>收起
+                                </button>
+                            </div>
+                        </div>
+                    `;
+                    card.replaceWith(fullCard);
+                };
+
+                container.appendChild(card);
             });
         }
 
@@ -2610,7 +2781,7 @@
                 if (heroIconB) { heroIconB.src = getTeamIcon(focusMatch.teamB); heroIconB.alt = focusMatch.teamB; }
             }
 
-            renderTrendLine();
+            renderHomeNews();
 
             const allRegions = [...new Set(matches.map(m => m.region))];
             const regionColors = {};
@@ -2640,7 +2811,6 @@
             const teamShowcase = document.getElementById('team-showcase');
             teamShowcase.innerHTML = '';
 
-            // 按赛区独立聚合战队战绩（同一战队在不同赛区战绩分开计算）
             const regionTeamStats = {};
             matches.forEach(m => {
                 if (!regionTeamStats[m.region]) regionTeamStats[m.region] = {};
@@ -2843,6 +3013,7 @@
         // ==================== 管理页渲染 ====================
         function renderAdmin() {
             matches = DataStore.getMatches();
+            newsList = DataStore.getNews();
             const tbody = document.getElementById('matches-table-body');
             tbody.innerHTML = '';
             const filtered = getFilteredMatches();
@@ -2925,6 +3096,118 @@
 
             updateRegionFilter();
             updateBatchBar();
+        }
+
+        // ==================== 新闻管理渲染 ====================
+        function renderNewsAdmin() {
+            newsList = DataStore.getNews();
+            const tbody = document.getElementById('news-table-body');
+            const mobileList = document.getElementById('news-mobile-list');
+            tbody.innerHTML = '';
+            mobileList.innerHTML = '';
+
+            const today = new Date();
+            today.setHours(0,0,0,0);
+
+            // 统计
+            const total = newsList.length;
+            const active = newsList.filter(n => {
+                const exp = parseDateLocal(n.expiryDate);
+                exp.setHours(0,0,0,0);
+                return exp >= today;
+            }).length;
+            const high = newsList.filter(n => n.priority === 'high').length;
+            const expired = newsList.filter(n => {
+                const exp = parseDateLocal(n.expiryDate);
+                exp.setHours(0,0,0,0);
+                return exp < today;
+            }).length;
+
+            document.getElementById('news-admin-total').textContent = total;
+            document.getElementById('news-admin-active').textContent = active;
+            document.getElementById('news-admin-high').textContent = high;
+            document.getElementById('news-admin-expired').textContent = expired;
+
+            // 排序：未过期优先，然后重要优先
+            const sortedNews = [...newsList].sort((a, b) => {
+                const aExp = parseDateLocal(a.expiryDate);
+                const bExp = parseDateLocal(b.expiryDate);
+                aExp.setHours(0,0,0,0); bExp.setHours(0,0,0,0);
+                const aExpired = aExp < today;
+                const bExpired = bExp < today;
+                if (aExpired !== bExpired) return aExpired ? 1 : -1;
+                if (a.priority !== b.priority) return a.priority === 'high' ? -1 : 1;
+                return new Date(b.createdAt) - new Date(a.createdAt);
+            });
+
+            sortedNews.forEach(news => {
+                const exp = parseDateLocal(news.expiryDate);
+                exp.setHours(0,0,0,0);
+                const isExpired = exp < today;
+                const daysLeft = getDaysUntilExpiry(news.expiryDate);
+                const rStyle = news.region ? getRegionStyle(news.region, 'admin') : null;
+
+                const tr = document.createElement('tr');
+                tr.className = 'table-row-hover transition-colors';
+                tr.innerHTML = `
+                    <td class="px-4 sm:px-6 py-3 sm:py-4">
+                        ${news.priority === 'high' 
+                            ? '<span class="px-2 py-1 rounded-lg text-[10px] font-medium bg-yellow-100 text-yellow-700 border border-yellow-200"><i class="fas fa-exclamation mr-1"></i>重要</span>' 
+                            : '<span class="px-2 py-1 rounded-lg text-[10px] font-medium bg-gray-100 text-gray-600 border border-gray-200">普通</span>'}
+                    </td>
+                    <td class="px-4 sm:px-6 py-3 sm:py-4">
+                        <div class="font-bold text-gray-800 text-xs sm:text-sm">${news.title}</div>
+                        <div class="text-gray-400 text-[10px] sm:text-xs mt-0.5 truncate max-w-[200px]">${news.content}</div>
+                    </td>
+                    <td class="px-4 sm:px-6 py-3 sm:py-4">
+                        ${rStyle ? `<span class="${rStyle.class}" style="${rStyle.style}">${news.region}</span>` : '<span class="text-gray-400 text-xs">全联盟</span>'}
+                    </td>
+                    <td class="px-4 sm:px-6 py-3 sm:py-4 text-xs sm:text-sm ${isExpired ? 'text-gray-400' : daysLeft <= 3 ? 'text-red-600 font-medium' : 'text-gray-600'}">
+                        ${news.expiryDate} ${isExpired ? '(已过期)' : daysLeft <= 3 ? '(剩' + daysLeft + '天)' : ''}
+                    </td>
+                    <td class="px-4 sm:px-6 py-3 sm:py-4">
+                        ${isExpired 
+                            ? '<span class="px-2 py-1 rounded-lg text-[10px] font-medium bg-gray-100 text-gray-500">已下架</span>' 
+                            : '<span class="px-2 py-1 rounded-lg text-[10px] font-medium bg-green-50 text-green-600">展示中</span>'}
+                    </td>
+                    <td class="px-4 sm:px-6 py-3 sm:py-4 text-right whitespace-nowrap">
+                        <button onclick="editNews(${news.id})" class="text-blue-600 hover:text-blue-800 mr-3 transition-colors p-1"><i class="fas fa-edit"></i></button>
+                        <button onclick="deleteNews(${news.id})" class="text-red-600 hover:text-red-800 transition-colors p-1"><i class="fas fa-trash"></i></button>
+                    </td>
+                `;
+                tbody.appendChild(tr);
+
+                const mobileCard = document.createElement('div');
+                mobileCard.className = 'admin-card p-4 relative';
+                mobileCard.innerHTML = `
+                    <div class="flex items-start justify-between mb-3">
+                        <div class="flex items-center gap-2">
+                            ${news.priority === 'high' 
+                                ? '<span class="px-2 py-1 rounded-lg text-[10px] font-medium bg-yellow-100 text-yellow-700 border border-yellow-200">重要</span>' 
+                                : '<span class="px-2 py-1 rounded-lg text-[10px] font-medium bg-gray-100 text-gray-600 border border-gray-200">普通</span>'}
+                            ${rStyle ? `<span class="${rStyle.class}" style="${rStyle.style}">${news.region}</span>` : '<span class="text-gray-400 text-xs">全联盟</span>'}
+                        </div>
+                        ${isExpired 
+                            ? '<span class="px-2 py-1 rounded-lg text-[10px] font-medium bg-gray-100 text-gray-500">已下架</span>' 
+                            : '<span class="px-2 py-1 rounded-lg text-[10px] font-medium bg-green-50 text-green-600">展示中</span>'}
+                    </div>
+                    <div class="font-bold text-gray-800 text-sm mb-1">${news.title}</div>
+                    <div class="text-gray-400 text-xs mb-3 line-clamp-2">${news.content}</div>
+                    <div class="flex items-center justify-between text-xs ${isExpired ? 'text-gray-400' : daysLeft <= 3 ? 'text-red-600' : 'text-gray-500'}">
+                        <span>到期：${news.expiryDate}</span>
+                        <div class="flex gap-2">
+                            <button onclick="editNews(${news.id})" class="text-blue-600 hover:text-blue-800 font-medium px-2 py-1 rounded hover:bg-blue-50 transition-colors">编辑</button>
+                            <button onclick="deleteNews(${news.id})" class="text-red-600 hover:text-red-800 font-medium px-2 py-1 rounded hover:bg-red-50 transition-colors">删除</button>
+                        </div>
+                    </div>
+                `;
+                mobileList.appendChild(mobileCard);
+            });
+
+            if (sortedNews.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="6" class="py-12 text-center text-gray-400"><i class="fas fa-newspaper text-3xl mb-3 text-gray-300"></i><p>暂无新闻</p></td></tr>`;
+                mobileList.innerHTML = `<div class="py-12 text-center text-gray-400"><i class="fas fa-newspaper text-3xl mb-3 text-gray-300"></i><p>暂无新闻</p></div>`;
+            }
         }
 
         // ==================== 批量操作 ====================
@@ -3084,6 +3367,9 @@
                 matches = DataStore.getMatches();
                 renderTeamsList();
             }
+            if (section === 'news') {
+                renderNewsAdmin();
+            }
         }
 
         // ==================== 战队热度管理 ====================
@@ -3091,7 +3377,6 @@
             const container = document.getElementById('teams-list');
             container.innerHTML = '';
 
-            // 按赛区独立聚合战队数据，战绩按赛区分开计算
             const regionTeamStats = {};
             matches.forEach(m => {
                 if (!regionTeamStats[m.region]) regionTeamStats[m.region] = {};
@@ -3112,7 +3397,6 @@
                 }
             });
 
-            // 按赛区战队数量排序
             const sortedRegions = Object.keys(regionTeamStats)
                 .sort((a, b) => Object.keys(regionTeamStats[b]).length - Object.keys(regionTeamStats[a]).length);
 
@@ -3201,7 +3485,7 @@
             showToast('战队热度设置已保存');
         }
 
-        // ==================== 数据操作 ====================
+        // ==================== 赛事数据操作 ====================
         function openModal(id = null) {
             editingId = id;
             document.getElementById('modal-title').textContent = id ? '编辑赛事' : '添加赛事';
@@ -3280,6 +3564,85 @@
             document.getElementById('toast-message').textContent = msg;
             toast.classList.remove('translate-y-20', 'opacity-0');
             setTimeout(() => toast.classList.add('translate-y-20', 'opacity-0'), 3000);
+        }
+
+        // ==================== 新闻操作 ====================
+        function openNewsModal(id = null) {
+            editingNewsId = id;
+            document.getElementById('news-modal-title').textContent = id ? '编辑新闻' : '发布新闻';
+            document.getElementById('news-modal').classList.remove('hidden');
+            document.body.style.overflow = 'hidden';
+
+            // 内容计数
+            const contentArea = document.getElementById('news-content');
+            const countSpan = document.getElementById('news-content-count');
+            contentArea.oninput = () => {
+                countSpan.textContent = contentArea.value.length;
+            };
+
+            if (id) {
+                const news = newsList.find(n => n.id === id);
+                document.getElementById('news-title').value = news.title;
+                document.getElementById('news-content').value = news.content;
+                document.getElementById('news-expiry').value = news.expiryDate;
+                document.getElementById('news-region').value = news.region || '';
+                const radios = document.getElementsByName('news-priority');
+                for (let r of radios) {
+                    r.checked = r.value === news.priority;
+                }
+                countSpan.textContent = news.content.length;
+            } else {
+                document.getElementById('news-form').reset();
+                document.getElementById('news-expiry').value = getTomorrowLocal();
+                countSpan.textContent = '0';
+            }
+        }
+
+        function closeNewsModal() {
+            document.getElementById('news-modal').classList.add('hidden');
+            document.body.style.overflow = '';
+            editingNewsId = null;
+        }
+
+        function saveNews(e) {
+            e.preventDefault();
+            const priorityRadio = document.querySelector('input[name="news-priority"]:checked');
+            const data = {
+                id: editingNewsId || Date.now(),
+                title: document.getElementById('news-title').value.trim(),
+                content: document.getElementById('news-content').value.trim(),
+                expiryDate: document.getElementById('news-expiry').value,
+                region: document.getElementById('news-region').value,
+                priority: priorityRadio ? priorityRadio.value : 'normal',
+                createdAt: editingNewsId ? (newsList.find(n => n.id === editingNewsId)?.createdAt || getTodayLocal()) : getTodayLocal()
+            };
+
+            if (editingNewsId) {
+                const idx = newsList.findIndex(n => n.id === editingNewsId);
+                newsList[idx] = data;
+            } else {
+                newsList.push(data);
+            }
+
+            DataStore.saveNews(newsList);
+            closeNewsModal();
+            renderNewsAdmin();
+            if (currentPage === 'home') renderHome();
+            showToast(editingNewsId ? '新闻更新成功' : '新闻发布成功');
+        }
+
+        function editNews(id) {
+            openNewsModal(id);
+        }
+
+        function deleteNews(id) {
+            if (confirm('确定要删除这条新闻吗？')) {
+                newsList = newsList.filter(n => n.id !== id);
+                DataStore.saveNews(newsList);
+                renderNewsAdmin();
+                if (currentPage === 'home') renderHome();
+                showToast('新闻删除成功');
+            }
         }
 
         // ==================== 导入导出 ====================
