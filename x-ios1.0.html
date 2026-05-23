@@ -700,6 +700,8 @@
     </style>
 <base target="_blank">
 <base target="_blank">
+<base target="_blank">
+<base target="_blank">
 </head>
 <body>
 
@@ -1077,6 +1079,7 @@
                                         <th class="px-4 sm:px-6 py-3 sm:py-4 text-xs font-semibold text-gray-500 uppercase tracking-wider text-right">A战队</th>
                                         <th class="px-4 sm:px-6 py-3 sm:py-4 text-xs font-semibold text-gray-500 uppercase tracking-wider text-center">比分</th>
                                         <th class="px-4 sm:px-6 py-3 sm:py-4 text-xs font-semibold text-gray-500 uppercase tracking-wider">B战队</th>
+                                        <th class="px-4 sm:px-6 py-3 sm:py-4 text-xs font-semibold text-gray-500 uppercase tracking-wider">赛制</th>
                                         <th class="px-4 sm:px-6 py-3 sm:py-4 text-xs font-semibold text-gray-500 uppercase tracking-wider">状态</th>
                                         <th class="px-4 sm:px-6 py-3 sm:py-4 text-xs font-semibold text-gray-500 uppercase tracking-wider text-right">操作</th>
                                     </tr>
@@ -1126,7 +1129,7 @@
                             </div>
                             <div class="mt-4 p-3 sm:p-4 bg-blue-50 rounded-lg">
                                 <p class="text-xs sm:text-sm text-blue-800 font-medium mb-2">文件格式要求：</p>
-                                <p class="text-[10px] sm:text-xs text-blue-600">赛区, 日期(YYYY-MM-DD), 时间(HH:MM), A战队, A成绩, B成绩, B战队</p>
+                                <p class="text-[10px] sm:text-xs text-blue-600">赛区, 日期(YYYY-MM-DD), 时间(HH:MM), A战队, A成绩, B成绩, B战队, 赛制(BO1/BO3/BO5)</p>
                             </div>
                         </div>
                         <div class="admin-card p-4 sm:p-6">
@@ -1289,6 +1292,15 @@
                                 <option value="VCS">
                                 <option value="CBLOL">
                             </datalist>
+                        </div>
+                        <div>
+                            <label class="block text-xs sm:text-sm font-medium text-gray-700 mb-1">赛制 <span class="text-gray-400 text-[10px] sm:text-xs">(自动推荐)</span></label>
+                            <select id="form-format" class="w-full border border-gray-200 rounded-xl px-3 sm:px-4 py-2 sm:py-2.5 focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none bg-white text-sm">
+                                <option value="BO1">BO1 - 一局定胜负</option>
+                                <option value="BO3">BO3 - 三局两胜</option>
+                                <option value="BO5">BO5 - 五局三胜</option>
+                                <option value="BO7">BO7 - 七局四胜</option>
+                            </select>
                         </div>
                         <div>
                             <label class="block text-xs sm:text-sm font-medium text-gray-700 mb-1">状态</label>
@@ -1483,297 +1495,346 @@
                     showToast('新闻存储失败');
                 }
             },
-            getDefaultData() {
+getDefaultData() {
                 return [
-                    { id: 1, region: "EWC", date: "2026-03-27", time: "15:00", teamA: "EDG", scoreA: 1, scoreB: 2, teamB: "UP", status: "completed" },
-  { id: 2, region: "EWC", date: "2026-03-27", time: "18:10", teamA: "TT", scoreA: 2, scoreB: 0, teamB: "LGD", status: "completed" },
-  { id: 3, region: "EWC", date: "2026-03-28", time: "17:00", teamA: "OMG", scoreA: 2, scoreB: 0, teamB: "UP", status: "completed" },
-  { id: 4, region: "EWC", date: "2026-03-28", time: "19:00", teamA: "LNG", scoreA: 0, scoreB: 2, teamB: "TT", status: "completed" },
-  { id: 5, region: "LEC", date: "2026-03-28", time: "21:10", teamA: "GX", scoreA: 2, scoreB: 1, teamB: "FNC", status: "completed" },
-  { id: 6, region: "LEC", date: "2026-03-28", time: "23:45", teamA: "KC", scoreA: 2, scoreB: 1, teamB: "VIT", status: "completed" },
-  { id: 7, region: "LEC", date: "2026-03-29", time: "03:00", teamA: "NAVI", scoreA: 2, scoreB: 1, teamB: "MKOI", status: "completed" },
-  { id: 8, region: "EWC", date: "2026-03-29", time: "17:00", teamA: "NIP", scoreA: 1, scoreB: 2, teamB: "OMG", status: "completed" },
-  { id: 9, region: "EWC", date: "2026-03-29", time: "19:30", teamA: "WE", scoreA: 2, scoreB: 0, teamB: "TT", status: "completed" },
-  { id: 10, region: "LEC", date: "2026-03-29", time: "23:00", teamA: "SK", scoreA: 1, scoreB: 2, teamB: "THRT", status: "completed" },
-  { id: 11, region: "LEC", date: "2026-03-30", time: "02:00", teamA: "MKOI", scoreA: 2, scoreB: 0, teamB: "FNC", status: "completed" },
-  { id: 12, region: "EWC", date: "2026-03-30", time: "17:00", teamA: "WBG", scoreA: 2, scoreB: 0, teamB: "IG", status: "completed" },
-  { id: 13, region: "EWC", date: "2026-03-30", time: "18:40", teamA: "AL", scoreA: 2, scoreB: 0, teamB: "TES", status: "completed" },
-  { id: 14, region: "LEC", date: "2026-03-30", time: "23:00", teamA: "NAVI", scoreA: 2, scoreB: 1, teamB: "SK", status: "completed" },
-  { id: 15, region: "LEC", date: "2026-03-31", time: "02:15", teamA: "THRT", scoreA: 0, scoreB: 2, teamB: "VIT", status: "completed" },
-  { id: 16, region: "EWC", date: "2026-03-31", time: "17:00", teamA: "BLG", scoreA: 2, scoreB: 0, teamB: "WE", status: "completed" },
-  { id: 17, region: "EWC", date: "2026-03-31", time: "18:40", teamA: "JDG", scoreA: 2, scoreB: 1, teamB: "OMG", status: "completed" },
-  { id: 18, region: "LCK", date: "2026-04-01", time: "16:00", teamA: "HLE", scoreA: 2, scoreB: 0, teamB: "BRO", status: "completed" },
-  { id: 19, region: "LCK", date: "2026-04-01", time: "18:10", teamA: "T1", scoreA: 0, scoreB: 2, teamB: "KT", status: "completed" },
-  { id: 20, region: "LCK", date: "2026-04-02", time: "16:00", teamA: "DK", scoreA: 0, scoreB: 2, teamB: "NS", status: "completed" },
-  { id: 21, region: "LCK", date: "2026-04-02", time: "18:10", teamA: "KRX", scoreA: 0, scoreB: 2, teamB: "DNS", status: "completed" },
-  { id: 22, region: "LCK", date: "2026-04-03", time: "16:00", teamA: "GEN", scoreA: 1, scoreB: 2, teamB: "KT", status: "completed" },
-  { id: 23, region: "LCK", date: "2026-04-03", time: "19:00", teamA: "BFX", scoreA: 0, scoreB: 2, teamB: "BRO", status: "completed" },
-  { id: 24, region: "LPL", date: "2026-04-04", time: "15:00", teamA: "TES", scoreA: 0, scoreB: 2, teamB: "IG", status: "completed" },
-  { id: 25, region: "LCK", date: "2026-04-04", time: "16:00", teamA: "T1", scoreA: 2, scoreB: 0, teamB: "HLE", status: "completed" },
-  { id: 26, region: "LPL", date: "2026-04-04", time: "17:20", teamA: "WBG", scoreA: 0, scoreB: 2, teamB: "AL", status: "completed" },
-  { id: 27, region: "LCK", date: "2026-04-04", time: "18:15", teamA: "KRX", scoreA: 0, scoreB: 2, teamB: "DK", status: "completed" },
-  { id: 28, region: "LPL", date: "2026-04-04", time: "19:20", teamA: "WE", scoreA: 0, scoreB: 2, teamB: "NIP", status: "completed" },
-  { id: 29, region: "LEC", date: "2026-04-04", time: "20:00", teamA: "SK", scoreA: 2, scoreB: 0, teamB: "Shifters", status: "completed" },
-  { id: 30, region: "LEC", date: "2026-04-04", time: "22:00", teamA: "G2", scoreA: 2, scoreB: 0, teamB: "THRT", status: "completed" },
-  { id: 31, region: "LEC", date: "2026-04-05", time: "00:00", teamA: "NAVI", scoreA: 0, scoreB: 2, teamB: "VIT", status: "completed" },
-  { id: 32, region: "LCK", date: "2026-04-05", time: "16:00", teamA: "NS", scoreA: 2, scoreB: 0, teamB: "DNS", status: "completed" },
-  { id: 33, region: "LPL", date: "2026-04-05", time: "17:00", teamA: "JDG", scoreA: 1, scoreB: 2, teamB: "BLG", status: "completed" },
-  { id: 34, region: "LCK", date: "2026-04-05", time: "18:10", teamA: "GEN", scoreA: 2, scoreB: 0, teamB: "BFX", status: "completed" },
-  { id: 35, region: "LPL", date: "2026-04-05", time: "20:10", teamA: "TES", scoreA: 2, scoreB: 0, teamB: "AL", status: "completed" },
-  { id: 36, region: "LEC", date: "2026-04-05", time: "23:00", teamA: "SK", scoreA: 0, scoreB: 2, teamB: "GX", status: "completed" },
-  { id: 37, region: "LEC", date: "2026-04-06", time: "01:00", teamA: "FNC", scoreA: 2, scoreB: 1, teamB: "G2", status: "completed" },
-  { id: 38, region: "LEC", date: "2026-04-06", time: "23:00", teamA: "GX", scoreA: 2, scoreB: 1, teamB: "THRT", status: "completed" },
-  { id: 39, region: "LEC", date: "2026-04-07", time: "01:45", teamA: "VIT", scoreA: 2, scoreB: 1, teamB: "MKOI", status: "completed" },
-  { id: 40, region: "LCK", date: "2026-04-08", time: "16:00", teamA: "DK", scoreA: 0, scoreB: 2, teamB: "HLE", status: "completed" },
-  { id: 41, region: "LPL", date: "2026-04-08", time: "17:00", teamA: "NIP", scoreA: 1, scoreB: 2, teamB: "IG", status: "completed" },
-  { id: 42, region: "LCK", date: "2026-04-08", time: "18:10", teamA: "T1", scoreA: 0, scoreB: 2, teamB: "GEN", status: "completed" },
-  { id: 43, region: "LPL", date: "2026-04-08", time: "20:20", teamA: "TES", scoreA: 2, scoreB: 0, teamB: "WE", status: "completed" },
-  { id: 44, region: "LCK", date: "2026-04-09", time: "16:00", teamA: "BRO", scoreA: 1, scoreB: 2, teamB: "KRX", status: "completed" },
-  { id: 45, region: "LPL", date: "2026-04-09", time: "17:00", teamA: "WBG", scoreA: 1, scoreB: 2, teamB: "NIP", status: "completed" },
-  { id: 46, region: "LCK", date: "2026-04-09", time: "19:15", teamA: "KT", scoreA: 2, scoreB: 0, teamB: "NS", status: "completed" },
-  { id: 47, region: "LPL", date: "2026-04-09", time: "20:00", teamA: "WE", scoreA: 0, scoreB: 2, teamB: "BLG", status: "completed" },
-  { id: 48, region: "LCK", date: "2026-04-10", time: "16:00", teamA: "DNS", scoreA: 0, scoreB: 2, teamB: "T1", status: "completed" },
-  { id: 49, region: "LPL", date: "2026-04-10", time: "17:00", teamA: "LNG", scoreA: 1, scoreB: 2, teamB: "EDG", status: "completed" },
-  { id: 50, region: "LCK", date: "2026-04-10", time: "18:00", teamA: "HLE", scoreA: 2, scoreB: 1, teamB: "BFX", status: "completed" },
-  { id: 51, region: "LPL", date: "2026-04-10", time: "20:25", teamA: "JDG", scoreA: 2, scoreB: 0, teamB: "AL", status: "completed" },
-  { id: 52, region: "LCK", date: "2026-04-11", time: "16:00", teamA: "NS", scoreA: 0, scoreB: 2, teamB: "KRX", status: "completed" },
-  { id: 53, region: "LPL", date: "2026-04-11", time: "17:00", teamA: "WE", scoreA: 0, scoreB: 2, teamB: "IG", status: "completed" },
-  { id: 54, region: "LCK", date: "2026-04-11", time: "18:00", teamA: "DK", scoreA: 2, scoreB: 0, teamB: "GEN", status: "completed" },
-  { id: 55, region: "LPL", date: "2026-04-11", time: "19:20", teamA: "TES", scoreA: 2, scoreB: 0, teamB: "JDG", status: "completed" },
-  { id: 56, region: "LEC", date: "2026-04-11", time: "20:00", teamA: "THRT", scoreA: 0, scoreB: 2, teamB: "NAVI", status: "completed" },
-  { id: 57, region: "LEC", date: "2026-04-11", time: "21:55", teamA: "G2", scoreA: 1, scoreB: 2, teamB: "VIT", status: "completed" },
-  { id: 58, region: "LEC", date: "2026-04-12", time: "01:00", teamA: "MKOI", scoreA: 2, scoreB: 0, teamB: "SK", status: "completed" },
-  { id: 59, region: "LCK", date: "2026-04-12", time: "16:00", teamA: "BFX", scoreA: 2, scoreB: 0, teamB: "DNS", status: "completed" },
-  { id: 60, region: "LPL", date: "2026-04-12", time: "17:00", teamA: "OMG", scoreA: 1, scoreB: 2, teamB: "LGD", status: "completed" },
-  { id: 61, region: "LCK", date: "2026-04-12", time: "18:00", teamA: "BRO", scoreA: 0, scoreB: 2, teamB: "KT", status: "completed" },
-  { id: 62, region: "LPL", date: "2026-04-12", time: "19:50", teamA: "WBG", scoreA: 0, scoreB: 2, teamB: "BLG", status: "completed" },
-  { id: 63, region: "LEC", date: "2026-04-12", time: "23:00", teamA: "VIT", scoreA: 2, scoreB: 1, teamB: "Shifters", status: "completed" },
-  { id: 64, region: "LEC", date: "2026-04-13", time: "01:45", teamA: "THRT", scoreA: 0, scoreB: 2, teamB: "KC", status: "completed" },
-  { id: 65, region: "EWC", date: "2026-04-13", time: "17:00", teamA: "BLG", scoreA: 1, scoreB: 2, teamB: "JDG", status: "completed" },
-  { id: 66, region: "EWC", date: "2026-04-13", time: "20:00", teamA: "WBG", scoreA: 0, scoreB: 2, teamB: "AL", status: "completed" },
-  { id: 67, region: "LEC", date: "2026-04-13", time: "23:00", teamA: "FNC", scoreA: 0, scoreB: 2, teamB: "SK", status: "completed" },
-  { id: 68, region: "LEC", date: "2026-04-14", time: "01:15", teamA: "GX", scoreA: 2, scoreB: 0, teamB: "Shifters", status: "completed" },
-  { id: 69, region: "EWC", date: "2026-04-14", time: "17:00", teamA: "WE", scoreA: 0, scoreB: 2, teamB: "OMG", status: "completed" },
-  { id: 70, region: "EWC", date: "2026-04-14", time: "18:45", teamA: "IG", scoreA: 2, scoreB: 0, teamB: "TES", status: "completed" },
-  { id: 71, region: "LCK", date: "2026-04-15", time: "16:00", teamA: "NS", scoreA: 2, scoreB: 0, teamB: "BFX", status: "completed" },
-  { id: 72, region: "LPL", date: "2026-04-15", time: "17:00", teamA: "UP", scoreA: 0, scoreB: 2, teamB: "TT", status: "completed" },
-  { id: 73, region: "LCK", date: "2026-04-15", time: "18:00", teamA: "KT", scoreA: 2, scoreB: 1, teamB: "DK", status: "completed" },
-  { id: 74, region: "LPL", date: "2026-04-15", time: "19:00", teamA: "WBG", scoreA: 2, scoreB: 1, teamB: "IG", status: "completed" },
-  { id: 75, region: "LCK", date: "2026-04-16", time: "16:00", teamA: "BRO", scoreA: 0, scoreB: 2, teamB: "GEN", status: "completed" },
-  { id: 76, region: "LPL", date: "2026-04-16", time: "17:10", teamA: "WE", scoreA: 0, scoreB: 2, teamB: "AL", status: "completed" },
-  { id: 77, region: "LCK", date: "2026-04-16", time: "18:15", teamA: "DNS", scoreA: 0, scoreB: 2, teamB: "HLE", status: "completed" },
-  { id: 78, region: "LPL", date: "2026-04-16", time: "19:30", teamA: "TES", scoreA: 2, scoreB: 0, teamB: "BLG", status: "completed" },
-  { id: 79, region: "LCK", date: "2026-04-17", time: "16:00", teamA: "KRX", scoreA: 0, scoreB: 2, teamB: "BFX", status: "completed" },
-  { id: 80, region: "LPL", date: "2026-04-17", time: "17:00", teamA: "TT", scoreA: 2, scoreB: 1, teamB: "OMG", status: "completed" },
-  { id: 81, region: "LCK", date: "2026-04-17", time: "18:00", teamA: "DK", scoreA: 2, scoreB: 1, teamB: "T1", status: "completed" },
-  { id: 82, region: "LPL", date: "2026-04-17", time: "20:10", teamA: "NIP", scoreA: 2, scoreB: 0, teamB: "JDG", status: "completed" },
-  { id: 83, region: "LCK", date: "2026-04-18", time: "16:00", teamA: "HLE", scoreA: 2, scoreB: 0, teamB: "GEN", status: "completed" },
-  { id: 84, region: "LPL", date: "2026-04-18", time: "17:00", teamA: "IG", scoreA: 1, scoreB: 2, teamB: "BLG", status: "completed" },
-  { id: 85, region: "LCK", date: "2026-04-18", time: "18:15", teamA: "DNS", scoreA: 0, scoreB: 2, teamB: "KT", status: "completed" },
-  { id: 86, region: "LPL", date: "2026-04-18", time: "20:10", teamA: "WBG", scoreA: 1, scoreB: 2, teamB: "JDG", status: "completed" },
-  { id: 87, region: "LEC", date: "2026-04-18", time: "23:00", teamA: "GX", scoreA: 1, scoreB: 2, teamB: "NAVI", status: "completed" },
-  { id: 88, region: "LEC", date: "2026-04-19", time: "01:40", teamA: "G2", scoreA: 2, scoreB: 0, teamB: "SK", status: "completed" },
-  { id: 89, region: "LCK", date: "2026-04-19", time: "16:00", teamA: "BRO", scoreA: 1, scoreB: 2, teamB: "NS", status: "completed" },
-  { id: 90, region: "LPL", date: "2026-04-19", time: "17:00", teamA: "TES", scoreA: 2, scoreB: 0, teamB: "IG", status: "completed" },
-  { id: 91, region: "LPL", date: "2026-04-19", time: "19:10", teamA: "BLG", scoreA: 2, scoreB: 0, teamB: "AL", status: "completed" },
-  { id: 92, region: "LCK", date: "2026-04-19", time: "19:15", teamA: "KRX", scoreA: 0, scoreB: 2, teamB: "T1", status: "completed" },
-  { id: 93, region: "LEC", date: "2026-04-19", time: "23:00", teamA: "VIT", scoreA: 2, scoreB: 0, teamB: "GX", status: "completed" },
-  { id: 94, region: "LEC", date: "2026-04-20", time: "01:00", teamA: "THRT", scoreA: 0, scoreB: 2, teamB: "MKOI", status: "completed" },
-  { id: 95, region: "EWC", date: "2026-04-20", time: "17:00", teamA: "WBG", scoreA: 2, scoreB: 0, teamB: "OMG", status: "completed" },
-  { id: 96, region: "EWC", date: "2026-04-20", time: "18:30", teamA: "BLG", scoreA: 2, scoreB: 1, teamB: "IG", status: "completed" },
-  { id: 97, region: "LEC", date: "2026-04-20", time: "23:00", teamA: "Shifters", scoreA: 0, scoreB: 2, teamB: "G2", status: "completed" },
-  { id: 98, region: "LEC", date: "2026-04-21", time: "01:15", teamA: "SK", scoreA: 0, scoreB: 2, teamB: "KC", status: "completed" },
-  { id: 99, region: "LCK", date: "2026-04-22", time: "16:00", teamA: "KT", scoreA: 2, scoreB: 0, teamB: "KRX", status: "completed" },
-  { id: 100, region: "LPL", date: "2026-04-22", time: "17:00", teamA: "WBG", scoreA: 2, scoreB: 0, teamB: "WE", status: "completed" },
-  { id: 101, region: "LCK", date: "2026-04-22", time: "18:10", teamA: "HLE", scoreA: 2, scoreB: 1, teamB: "NS", status: "completed" },
-  { id: 102, region: "LPL", date: "2026-04-22", time: "19:00", teamA: "NIP", scoreA: 0, scoreB: 2, teamB: "AL", status: "completed" },
-  { id: 103, region: "LCK", date: "2026-04-23", time: "16:00", teamA: "BRO", scoreA: 0, scoreB: 2, teamB: "DK", status: "completed" },
-  { id: 104, region: "LPL", date: "2026-04-23", time: "17:00", teamA: "LGD", scoreA: 2, scoreB: 0, teamB: "EDG", status: "completed" },
-  { id: 105, region: "LCK", date: "2026-04-23", time: "18:00", teamA: "GEN", scoreA: 2, scoreB: 0, teamB: "DNS", status: "completed" },
-  { id: 106, region: "LPL", date: "2026-04-23", time: "19:40", teamA: "NIP", scoreA: 2, scoreB: 0, teamB: "BLG", status: "completed" },
-  { id: 107, region: "LCK", date: "2026-04-24", time: "16:00", teamA: "BFX", scoreA: 0, scoreB: 2, teamB: "KT", status: "completed" },
-  { id: 108, region: "LPL", date: "2026-04-24", time: "17:00", teamA: "OMG", scoreA: 0, scoreB: 2, teamB: "LNG", status: "completed" },
-  { id: 109, region: "LCK", date: "2026-04-24", time: "18:20", teamA: "HLE", scoreA: 2, scoreB: 0, teamB: "KRX", status: "completed" },
-  { id: 110, region: "LPL", date: "2026-04-24", time: "19:10", teamA: "JDG", scoreA: 2, scoreB: 0, teamB: "IG", status: "completed" },
-  { id: 111, region: "LEC", date: "2026-04-24", time: "23:10", teamA: "Shifters", scoreA: 0, scoreB: 2, teamB: "FNC", status: "completed" },
-  { id: 112, region: "LEC", date: "2026-04-25", time: "01:40", teamA: "NAVI", scoreA: 0, scoreB: 2, teamB: "KC", status: "completed" },
-  { id: 113, region: "LPL", date: "2026-04-25", time: "15:00", teamA: "TES", scoreA: 2, scoreB: 0, teamB: "NIP", status: "completed" },
-  { id: 114, region: "LCK", date: "2026-04-25", time: "16:00", teamA: "T1", scoreA: 2, scoreB: 0, teamB: "BRO", status: "completed" },
-  { id: 115, region: "LPL", date: "2026-04-25", time: "17:15", teamA: "WE", scoreA: 0, scoreB: 2, teamB: "JDG", status: "completed" },
-  { id: 116, region: "LCK", date: "2026-04-25", time: "18:45", teamA: "DK", scoreA: 2, scoreB: 0, teamB: "DNS", status: "completed" },
-  { id: 117, region: "LPL", date: "2026-04-25", time: "19:20", teamA: "WBG", scoreA: 1, scoreB: 2, teamB: "AL", status: "completed" },
-  { id: 118, region: "LEC", date: "2026-04-25", time: "23:00", teamA: "FNC", scoreA: 1, scoreB: 2, teamB: "NAVI", status: "completed" },
-  { id: 119, region: "LEC", date: "2026-04-26", time: "02:35", teamA: "KC", scoreA: 2, scoreB: 1, teamB: "Shifters", status: "completed" },
-  { id: 120, region: "LCK", date: "2026-04-26", time: "16:00", teamA: "T1", scoreA: 2, scoreB: 0, teamB: "BFX", status: "completed" },
-  { id: 121, region: "LPL", date: "2026-04-26", time: "17:00", teamA: "UP", scoreA: 2, scoreB: 0, teamB: "LGD", status: "completed" },
-  { id: 122, region: "LCK", date: "2026-04-26", time: "18:00", teamA: "NS", scoreA: 0, scoreB: 2, teamB: "GEN", status: "completed" },
-  { id: 123, region: "LPL", date: "2026-04-26", time: "19:30", teamA: "WBG", scoreA: 0, scoreB: 2, teamB: "BLG", status: "completed" },
-  { id: 124, region: "LEC", date: "2026-04-26", time: "23:00", teamA: "Shifters", scoreA: 1, scoreB: 2, teamB: "NAVI", status: "completed" },
-  { id: 125, region: "LEC", date: "2026-04-27", time: "02:20", teamA: "KC", scoreA: 2, scoreB: 1, teamB: "FNC", status: "completed" },
-  { id: 126, region: "LPL", date: "2026-04-28", time: "17:10", teamA: "IG", scoreA: 0, scoreB: 2, teamB: "AL", status: "completed" },
-  { id: 127, region: "LPL", date: "2026-04-28", time: "19:20", teamA: "WBG", scoreA: 2, scoreB: 0, teamB: "TES", status: "completed" },
-  { id: 128, region: "EWC", date: "2026-04-28", time: "23:00", teamA: "NAVI", scoreA: 2, scoreB: 0, teamB: "Galions", status: "completed" },
-  { id: 129, region: "EWC", date: "2026-04-28", time: "23:00", teamA: "FNC", scoreA: 2, scoreB: 1, teamB: "Shifters", status: "completed" },
-  { id: 130, region: "EWC", date: "2026-04-29", time: "00:50", teamA: "VIT", scoreA: 2, scoreB: 1, teamB: "SLY", status: "completed" },
-  { id: 131, region: "EWC", date: "2026-04-29", time: "02:20", teamA: "THRT", scoreA: 0, scoreB: 2, teamB: "SK", status: "completed" },
-  { id: 132, region: "LCK", date: "2026-04-29", time: "16:00", teamA: "NS", scoreA: 0, scoreB: 2, teamB: "T1", status: "completed" },
-  { id: 133, region: "LPL", date: "2026-04-29", time: "17:10", teamA: "NIP", scoreA: 0, scoreB: 2, teamB: "JDG", status: "completed" },
-  { id: 134, region: "LCK", date: "2026-04-29", time: "18:00", teamA: "KT", scoreA: 0, scoreB: 2, teamB: "HLE", status: "completed" },
-  { id: 135, region: "LPL", date: "2026-04-29", time: "19:20", teamA: "WE", scoreA: 0, scoreB: 2, teamB: "BLG", status: "completed" },
-  { id: 136, region: "EWC", date: "2026-04-29", time: "23:00", teamA: "GX", scoreA: 0, scoreB: 2, teamB: "NAVI", status: "completed" },
-  { id: 137, region: "EWC", date: "2026-04-29", time: "23:00", teamA: "G2", scoreA: 2, scoreB: 0, teamB: "FNC", status: "completed" },
-  { id: 138, region: "EWC", date: "2026-04-30", time: "01:00", teamA: "MKOI", scoreA: 2, scoreB: 1, teamB: "VIT", status: "completed" },
-  { id: 139, region: "EWC", date: "2026-04-30", time: "01:00", teamA: "KC", scoreA: 2, scoreB: 0, teamB: "SK", status: "completed" },
-  { id: 140, region: "LCK", date: "2026-04-30", time: "16:00", teamA: "GEN", scoreA: 2, scoreB: 1, teamB: "KRX", status: "completed" },
-  { id: 141, region: "LPL", date: "2026-04-30", time: "17:00", teamA: "TT", scoreA: 1, scoreB: 2, teamB: "LGD", status: "completed" },
-  { id: 142, region: "LCK", date: "2026-04-30", time: "19:00", teamA: "BFX", scoreA: 0, scoreB: 2, teamB: "DK", status: "completed" },
-  { id: 143, region: "LPL", date: "2026-04-30", time: "20:00", teamA: "UP", scoreA: 1, scoreB: 2, teamB: "EDG", status: "completed" },
-  { id: 144, region: "EWC", date: "2026-04-30", time: "23:00", teamA: "Shifters", scoreA: 2, scoreB: 0, teamB: "VIT", status: "completed" },
-  { id: 145, region: "EWC", date: "2026-04-30", time: "23:00", teamA: "SK", scoreA: 0, scoreB: 2, teamB: "Galions", status: "completed" },
-  { id: 146, region: "EWC", date: "2026-05-01", time: "00:50", teamA: "FNC", scoreA: 0, scoreB: 2, teamB: "SLY", status: "completed" },
-  { id: 147, region: "EWC", date: "2026-05-01", time: "01:00", teamA: "GX", scoreA: 2, scoreB: 0, teamB: "THRT", status: "completed" },
-  { id: 148, region: "LCK", date: "2026-05-01", time: "16:00", teamA: "DNS", scoreA: 0, scoreB: 2, teamB: "BRO", status: "completed" },
-  { id: 149, region: "LPL", date: "2026-05-01", time: "17:00", teamA: "TES", scoreA: 0, scoreB: 2, teamB: "AL", status: "completed" },
-  { id: 150, region: "LCK", date: "2026-05-01", time: "18:15", teamA: "HLE", scoreA: 2, scoreB: 1, teamB: "T1", status: "completed" },
-  { id: 151, region: "LPL", date: "2026-05-01", time: "19:30", teamA: "WBG", scoreA: 1, scoreB: 2, teamB: "IG", status: "completed" },
-  { id: 152, region: "LPL", date: "2026-05-02", time: "15:00", teamA: "WE", scoreA: 1, scoreB: 2, teamB: "JDG", status: "completed" },
-  { id: 153, region: "LCK", date: "2026-05-02", time: "16:00", teamA: "GEN", scoreA: 2, scoreB: 1, teamB: "DK", status: "completed" },
-  { id: 154, region: "LPL", date: "2026-05-02", time: "18:00", teamA: "WBG", scoreA: 0, scoreB: 2, teamB: "TES", status: "completed" },
-  { id: 155, region: "LCK", date: "2026-05-02", time: "19:00", teamA: "KRX", scoreA: 2, scoreB: 0, teamB: "NS", status: "completed" },
-  { id: 156, region: "LPL", date: "2026-05-02", time: "20:00", teamA: "IG", scoreA: 0, scoreB: 2, teamB: "AL", status: "completed" },
-  { id: 157, region: "LEC", date: "2026-05-02", time: "23:00", teamA: "FNC", scoreA: 2, scoreB: 0, teamB: "THRT", status: "completed" },
-  { id: 158, region: "LEC", date: "2026-05-03", time: "00:55", teamA: "VIT", scoreA: 2, scoreB: 1, teamB: "SK", status: "completed" },
-  { id: 159, region: "LCK", date: "2026-05-03", time: "16:00", teamA: "KT", scoreA: 0, scoreB: 2, teamB: "BRO", status: "completed" },
-  { id: 160, region: "LPL", date: "2026-05-03", time: "17:00", teamA: "TT", scoreA: 1, scoreB: 2, teamB: "LNG", status: "completed" },
-  { id: 161, region: "LCK", date: "2026-05-03", time: "18:20", teamA: "DNS", scoreA: 0, scoreB: 2, teamB: "BFX", status: "completed" },
-  { id: 162, region: "LPL", date: "2026-05-03", time: "20:00", teamA: "NIP", scoreA: 1, scoreB: 2, teamB: "BLG", status: "completed" },
-  { id: 163, region: "LEC", date: "2026-05-03", time: "23:00", teamA: "THRT", scoreA: 0, scoreB: 2, teamB: "Shifters", status: "completed" },
-  { id: 164, region: "LEC", date: "2026-05-04", time: "01:15", teamA: "G2", scoreA: 2, scoreB: 0, teamB: "NAVI", status: "completed" },
-  { id: 165, region: "EWC", date: "2026-05-04", time: "15:00", teamA: "KRX", scoreA: 1, scoreB: 2, teamB: "DNS", status: "completed" },
-  { id: 166, region: "EWC", date: "2026-05-04", time: "18:00", teamA: "KT", scoreA: 0, scoreB: 2, teamB: "BFX", status: "completed" },
-  { id: 167, region: "EWC", date: "2026-05-04", time: "20:15", teamA: "T1", scoreA: 2, scoreB: 0, teamB: "BRO", status: "completed" },
-  { id: 168, region: "LEC", date: "2026-05-04", time: "23:00", teamA: "FNC", scoreA: 1, scoreB: 2, teamB: "VIT", status: "completed" },
-  { id: 169, region: "LEC", date: "2026-05-05", time: "02:00", teamA: "Shifters", scoreA: 1, scoreB: 2, teamB: "MKOI", status: "completed" },
-  { id: 170, region: "EWC", date: "2026-05-05", time: "16:00", teamA: "HLE", scoreA: 2, scoreB: 0, teamB: "DNS", status: "completed" },
-  { id: 171, region: "EWC", date: "2026-05-05", time: "18:00", teamA: "DK", scoreA: 2, scoreB: 0, teamB: "NS", status: "completed" },
-  { id: 172, region: "LCK", date: "2026-05-06", time: "16:00", teamA: "GEN", scoreA: 2, scoreB: 0, teamB: "NS", status: "completed" },
-  { id: 173, region: "LPL", date: "2026-05-06", time: "17:00", teamA: "WE", scoreA: 2, scoreB: 1, teamB: "IG", status: "completed" },
-  { id: 174, region: "LCK", date: "2026-05-06", time: "18:30", teamA: "HLE", scoreA: 2, scoreB: 0, teamB: "DNS", status: "completed" },
-  { id: 175, region: "LPL", date: "2026-05-06", time: "20:00", teamA: "TES", scoreA: 1, scoreB: 2, teamB: "JDG", status: "completed" },
-  { id: 176, region: "LCK", date: "2026-05-07", time: "16:00", teamA: "DK", scoreA: 0, scoreB: 2, teamB: "KT", status: "completed" },
-  { id: 177, region: "LPL", date: "2026-05-07", time: "17:00", teamA: "WBG", scoreA: 2, scoreB: 1, teamB: "WE", status: "completed" },
-  { id: 178, region: "LCK", date: "2026-05-07", time: "18:30", teamA: "BRO", scoreA: 2, scoreB: 0, teamB: "BFX", status: "completed" },
-  { id: 179, region: "LPL", date: "2026-05-07", time: "20:30", teamA: "NIP", scoreA: 2, scoreB: 0, teamB: "AL", status: "completed" },
-  { id: 180, region: "LCK", date: "2026-05-08", time: "16:00", teamA: "T1", scoreA: 2, scoreB: 0, teamB: "DNS", status: "completed" },
-  { id: 181, region: "LPL", date: "2026-05-08", time: "17:00", teamA: "UP", scoreA: 1, scoreB: 2, teamB: "LNG", status: "completed" },
-  { id: 182, region: "LCK", date: "2026-05-08", time: "18:30", teamA: "KRX", scoreA: 0, scoreB: 2, teamB: "GEN", status: "completed" },
-  { id: 183, region: "LPL", date: "2026-05-08", time: "20:30", teamA: "JDG", scoreA: 0, scoreB: 2, teamB: "BLG", status: "completed" },
-  { id: 184, region: "LEC", date: "2026-05-08", time: "22:10", teamA: "KC", scoreA: 0, scoreB: 2, teamB: "G2", status: "completed" },
-  { id: 185, region: "LEC", date: "2026-05-09", time: "00:10", teamA: "GX", scoreA: 0, scoreB: 2, teamB: "MKOI", status: "completed" },
-  { id: 186, region: "LCK", date: "2026-05-09", time: "16:00", teamA: "KT", scoreA: 0, scoreB: 2, teamB: "BFX", status: "completed" },
-  { id: 187, region: "LPL", date: "2026-05-09", time: "17:00", teamA: "NIP", scoreA: 0, scoreB: 2, teamB: "IG", status: "completed" },
-  { id: 188, region: "LCK", date: "2026-05-09", time: "18:00", teamA: "NS", scoreA: 0, scoreB: 2, teamB: "BRO", status: "completed" },
-  { id: 189, region: "LPL", date: "2026-05-09", time: "19:00", teamA: "TES", scoreA: 2, scoreB: 0, teamB: "WE", status: "completed" },
-  { id: 190, region: "LEC", date: "2026-05-09", time: "22:00", teamA: "G2", scoreA: 2, scoreB: 0, teamB: "GX", status: "completed" },
-  { id: 191, region: "LEC", date: "2026-05-10", time: "01:00", teamA: "MKOI", scoreA: 1, scoreB: 2, teamB: "KC", status: "completed" },
-  { id: 192, region: "LCK", date: "2026-05-10", time: "16:00", teamA: "T1", scoreA: 2, scoreB: 0, teamB: "DK", status: "completed" },
-  { id: 193, region: "LPL", date: "2026-05-10", time: "17:00", teamA: "WBG", scoreA: 2, scoreB: 0, teamB: "NIP", status: "completed" },
-  { id: 194, region: "LCK", date: "2026-05-10", time: "18:00", teamA: "KRX", scoreA: 1, scoreB: 2, teamB: "HLE", status: "completed" },
-  { id: 195, region: "LPL", date: "2026-05-10", time: "19:00", teamA: "JDG", scoreA: 2, scoreB: 1, teamB: "AL", status: "completed" },
-  { id: 196, region: "LEC", date: "2026-05-10", time: "21:00", teamA: "KC", scoreA: 1, scoreB: 2, teamB: "GX", status: "completed" },
-  { id: 197, region: "LEC", date: "2026-05-11", time: "00:00", teamA: "MKOI", scoreA: 2, scoreB: 1, teamB: "G2", status: "completed" },
-  { id: 198, region: "EWC", date: "2026-05-12", time: "16:00", teamA: "BFX", scoreA: 0, scoreB: 2, teamB: "T1", status: "completed" },
-  { id: 199, region: "LPL", date: "2026-05-12", time: "17:00", teamA: "TES", scoreA: 1, scoreB: 2, teamB: "NIP", status: "completed" },
-  { id: 200, region: "EWC", date: "2026-05-12", time: "18:00", teamA: "HLE", scoreA: 1, scoreB: 2, teamB: "DK", status: "completed" },
-  { id: 201, region: "LPL", date: "2026-05-12", time: "19:00", teamA: "IG", scoreA: 1, scoreB: 2, teamB: "BLG", status: "completed" },
-  { id: 202, region: "LCK", date: "2026-05-13", time: "16:00", teamA: "T1", scoreA: 2, scoreB: 0, teamB: "NS", status: "completed" },
-  { id: 203, region: "LPL", date: "2026-05-13", time: "17:00", teamA: "OMG", scoreA: 1, scoreB: 2, teamB: "EDG", status: "completed" },
-  { id: 204, region: "LCK", date: "2026-05-13", time: "18:00", teamA: "DNS", scoreA: 0, scoreB: 2, teamB: "DK", status: "completed" },
-  { id: 205, region: "LPL", date: "2026-05-13", time: "19:00", teamA: "WE", scoreA: 1, scoreB: 2, teamB: "AL", status: "completed" },
-  { id: 206, region: "LCK", date: "2026-05-14", time: "16:00", teamA: "BFX", scoreA: 0, scoreB: 2, teamB: "GEN", status: "completed" },
-  { id: 207, region: "LPL", date: "2026-05-14", time: "17:00", teamA: "LNG", scoreA: 2, scoreB: 0, teamB: "LGD", status: "completed" },
-  { id: 208, region: "LCK", date: "2026-05-14", time: "18:00", teamA: "KRX", scoreA: 1, scoreB: 2, teamB: "KT", status: "completed" },
-  { id: 209, region: "LPL", date: "2026-05-14", time: "19:00", teamA: "WBG", scoreA: 2, scoreB: 1, teamB: "JDG", status: "completed" },
-  { id: 210, region: "EWC", date: "2026-05-14", time: "23:00", teamA: "KC", scoreA: 2, scoreB: 0, teamB: "MKOI", status: "completed" },
-  { id: 211, region: "EWC", date: "2026-05-14", time: "23:00", teamA: "G2", scoreA: 2, scoreB: 0, teamB: "NAVI", status: "completed" },
-  { id: 212, region: "EWC", date: "2026-05-15", time: "02:00", teamA: "GX", scoreA: 2, scoreB: 0, teamB: "SLY", status: "completed" },
-  { id: 213, region: "EWC", date: "2026-05-15", time: "02:00", teamA: "Shifters", scoreA: 0, scoreB: 2, teamB: "Galions", status: "completed" },
-  { id: 214, region: "LCK", date: "2026-05-15", time: "16:00", teamA: "HLE", scoreA: 2, scoreB: 0, teamB: "DK", status: "completed" },
-  { id: 215, region: "LPL", date: "2026-05-15", time: "17:00", teamA: "UP", scoreA: 2, scoreB: 0, teamB: "OMG", status: "completed" },
-  { id: 216, region: "LCK", date: "2026-05-15", time: "18:00", teamA: "BRO", scoreA: 2, scoreB: 0, teamB: "DNS", status: "completed" },
-  { id: 217, region: "LPL", date: "2026-05-15", time: "19:00", teamA: "TES", scoreA: 0, scoreB: 2, teamB: "BLG", status: "completed" },
-  { id: 218, region: "EWC", date: "2026-05-15", time: "23:00", teamA: "NAVI", scoreA: 2, scoreB: 1, teamB: "Galions", status: "completed" },
-  { id: 219, region: "EWC", date: "2026-05-16", time: "02:00", teamA: "MKOI", scoreA: 2, scoreB: 0, teamB: "GX", status: "completed" },
-  { id: 220, region: "LCK", date: "2026-05-16", time: "16:00", teamA: "GEN", scoreA: 1, scoreB: 2, teamB: "T1", status: "completed" },
-  { id: 221, region: "LPL", date: "2026-05-16", time: "17:00", teamA: "TT", scoreA: 2, scoreB: 1, teamB: "EDG", status: "completed" },
-  { id: 222, region: "LCK", date: "2026-05-16", time: "18:00", teamA: "BFX", scoreA: 2, scoreB: 0, teamB: "NS", status: "completed" },
-  { id: 223, region: "LPL", date: "2026-05-16", time: "19:00", teamA: "WE", scoreA: 1, scoreB: 2, teamB: "NIP", status: "completed" },
-  { id: 224, region: "EWC", date: "2026-05-16", time: "23:00", teamA: "G2", scoreA: 3, scoreB: 0, teamB: "KC", status: "completed" },
-  { id: 225, region: "EWC", date: "2026-05-16", time: "23:00", teamA: "NAVI", scoreA: 0, scoreB: 2, teamB: "MKOI", status: "completed" },
-  { id: 226, region: "LCK", date: "2026-05-17", time: "16:00", teamA: "HLE", scoreA: 1, scoreB: 2, teamB: "KT", status: "completed" },
-  { id: 227, region: "LPL", date: "2026-05-17", time: "17:00", teamA: "JDG", scoreA: 2, scoreB: 1, teamB: "IG", status: "completed" },
-  { id: 228, region: "LCK", date: "2026-05-17", time: "18:00", teamA: "KRX", scoreA: 2, scoreB: 1, teamB: "BRO", status: "completed" },
-  { id: 229, region: "LPL", date: "2026-05-17", time: "19:00", teamA: "BLG", scoreA: 2, scoreB: 0, teamB: "AL", status: "completed" },
-  { id: 230, region: "EWC", date: "2026-05-17", time: "23:00", teamA: "KC", scoreA: 3, scoreB: 1, teamB: "MKOI", status: "completed" },
-  { id: 231, region: "EWC", date: "2026-05-18", time: "16:00", teamA: "KT", scoreA: 0, scoreB: 2, teamB: "BRO", status: "completed" },
-  { id: 232, region: "EWC", date: "2026-05-18", time: "18:00", teamA: "DNS", scoreA: 0, scoreB: 2, teamB: "NS", status: "completed" },
-  { id: 233, region: "EWC", date: "2026-05-19", time: "16:00", teamA: "HLE", scoreA: 2, scoreB: 0, teamB: "BRO", status: "completed" },
-  { id: 234, region: "EWC", date: "2026-05-19", time: "18:00", teamA: "BFX", scoreA: 1, scoreB: 2, teamB: "NS", status: "completed" },
-  { id: 235, region: "LCK", date: "2026-05-20", time: "16:00", teamA: "T1", scoreA: 2, scoreB: 1, teamB: "KRX", status: "completed" },
-  { id: 236, region: "LCK", date: "2026-05-20", time: "18:00", teamA: "NS", scoreA: 1, scoreB: 2, teamB: "KT", status: "completed" },
-  { id: 237, region: "EWC", date: "2026-05-21", time: "15:00", teamA: "WBG", scoreA: 2, scoreB: 0, teamB: "BLG", status: "completed" },
-  { id: 238, region: "LCK", date: "2026-05-21", time: "16:00", teamA: "BFX", scoreA: 0, scoreB: 2, teamB: "HLE", status: "completed" },
-  { id: 239, region: "EWC", date: "2026-05-21", time: "17:00", teamA: "JDG", scoreA: 1, scoreB: 2, teamB: "AL", status: "completed" },
-  { id: 240, region: "LCK", date: "2026-05-21", time: "18:00", teamA: "DK", scoreA: 2, scoreB: 1, teamB: "BRO", status: "completed" },
-  { id: 241, region: "LCK", date: "2026-05-22", time: "16:00", teamA: "DNS", scoreA: 0, scoreB: 0, teamB: "KRX", status: "live" },
-  { id: 242, region: "EWC", date: "2026-05-22", time: "17:00", teamA: "JDG", scoreA: 0, scoreB: 0, teamB: "WBG", status: "live" },
-  { id: 243, region: "LCK", date: "2026-05-22", time: "18:00", teamA: "KT", scoreA: 0, scoreB: 0, teamB: "GEN", status: "live" },
-  { id: 244, region: "LPL", date: "2026-05-23", time: "14:00", teamA: "WE", scoreA: 0, scoreB: 0, teamB: "LNG", status: "upcoming" },
-  { id: 245, region: "LCK", date: "2026-05-23", time: "16:00", teamA: "DK", scoreA: 0, scoreB: 0, teamB: "BFX", status: "upcoming" },
-  { id: 246, region: "LPL", date: "2026-05-23", time: "17:00", teamA: "IG", scoreA: 0, scoreB: 0, teamB: "TT", status: "upcoming" },
-  { id: 247, region: "LCK", date: "2026-05-23", time: "18:00", teamA: "NS", scoreA: 0, scoreB: 0, teamB: "HLE", status: "upcoming" },
-  { id: 248, region: "LEC", date: "2026-05-23", time: "23:00", teamA: "KC", scoreA: 0, scoreB: 0, teamB: "G2", status: "upcoming" },
-  { id: 249, region: "LPL", date: "2026-05-24", time: "14:00", teamA: "NIP", scoreA: 0, scoreB: 0, teamB: "EDG", status: "upcoming" },
-  { id: 250, region: "LCK", date: "2026-05-24", time: "16:00", teamA: "DNS", scoreA: 0, scoreB: 0, teamB: "GEN", status: "upcoming" },
-  { id: 251, region: "LPL", date: "2026-05-24", time: "17:00", teamA: "WBG", scoreA: 0, scoreB: 0, teamB: "LGD", status: "upcoming" },
-  { id: 252, region: "LCK", date: "2026-05-24", time: "18:00", teamA: "BRO", scoreA: 0, scoreB: 0, teamB: "T1", status: "upcoming" },
-  { id: 253, region: "LEC", date: "2026-05-24", time: "23:00", teamA: "VIT", scoreA: 0, scoreB: 0, teamB: "MKOI", status: "upcoming" },
-  { id: 254, region: "EWC", date: "2026-05-25", time: "15:00", teamA: "DK", scoreA: 0, scoreB: 0, teamB: "T1", status: "upcoming" },
-  { id: 255, region: "EWC", date: "2026-05-25", time: "18:00", teamA: "NS", scoreA: 0, scoreB: 0, teamB: "HLE", status: "upcoming" },
-  { id: 256, region: "LEC", date: "2026-05-25", time: "23:00", teamA: null, scoreA: 0, scoreB: 0, teamB: null, status: "upcoming" },
-  { id: 257, region: "EWC", date: "2026-05-26", time: "15:00", teamA: "T1", scoreA: 0, scoreB: 0, teamB: "HLE", status: "upcoming" },
-  { id: 258, region: "LCK", date: "2026-05-27", time: "16:00", teamA: "GEN", scoreA: 0, scoreB: 0, teamB: "HLE", status: "upcoming" },
-  { id: 259, region: "LCK", date: "2026-05-27", time: "18:00", teamA: "BFX", scoreA: 0, scoreB: 0, teamB: "KRX", status: "upcoming" },
-  { id: 260, region: "LCK", date: "2026-05-28", time: "16:00", teamA: "DNS", scoreA: 0, scoreB: 0, teamB: "NS", status: "upcoming" },
-  { id: 261, region: "LCK", date: "2026-05-28", time: "18:00", teamA: "KT", scoreA: 0, scoreB: 0, teamB: "T1", status: "upcoming" },
-  { id: 262, region: "LPL", date: "2026-05-29", time: "14:00", teamA: null, scoreA: 0, scoreB: 0, teamB: null, status: "upcoming" },
-  { id: 263, region: "LCK", date: "2026-05-29", time: "16:00", teamA: "DK", scoreA: 0, scoreB: 0, teamB: "KRX", status: "upcoming" },
-  { id: 264, region: "LPL", date: "2026-05-29", time: "17:00", teamA: null, scoreA: 0, scoreB: 0, teamB: null, status: "upcoming" },
-  { id: 265, region: "LCK", date: "2026-05-29", time: "18:00", teamA: "GEN", scoreA: 0, scoreB: 0, teamB: "BRO", status: "upcoming" },
-  { id: 266, region: "LPL", date: "2026-05-30", time: "14:00", teamA: null, scoreA: 0, scoreB: 0, teamB: null, status: "upcoming" },
-  { id: 267, region: "LCK", date: "2026-05-30", time: "16:00", teamA: "KT", scoreA: 0, scoreB: 0, teamB: "DNS", status: "upcoming" },
-  { id: 268, region: "LPL", date: "2026-05-30", time: "17:00", teamA: null, scoreA: 0, scoreB: 0, teamB: null, status: "upcoming" },
-  { id: 269, region: "LCK", date: "2026-05-30", time: "18:00", teamA: "BFX", scoreA: 0, scoreB: 0, teamB: "T1", status: "upcoming" },
-  { id: 270, region: "LEC", date: "2026-05-30", time: "23:00", teamA: null, scoreA: 0, scoreB: 0, teamB: "NAVI", status: "upcoming" },
-  { id: 271, region: "LCK", date: "2026-05-31", time: "16:00", teamA: "BRO", scoreA: 0, scoreB: 0, teamB: "HLE", status: "upcoming" },
-  { id: 272, region: "LPL", date: "2026-05-31", time: "17:00", teamA: null, scoreA: 0, scoreB: 0, teamB: null, status: "upcoming" },
-  { id: 273, region: "LCK", date: "2026-05-31", time: "18:00", teamA: "NS", scoreA: 0, scoreB: 0, teamB: "DK", status: "upcoming" },
-  { id: 274, region: "LEC", date: "2026-05-31", time: "23:00", teamA: null, scoreA: 0, scoreB: 0, teamB: "GX", status: "upcoming" },
-  { id: 275, region: "LPL", date: "2026-06-01", time: "17:00", teamA: null, scoreA: 0, scoreB: 0, teamB: null, status: "upcoming" },
-  { id: 276, region: "LEC", date: "2026-06-01", time: "23:00", teamA: null, scoreA: 0, scoreB: 0, teamB: null, status: "upcoming" },
-  { id: 277, region: "LPL", date: "2026-06-02", time: "17:00", teamA: null, scoreA: 0, scoreB: 0, teamB: null, status: "upcoming" },
-  { id: 278, region: "LPL", date: "2026-06-03", time: "17:00", teamA: null, scoreA: 0, scoreB: 0, teamB: null, status: "upcoming" },
-  { id: 279, region: "LPL", date: "2026-06-05", time: "17:00", teamA: null, scoreA: 0, scoreB: 0, teamB: null, status: "upcoming" },
-  { id: 280, region: "LPL", date: "2026-06-06", time: "17:00", teamA: null, scoreA: 0, scoreB: 0, teamB: null, status: "upcoming" },
-  { id: 281, region: "LEC", date: "2026-06-06", time: "23:00", teamA: null, scoreA: 0, scoreB: 0, teamB: null, status: "upcoming" },
-  { id: 282, region: "LPL", date: "2026-06-07", time: "17:00", teamA: null, scoreA: 0, scoreB: 0, teamB: null, status: "upcoming" },
-  { id: 283, region: "LEC", date: "2026-06-07", time: "23:00", teamA: null, scoreA: 0, scoreB: 0, teamB: null, status: "upcoming" },
-  { id: 284, region: "LPL", date: "2026-06-08", time: "17:00", teamA: null, scoreA: 0, scoreB: 0, teamB: null, status: "upcoming" },
-  { id: 285, region: "LPL", date: "2026-06-13", time: "17:00", teamA: null, scoreA: 0, scoreB: 0, teamB: null, status: "upcoming" },
-  { id: 286, region: "LPL", date: "2026-06-14", time: "17:00", teamA: null, scoreA: 0, scoreB: 0, teamB: null, status: "upcoming" }
+                    { id: 1, region: "EWC", date: "2026-03-27", time: "15:00", teamA: "EDG", scoreA: 1, scoreB: 2, teamB: "UP", format: "BO3", status: "completed" },
+  { id: 2, region: "EWC", date: "2026-03-27", time: "18:10", teamA: "TT", scoreA: 2, scoreB: 0, teamB: "LGD", format: "BO3", status: "completed" },
+  { id: 3, region: "EWC", date: "2026-03-28", time: "17:00", teamA: "OMG", scoreA: 2, scoreB: 0, teamB: "UP", format: "BO3", status: "completed" },
+  { id: 4, region: "EWC", date: "2026-03-28", time: "19:00", teamA: "LNG", scoreA: 0, scoreB: 2, teamB: "TT", format: "BO3", status: "completed" },
+  { id: 5, region: "LEC", date: "2026-03-28", time: "21:10", teamA: "GX", scoreA: 2, scoreB: 1, teamB: "FNC", format: "BO3", status: "completed" },
+  { id: 6, region: "LEC", date: "2026-03-28", time: "23:45", teamA: "KC", scoreA: 2, scoreB: 1, teamB: "VIT", format: "BO3", status: "completed" },
+  { id: 7, region: "LEC", date: "2026-03-29", time: "03:00", teamA: "NAVI", scoreA: 2, scoreB: 1, teamB: "MKOI", format: "BO3", status: "completed" },
+  { id: 8, region: "EWC", date: "2026-03-29", time: "17:00", teamA: "NIP", scoreA: 1, scoreB: 2, teamB: "OMG", format: "BO3", status: "completed" },
+  { id: 9, region: "EWC", date: "2026-03-29", time: "19:30", teamA: "WE", scoreA: 2, scoreB: 0, teamB: "TT", format: "BO3", status: "completed" },
+  { id: 10, region: "LEC", date: "2026-03-29", time: "23:00", teamA: "SK", scoreA: 1, scoreB: 2, teamB: "THRT", format: "BO3", status: "completed" },
+  { id: 11, region: "LEC", date: "2026-03-30", time: "02:00", teamA: "MKOI", scoreA: 2, scoreB: 0, teamB: "FNC", format: "BO3", status: "completed" },
+  { id: 12, region: "EWC", date: "2026-03-30", time: "17:00", teamA: "WBG", scoreA: 2, scoreB: 0, teamB: "IG", format: "BO3", status: "completed" },
+  { id: 13, region: "EWC", date: "2026-03-30", time: "18:40", teamA: "AL", scoreA: 2, scoreB: 0, teamB: "TES", format: "BO3", status: "completed" },
+  { id: 14, region: "LEC", date: "2026-03-30", time: "23:00", teamA: "NAVI", scoreA: 2, scoreB: 1, teamB: "SK", format: "BO3", status: "completed" },
+  { id: 15, region: "LEC", date: "2026-03-31", time: "02:15", teamA: "THRT", scoreA: 0, scoreB: 2, teamB: "VIT", format: "BO3", status: "completed" },
+  { id: 16, region: "EWC", date: "2026-03-31", time: "17:00", teamA: "BLG", scoreA: 2, scoreB: 0, teamB: "WE", format: "BO3", status: "completed" },
+  { id: 17, region: "EWC", date: "2026-03-31", time: "18:40", teamA: "JDG", scoreA: 2, scoreB: 1, teamB: "OMG", format: "BO3", status: "completed" },
+  { id: 18, region: "LCK", date: "2026-04-01", time: "16:00", teamA: "HLE", scoreA: 2, scoreB: 0, teamB: "BRO", format: "BO3", status: "completed" },
+  { id: 19, region: "LCK", date: "2026-04-01", time: "18:10", teamA: "T1", scoreA: 0, scoreB: 2, teamB: "KT", format: "BO3", status: "completed" },
+  { id: 20, region: "LCK", date: "2026-04-02", time: "16:00", teamA: "DK", scoreA: 0, scoreB: 2, teamB: "NS", format: "BO3", status: "completed" },
+  { id: 21, region: "LCK", date: "2026-04-02", time: "18:10", teamA: "KRX", scoreA: 0, scoreB: 2, teamB: "DNS", format: "BO3", status: "completed" },
+  { id: 22, region: "LCK", date: "2026-04-03", time: "16:00", teamA: "GEN", scoreA: 1, scoreB: 2, teamB: "KT", format: "BO3", status: "completed" },
+  { id: 23, region: "LCK", date: "2026-04-03", time: "19:00", teamA: "BFX", scoreA: 0, scoreB: 2, teamB: "BRO", format: "BO3", status: "completed" },
+  { id: 24, region: "LPL", date: "2026-04-04", time: "15:00", teamA: "TES", scoreA: 0, scoreB: 2, teamB: "IG", format: "BO3", status: "completed" },
+  { id: 25, region: "LCK", date: "2026-04-04", time: "16:00", teamA: "T1", scoreA: 2, scoreB: 0, teamB: "HLE", format: "BO3", status: "completed" },
+  { id: 26, region: "LPL", date: "2026-04-04", time: "17:20", teamA: "WBG", scoreA: 0, scoreB: 2, teamB: "AL", format: "BO3", status: "completed" },
+  { id: 27, region: "LCK", date: "2026-04-04", time: "18:15", teamA: "KRX", scoreA: 0, scoreB: 2, teamB: "DK", format: "BO3", status: "completed" },
+  { id: 28, region: "LPL", date: "2026-04-04", time: "19:20", teamA: "WE", scoreA: 0, scoreB: 2, teamB: "NIP", format: "BO3", status: "completed" },
+  { id: 29, region: "LEC", date: "2026-04-04", time: "20:00", teamA: "SK", scoreA: 2, scoreB: 0, teamB: "Shifters", format: "BO3", status: "completed" },
+  { id: 30, region: "LEC", date: "2026-04-04", time: "22:00", teamA: "G2", scoreA: 2, scoreB: 0, teamB: "THRT", format: "BO3", status: "completed" },
+  { id: 31, region: "LEC", date: "2026-04-05", time: "00:00", teamA: "NAVI", scoreA: 0, scoreB: 2, teamB: "VIT", format: "BO3", status: "completed" },
+  { id: 32, region: "LCK", date: "2026-04-05", time: "16:00", teamA: "NS", scoreA: 2, scoreB: 0, teamB: "DNS", format: "BO3", status: "completed" },
+  { id: 33, region: "LPL", date: "2026-04-05", time: "17:00", teamA: "JDG", scoreA: 1, scoreB: 2, teamB: "BLG", format: "BO3", status: "completed" },
+  { id: 34, region: "LCK", date: "2026-04-05", time: "18:10", teamA: "GEN", scoreA: 2, scoreB: 0, teamB: "BFX", format: "BO3", status: "completed" },
+  { id: 35, region: "LPL", date: "2026-04-05", time: "20:10", teamA: "TES", scoreA: 2, scoreB: 0, teamB: "AL", format: "BO3", status: "completed" },
+  { id: 36, region: "LEC", date: "2026-04-05", time: "23:00", teamA: "SK", scoreA: 0, scoreB: 2, teamB: "GX", format: "BO3", status: "completed" },
+  { id: 37, region: "LEC", date: "2026-04-06", time: "01:00", teamA: "FNC", scoreA: 2, scoreB: 1, teamB: "G2", format: "BO3", status: "completed" },
+  { id: 38, region: "LEC", date: "2026-04-06", time: "23:00", teamA: "GX", scoreA: 2, scoreB: 1, teamB: "THRT", format: "BO3", status: "completed" },
+  { id: 39, region: "LEC", date: "2026-04-07", time: "01:45", teamA: "VIT", scoreA: 2, scoreB: 1, teamB: "MKOI", format: "BO3", status: "completed" },
+  { id: 40, region: "LCK", date: "2026-04-08", time: "16:00", teamA: "DK", scoreA: 0, scoreB: 2, teamB: "HLE", format: "BO3", status: "completed" },
+  { id: 41, region: "LPL", date: "2026-04-08", time: "17:00", teamA: "NIP", scoreA: 1, scoreB: 2, teamB: "IG", format: "BO3", status: "completed" },
+  { id: 42, region: "LCK", date: "2026-04-08", time: "18:10", teamA: "T1", scoreA: 0, scoreB: 2, teamB: "GEN", format: "BO3", status: "completed" },
+  { id: 43, region: "LPL", date: "2026-04-08", time: "20:20", teamA: "TES", scoreA: 2, scoreB: 0, teamB: "WE", format: "BO3", status: "completed" },
+  { id: 44, region: "LCK", date: "2026-04-09", time: "16:00", teamA: "BRO", scoreA: 1, scoreB: 2, teamB: "KRX", format: "BO3", status: "completed" },
+  { id: 45, region: "LPL", date: "2026-04-09", time: "17:00", teamA: "WBG", scoreA: 1, scoreB: 2, teamB: "NIP", format: "BO3", status: "completed" },
+  { id: 46, region: "LCK", date: "2026-04-09", time: "19:15", teamA: "KT", scoreA: 2, scoreB: 0, teamB: "NS", format: "BO3", status: "completed" },
+  { id: 47, region: "LPL", date: "2026-04-09", time: "20:00", teamA: "WE", scoreA: 0, scoreB: 2, teamB: "BLG", format: "BO3", status: "completed" },
+  { id: 48, region: "LCK", date: "2026-04-10", time: "16:00", teamA: "DNS", scoreA: 0, scoreB: 2, teamB: "T1", format: "BO3", status: "completed" },
+  { id: 49, region: "LPL", date: "2026-04-10", time: "17:00", teamA: "LNG", scoreA: 1, scoreB: 2, teamB: "EDG", format: "BO3", status: "completed" },
+  { id: 50, region: "LCK", date: "2026-04-10", time: "18:00", teamA: "HLE", scoreA: 2, scoreB: 1, teamB: "BFX", format: "BO3", status: "completed" },
+  { id: 51, region: "LPL", date: "2026-04-10", time: "20:25", teamA: "JDG", scoreA: 2, scoreB: 0, teamB: "AL", format: "BO3", status: "completed" },
+  { id: 52, region: "LCK", date: "2026-04-11", time: "16:00", teamA: "NS", scoreA: 0, scoreB: 2, teamB: "KRX", format: "BO3", status: "completed" },
+  { id: 53, region: "LPL", date: "2026-04-11", time: "17:00", teamA: "WE", scoreA: 0, scoreB: 2, teamB: "IG", format: "BO3", status: "completed" },
+  { id: 54, region: "LCK", date: "2026-04-11", time: "18:00", teamA: "DK", scoreA: 2, scoreB: 0, teamB: "GEN", format: "BO3", status: "completed" },
+  { id: 55, region: "LPL", date: "2026-04-11", time: "19:20", teamA: "TES", scoreA: 2, scoreB: 0, teamB: "JDG", format: "BO3", status: "completed" },
+  { id: 56, region: "LEC", date: "2026-04-11", time: "20:00", teamA: "THRT", scoreA: 0, scoreB: 2, teamB: "NAVI", format: "BO3", status: "completed" },
+  { id: 57, region: "LEC", date: "2026-04-11", time: "21:55", teamA: "G2", scoreA: 1, scoreB: 2, teamB: "VIT", format: "BO3", status: "completed" },
+  { id: 58, region: "LEC", date: "2026-04-12", time: "01:00", teamA: "MKOI", scoreA: 2, scoreB: 0, teamB: "SK", format: "BO3", status: "completed" },
+  { id: 59, region: "LCK", date: "2026-04-12", time: "16:00", teamA: "BFX", scoreA: 2, scoreB: 0, teamB: "DNS", format: "BO3", status: "completed" },
+  { id: 60, region: "LPL", date: "2026-04-12", time: "17:00", teamA: "OMG", scoreA: 1, scoreB: 2, teamB: "LGD", format: "BO3", status: "completed" },
+  { id: 61, region: "LCK", date: "2026-04-12", time: "18:00", teamA: "BRO", scoreA: 0, scoreB: 2, teamB: "KT", format: "BO3", status: "completed" },
+  { id: 62, region: "LPL", date: "2026-04-12", time: "19:50", teamA: "WBG", scoreA: 0, scoreB: 2, teamB: "BLG", format: "BO3", status: "completed" },
+  { id: 63, region: "LEC", date: "2026-04-12", time: "23:00", teamA: "VIT", scoreA: 2, scoreB: 1, teamB: "Shifters", format: "BO3", status: "completed" },
+  { id: 64, region: "LEC", date: "2026-04-13", time: "01:45", teamA: "THRT", scoreA: 0, scoreB: 2, teamB: "KC", format: "BO3", status: "completed" },
+  { id: 65, region: "EWC", date: "2026-04-13", time: "17:00", teamA: "BLG", scoreA: 1, scoreB: 2, teamB: "JDG", format: "BO3", status: "completed" },
+  { id: 66, region: "EWC", date: "2026-04-13", time: "20:00", teamA: "WBG", scoreA: 0, scoreB: 2, teamB: "AL", format: "BO3", status: "completed" },
+  { id: 67, region: "LEC", date: "2026-04-13", time: "23:00", teamA: "FNC", scoreA: 0, scoreB: 2, teamB: "SK", format: "BO3", status: "completed" },
+  { id: 68, region: "LEC", date: "2026-04-14", time: "01:15", teamA: "GX", scoreA: 2, scoreB: 0, teamB: "Shifters", format: "BO3", status: "completed" },
+  { id: 69, region: "EWC", date: "2026-04-14", time: "17:00", teamA: "WE", scoreA: 0, scoreB: 2, teamB: "OMG", format: "BO3", status: "completed" },
+  { id: 70, region: "EWC", date: "2026-04-14", time: "18:45", teamA: "IG", scoreA: 2, scoreB: 0, teamB: "TES", format: "BO3", status: "completed" },
+  { id: 71, region: "LCK", date: "2026-04-15", time: "16:00", teamA: "NS", scoreA: 2, scoreB: 0, teamB: "BFX", format: "BO3", status: "completed" },
+  { id: 72, region: "LPL", date: "2026-04-15", time: "17:00", teamA: "UP", scoreA: 0, scoreB: 2, teamB: "TT", format: "BO3", status: "completed" },
+  { id: 73, region: "LCK", date: "2026-04-15", time: "18:00", teamA: "KT", scoreA: 2, scoreB: 1, teamB: "DK", format: "BO3", status: "completed" },
+  { id: 74, region: "LPL", date: "2026-04-15", time: "19:00", teamA: "WBG", scoreA: 2, scoreB: 1, teamB: "IG", format: "BO3", status: "completed" },
+  { id: 75, region: "LCK", date: "2026-04-16", time: "16:00", teamA: "BRO", scoreA: 0, scoreB: 2, teamB: "GEN", format: "BO3", status: "completed" },
+  { id: 76, region: "LPL", date: "2026-04-16", time: "17:10", teamA: "WE", scoreA: 0, scoreB: 2, teamB: "AL", format: "BO3", status: "completed" },
+  { id: 77, region: "LCK", date: "2026-04-16", time: "18:15", teamA: "DNS", scoreA: 0, scoreB: 2, teamB: "HLE", format: "BO3", status: "completed" },
+  { id: 78, region: "LPL", date: "2026-04-16", time: "19:30", teamA: "TES", scoreA: 2, scoreB: 0, teamB: "BLG", format: "BO3", status: "completed" },
+  { id: 79, region: "LCK", date: "2026-04-17", time: "16:00", teamA: "KRX", scoreA: 0, scoreB: 2, teamB: "BFX", format: "BO3", status: "completed" },
+  { id: 80, region: "LPL", date: "2026-04-17", time: "17:00", teamA: "TT", scoreA: 2, scoreB: 1, teamB: "OMG", format: "BO3", status: "completed" },
+  { id: 81, region: "LCK", date: "2026-04-17", time: "18:00", teamA: "DK", scoreA: 2, scoreB: 1, teamB: "T1", format: "BO3", status: "completed" },
+  { id: 82, region: "LPL", date: "2026-04-17", time: "20:10", teamA: "NIP", scoreA: 2, scoreB: 0, teamB: "JDG", format: "BO3", status: "completed" },
+  { id: 83, region: "LCK", date: "2026-04-18", time: "16:00", teamA: "HLE", scoreA: 2, scoreB: 0, teamB: "GEN", format: "BO3", status: "completed" },
+  { id: 84, region: "LPL", date: "2026-04-18", time: "17:00", teamA: "IG", scoreA: 1, scoreB: 2, teamB: "BLG", format: "BO3", status: "completed" },
+  { id: 85, region: "LCK", date: "2026-04-18", time: "18:15", teamA: "DNS", scoreA: 0, scoreB: 2, teamB: "KT", format: "BO3", status: "completed" },
+  { id: 86, region: "LPL", date: "2026-04-18", time: "20:10", teamA: "WBG", scoreA: 1, scoreB: 2, teamB: "JDG", format: "BO3", status: "completed" },
+  { id: 87, region: "LEC", date: "2026-04-18", time: "23:00", teamA: "GX", scoreA: 1, scoreB: 2, teamB: "NAVI", format: "BO3", status: "completed" },
+  { id: 88, region: "LEC", date: "2026-04-19", time: "01:40", teamA: "G2", scoreA: 2, scoreB: 0, teamB: "SK", format: "BO3", status: "completed" },
+  { id: 89, region: "LCK", date: "2026-04-19", time: "16:00", teamA: "BRO", scoreA: 1, scoreB: 2, teamB: "NS", format: "BO3", status: "completed" },
+  { id: 90, region: "LPL", date: "2026-04-19", time: "17:00", teamA: "TES", scoreA: 2, scoreB: 0, teamB: "IG", format: "BO3", status: "completed" },
+  { id: 91, region: "LPL", date: "2026-04-19", time: "19:10", teamA: "BLG", scoreA: 2, scoreB: 0, teamB: "AL", format: "BO3", status: "completed" },
+  { id: 92, region: "LCK", date: "2026-04-19", time: "19:15", teamA: "KRX", scoreA: 0, scoreB: 2, teamB: "T1", format: "BO3", status: "completed" },
+  { id: 93, region: "LEC", date: "2026-04-19", time: "23:00", teamA: "VIT", scoreA: 2, scoreB: 0, teamB: "GX", format: "BO3", status: "completed" },
+  { id: 94, region: "LEC", date: "2026-04-20", time: "01:00", teamA: "THRT", scoreA: 0, scoreB: 2, teamB: "MKOI", format: "BO3", status: "completed" },
+  { id: 95, region: "EWC", date: "2026-04-20", time: "17:00", teamA: "WBG", scoreA: 2, scoreB: 0, teamB: "OMG", format: "BO3", status: "completed" },
+  { id: 96, region: "EWC", date: "2026-04-20", time: "18:30", teamA: "BLG", scoreA: 2, scoreB: 1, teamB: "IG", format: "BO3", status: "completed" },
+  { id: 97, region: "LEC", date: "2026-04-20", time: "23:00", teamA: "Shifters", scoreA: 0, scoreB: 2, teamB: "G2", format: "BO3", status: "completed" },
+  { id: 98, region: "LEC", date: "2026-04-21", time: "01:15", teamA: "SK", scoreA: 0, scoreB: 2, teamB: "KC", format: "BO3", status: "completed" },
+  { id: 99, region: "LCK", date: "2026-04-22", time: "16:00", teamA: "KT", scoreA: 2, scoreB: 0, teamB: "KRX", format: "BO3", status: "completed" },
+  { id: 100, region: "LPL", date: "2026-04-22", time: "17:00", teamA: "WBG", scoreA: 2, scoreB: 0, teamB: "WE", format: "BO3", status: "completed" },
+  { id: 101, region: "LCK", date: "2026-04-22", time: "18:10", teamA: "HLE", scoreA: 2, scoreB: 1, teamB: "NS", format: "BO3", status: "completed" },
+  { id: 102, region: "LPL", date: "2026-04-22", time: "19:00", teamA: "NIP", scoreA: 0, scoreB: 2, teamB: "AL", format: "BO3", status: "completed" },
+  { id: 103, region: "LCK", date: "2026-04-23", time: "16:00", teamA: "BRO", scoreA: 0, scoreB: 2, teamB: "DK", format: "BO3", status: "completed" },
+  { id: 104, region: "LPL", date: "2026-04-23", time: "17:00", teamA: "LGD", scoreA: 2, scoreB: 0, teamB: "EDG", format: "BO3", status: "completed" },
+  { id: 105, region: "LCK", date: "2026-04-23", time: "18:00", teamA: "GEN", scoreA: 2, scoreB: 0, teamB: "DNS", format: "BO3", status: "completed" },
+  { id: 106, region: "LPL", date: "2026-04-23", time: "19:40", teamA: "NIP", scoreA: 2, scoreB: 0, teamB: "BLG", format: "BO3", status: "completed" },
+  { id: 107, region: "LCK", date: "2026-04-24", time: "16:00", teamA: "BFX", scoreA: 0, scoreB: 2, teamB: "KT", format: "BO3", status: "completed" },
+  { id: 108, region: "LPL", date: "2026-04-24", time: "17:00", teamA: "OMG", scoreA: 0, scoreB: 2, teamB: "LNG", format: "BO3", status: "completed" },
+  { id: 109, region: "LCK", date: "2026-04-24", time: "18:20", teamA: "HLE", scoreA: 2, scoreB: 0, teamB: "KRX", format: "BO3", status: "completed" },
+  { id: 110, region: "LPL", date: "2026-04-24", time: "19:10", teamA: "JDG", scoreA: 2, scoreB: 0, teamB: "IG", format: "BO3", status: "completed" },
+  { id: 111, region: "LEC", date: "2026-04-24", time: "23:10", teamA: "Shifters", scoreA: 0, scoreB: 2, teamB: "FNC", format: "BO3", status: "completed" },
+  { id: 112, region: "LEC", date: "2026-04-25", time: "01:40", teamA: "NAVI", scoreA: 0, scoreB: 2, teamB: "KC", format: "BO3", status: "completed" },
+  { id: 113, region: "LPL", date: "2026-04-25", time: "15:00", teamA: "TES", scoreA: 2, scoreB: 0, teamB: "NIP", format: "BO3", status: "completed" },
+  { id: 114, region: "LCK", date: "2026-04-25", time: "16:00", teamA: "T1", scoreA: 2, scoreB: 0, teamB: "BRO", format: "BO3", status: "completed" },
+  { id: 115, region: "LPL", date: "2026-04-25", time: "17:15", teamA: "WE", scoreA: 0, scoreB: 2, teamB: "JDG", format: "BO3", status: "completed" },
+  { id: 116, region: "LCK", date: "2026-04-25", time: "18:45", teamA: "DK", scoreA: 2, scoreB: 0, teamB: "DNS", format: "BO3", status: "completed" },
+  { id: 117, region: "LPL", date: "2026-04-25", time: "19:20", teamA: "WBG", scoreA: 1, scoreB: 2, teamB: "AL", format: "BO3", status: "completed" },
+  { id: 118, region: "LEC", date: "2026-04-25", time: "23:00", teamA: "FNC", scoreA: 1, scoreB: 2, teamB: "NAVI", format: "BO3", status: "completed" },
+  { id: 119, region: "LEC", date: "2026-04-26", time: "02:35", teamA: "KC", scoreA: 2, scoreB: 1, teamB: "Shifters", format: "BO3", status: "completed" },
+  { id: 120, region: "LCK", date: "2026-04-26", time: "16:00", teamA: "T1", scoreA: 2, scoreB: 0, teamB: "BFX", format: "BO3", status: "completed" },
+  { id: 121, region: "LPL", date: "2026-04-26", time: "17:00", teamA: "UP", scoreA: 2, scoreB: 0, teamB: "LGD", format: "BO3", status: "completed" },
+  { id: 122, region: "LCK", date: "2026-04-26", time: "18:00", teamA: "NS", scoreA: 0, scoreB: 2, teamB: "GEN", format: "BO3", status: "completed" },
+  { id: 123, region: "LPL", date: "2026-04-26", time: "19:30", teamA: "WBG", scoreA: 0, scoreB: 2, teamB: "BLG", format: "BO3", status: "completed" },
+  { id: 124, region: "LEC", date: "2026-04-26", time: "23:00", teamA: "Shifters", scoreA: 1, scoreB: 2, teamB: "NAVI", format: "BO3", status: "completed" },
+  { id: 125, region: "LEC", date: "2026-04-27", time: "02:20", teamA: "KC", scoreA: 2, scoreB: 1, teamB: "FNC", format: "BO3", status: "completed" },
+  { id: 126, region: "LPL", date: "2026-04-28", time: "17:10", teamA: "IG", scoreA: 0, scoreB: 2, teamB: "AL", format: "BO3", status: "completed" },
+  { id: 127, region: "LPL", date: "2026-04-28", time: "19:20", teamA: "WBG", scoreA: 2, scoreB: 0, teamB: "TES", format: "BO3", status: "completed" },
+  { id: 128, region: "EWC", date: "2026-04-28", time: "23:00", teamA: "NAVI", scoreA: 2, scoreB: 0, teamB: "Galions", format: "BO3", status: "completed" },
+  { id: 129, region: "EWC", date: "2026-04-28", time: "23:00", teamA: "FNC", scoreA: 2, scoreB: 1, teamB: "Shifters", format: "BO3", status: "completed" },
+  { id: 130, region: "EWC", date: "2026-04-29", time: "00:50", teamA: "VIT", scoreA: 2, scoreB: 1, teamB: "SLY", format: "BO3", status: "completed" },
+  { id: 131, region: "EWC", date: "2026-04-29", time: "02:20", teamA: "THRT", scoreA: 0, scoreB: 2, teamB: "SK", format: "BO3", status: "completed" },
+  { id: 132, region: "LCK", date: "2026-04-29", time: "16:00", teamA: "NS", scoreA: 0, scoreB: 2, teamB: "T1", format: "BO3", status: "completed" },
+  { id: 133, region: "LPL", date: "2026-04-29", time: "17:10", teamA: "NIP", scoreA: 0, scoreB: 2, teamB: "JDG", format: "BO3", status: "completed" },
+  { id: 134, region: "LCK", date: "2026-04-29", time: "18:00", teamA: "KT", scoreA: 0, scoreB: 2, teamB: "HLE", format: "BO3", status: "completed" },
+  { id: 135, region: "LPL", date: "2026-04-29", time: "19:20", teamA: "WE", scoreA: 0, scoreB: 2, teamB: "BLG", format: "BO3", status: "completed" },
+  { id: 136, region: "EWC", date: "2026-04-29", time: "23:00", teamA: "GX", scoreA: 0, scoreB: 2, teamB: "NAVI", format: "BO3", status: "completed" },
+  { id: 137, region: "EWC", date: "2026-04-29", time: "23:00", teamA: "G2", scoreA: 2, scoreB: 0, teamB: "FNC", format: "BO3", status: "completed" },
+  { id: 138, region: "EWC", date: "2026-04-30", time: "01:00", teamA: "MKOI", scoreA: 2, scoreB: 1, teamB: "VIT", format: "BO3", status: "completed" },
+  { id: 139, region: "EWC", date: "2026-04-30", time: "01:00", teamA: "KC", scoreA: 2, scoreB: 0, teamB: "SK", format: "BO3", status: "completed" },
+  { id: 140, region: "LCK", date: "2026-04-30", time: "16:00", teamA: "GEN", scoreA: 2, scoreB: 1, teamB: "KRX", format: "BO3", status: "completed" },
+  { id: 141, region: "LPL", date: "2026-04-30", time: "17:00", teamA: "TT", scoreA: 1, scoreB: 2, teamB: "LGD", format: "BO3", status: "completed" },
+  { id: 142, region: "LCK", date: "2026-04-30", time: "19:00", teamA: "BFX", scoreA: 0, scoreB: 2, teamB: "DK", format: "BO3", status: "completed" },
+  { id: 143, region: "LPL", date: "2026-04-30", time: "20:00", teamA: "UP", scoreA: 1, scoreB: 2, teamB: "EDG", format: "BO3", status: "completed" },
+  { id: 144, region: "EWC", date: "2026-04-30", time: "23:00", teamA: "Shifters", scoreA: 2, scoreB: 0, teamB: "VIT", format: "BO3", status: "completed" },
+  { id: 145, region: "EWC", date: "2026-04-30", time: "23:00", teamA: "SK", scoreA: 0, scoreB: 2, teamB: "Galions", format: "BO3", status: "completed" },
+  { id: 146, region: "EWC", date: "2026-05-01", time: "00:50", teamA: "FNC", scoreA: 0, scoreB: 2, teamB: "SLY", format: "BO3", status: "completed" },
+  { id: 147, region: "EWC", date: "2026-05-01", time: "01:00", teamA: "GX", scoreA: 2, scoreB: 0, teamB: "THRT", format: "BO3", status: "completed" },
+  { id: 148, region: "LCK", date: "2026-05-01", time: "16:00", teamA: "DNS", scoreA: 0, scoreB: 2, teamB: "BRO", format: "BO3", status: "completed" },
+  { id: 149, region: "LPL", date: "2026-05-01", time: "17:00", teamA: "TES", scoreA: 0, scoreB: 2, teamB: "AL", format: "BO3", status: "completed" },
+  { id: 150, region: "LCK", date: "2026-05-01", time: "18:15", teamA: "HLE", scoreA: 2, scoreB: 1, teamB: "T1", format: "BO3", status: "completed" },
+  { id: 151, region: "LPL", date: "2026-05-01", time: "19:30", teamA: "WBG", scoreA: 1, scoreB: 2, teamB: "IG", format: "BO3", status: "completed" },
+  { id: 152, region: "LPL", date: "2026-05-02", time: "15:00", teamA: "WE", scoreA: 1, scoreB: 2, teamB: "JDG", format: "BO3", status: "completed" },
+  { id: 153, region: "LCK", date: "2026-05-02", time: "16:00", teamA: "GEN", scoreA: 2, scoreB: 1, teamB: "DK", format: "BO3", status: "completed" },
+  { id: 154, region: "LPL", date: "2026-05-02", time: "18:00", teamA: "WBG", scoreA: 0, scoreB: 2, teamB: "TES", format: "BO3", status: "completed" },
+  { id: 155, region: "LCK", date: "2026-05-02", time: "19:00", teamA: "KRX", scoreA: 2, scoreB: 0, teamB: "NS", format: "BO3", status: "completed" },
+  { id: 156, region: "LPL", date: "2026-05-02", time: "20:00", teamA: "IG", scoreA: 0, scoreB: 2, teamB: "AL", format: "BO3", status: "completed" },
+  { id: 157, region: "LEC", date: "2026-05-02", time: "23:00", teamA: "FNC", scoreA: 2, scoreB: 0, teamB: "THRT", format: "BO3", status: "completed" },
+  { id: 158, region: "LEC", date: "2026-05-03", time: "00:55", teamA: "VIT", scoreA: 2, scoreB: 1, teamB: "SK", format: "BO3", status: "completed" },
+  { id: 159, region: "LCK", date: "2026-05-03", time: "16:00", teamA: "KT", scoreA: 0, scoreB: 2, teamB: "BRO", format: "BO3", status: "completed" },
+  { id: 160, region: "LPL", date: "2026-05-03", time: "17:00", teamA: "TT", scoreA: 1, scoreB: 2, teamB: "LNG", format: "BO3", status: "completed" },
+  { id: 161, region: "LCK", date: "2026-05-03", time: "18:20", teamA: "DNS", scoreA: 0, scoreB: 2, teamB: "BFX", format: "BO3", status: "completed" },
+  { id: 162, region: "LPL", date: "2026-05-03", time: "20:00", teamA: "NIP", scoreA: 1, scoreB: 2, teamB: "BLG", format: "BO3", status: "completed" },
+  { id: 163, region: "LEC", date: "2026-05-03", time: "23:00", teamA: "THRT", scoreA: 0, scoreB: 2, teamB: "Shifters", format: "BO3", status: "completed" },
+  { id: 164, region: "LEC", date: "2026-05-04", time: "01:15", teamA: "G2", scoreA: 2, scoreB: 0, teamB: "NAVI", format: "BO3", status: "completed" },
+  { id: 165, region: "EWC", date: "2026-05-04", time: "15:00", teamA: "KRX", scoreA: 1, scoreB: 2, teamB: "DNS", format: "BO3", status: "completed" },
+  { id: 166, region: "EWC", date: "2026-05-04", time: "18:00", teamA: "KT", scoreA: 0, scoreB: 2, teamB: "BFX", format: "BO3", status: "completed" },
+  { id: 167, region: "EWC", date: "2026-05-04", time: "20:15", teamA: "T1", scoreA: 2, scoreB: 0, teamB: "BRO", format: "BO3", status: "completed" },
+  { id: 168, region: "LEC", date: "2026-05-04", time: "23:00", teamA: "FNC", scoreA: 1, scoreB: 2, teamB: "VIT", format: "BO3", status: "completed" },
+  { id: 169, region: "LEC", date: "2026-05-05", time: "02:00", teamA: "Shifters", scoreA: 1, scoreB: 2, teamB: "MKOI", format: "BO3", status: "completed" },
+  { id: 170, region: "EWC", date: "2026-05-05", time: "16:00", teamA: "HLE", scoreA: 2, scoreB: 0, teamB: "DNS", format: "BO3", status: "completed" },
+  { id: 171, region: "EWC", date: "2026-05-05", time: "18:00", teamA: "DK", scoreA: 2, scoreB: 0, teamB: "NS", format: "BO3", status: "completed" },
+  { id: 172, region: "LCK", date: "2026-05-06", time: "16:00", teamA: "GEN", scoreA: 2, scoreB: 0, teamB: "NS", format: "BO3", status: "completed" },
+  { id: 173, region: "LPL", date: "2026-05-06", time: "17:00", teamA: "WE", scoreA: 2, scoreB: 1, teamB: "IG", format: "BO3", status: "completed" },
+  { id: 174, region: "LCK", date: "2026-05-06", time: "18:30", teamA: "HLE", scoreA: 2, scoreB: 0, teamB: "DNS", format: "BO3", status: "completed" },
+  { id: 175, region: "LPL", date: "2026-05-06", time: "20:00", teamA: "TES", scoreA: 1, scoreB: 2, teamB: "JDG", format: "BO3", status: "completed" },
+  { id: 176, region: "LCK", date: "2026-05-07", time: "16:00", teamA: "DK", scoreA: 0, scoreB: 2, teamB: "KT", format: "BO3", status: "completed" },
+  { id: 177, region: "LPL", date: "2026-05-07", time: "17:00", teamA: "WBG", scoreA: 2, scoreB: 1, teamB: "WE", format: "BO3", status: "completed" },
+  { id: 178, region: "LCK", date: "2026-05-07", time: "18:30", teamA: "BRO", scoreA: 2, scoreB: 0, teamB: "BFX", format: "BO3", status: "completed" },
+  { id: 179, region: "LPL", date: "2026-05-07", time: "20:30", teamA: "NIP", scoreA: 2, scoreB: 0, teamB: "AL", format: "BO3", status: "completed" },
+  { id: 180, region: "LCK", date: "2026-05-08", time: "16:00", teamA: "T1", scoreA: 2, scoreB: 0, teamB: "DNS", format: "BO3", status: "completed" },
+  { id: 181, region: "LPL", date: "2026-05-08", time: "17:00", teamA: "UP", scoreA: 1, scoreB: 2, teamB: "LNG", format: "BO3", status: "completed" },
+  { id: 182, region: "LCK", date: "2026-05-08", time: "18:30", teamA: "KRX", scoreA: 0, scoreB: 2, teamB: "GEN", format: "BO3", status: "completed" },
+  { id: 183, region: "LPL", date: "2026-05-08", time: "20:30", teamA: "JDG", scoreA: 0, scoreB: 2, teamB: "BLG", format: "BO3", status: "completed" },
+  { id: 184, region: "LEC", date: "2026-05-08", time: "22:10", teamA: "KC", scoreA: 0, scoreB: 2, teamB: "G2", format: "BO3", status: "completed" },
+  { id: 185, region: "LEC", date: "2026-05-09", time: "00:10", teamA: "GX", scoreA: 0, scoreB: 2, teamB: "MKOI", format: "BO3", status: "completed" },
+  { id: 186, region: "LCK", date: "2026-05-09", time: "16:00", teamA: "KT", scoreA: 0, scoreB: 2, teamB: "BFX", format: "BO3", status: "completed" },
+  { id: 187, region: "LPL", date: "2026-05-09", time: "17:00", teamA: "NIP", scoreA: 0, scoreB: 2, teamB: "IG", format: "BO3", status: "completed" },
+  { id: 188, region: "LCK", date: "2026-05-09", time: "18:00", teamA: "NS", scoreA: 0, scoreB: 2, teamB: "BRO", format: "BO3", status: "completed" },
+  { id: 189, region: "LPL", date: "2026-05-09", time: "19:00", teamA: "TES", scoreA: 2, scoreB: 0, teamB: "WE", format: "BO3", status: "completed" },
+  { id: 190, region: "LEC", date: "2026-05-09", time: "22:00", teamA: "G2", scoreA: 2, scoreB: 0, teamB: "GX", format: "BO3", status: "completed" },
+  { id: 191, region: "LEC", date: "2026-05-10", time: "01:00", teamA: "MKOI", scoreA: 1, scoreB: 2, teamB: "KC", format: "BO3", status: "completed" },
+  { id: 192, region: "LCK", date: "2026-05-10", time: "16:00", teamA: "T1", scoreA: 2, scoreB: 0, teamB: "DK", format: "BO3", status: "completed" },
+  { id: 193, region: "LPL", date: "2026-05-10", time: "17:00", teamA: "WBG", scoreA: 2, scoreB: 0, teamB: "NIP", format: "BO3", status: "completed" },
+  { id: 194, region: "LCK", date: "2026-05-10", time: "18:00", teamA: "KRX", scoreA: 1, scoreB: 2, teamB: "HLE", format: "BO3", status: "completed" },
+  { id: 195, region: "LPL", date: "2026-05-10", time: "19:00", teamA: "JDG", scoreA: 2, scoreB: 1, teamB: "AL", format: "BO3", status: "completed" },
+  { id: 196, region: "LEC", date: "2026-05-10", time: "21:00", teamA: "KC", scoreA: 1, scoreB: 2, teamB: "GX", format: "BO3", status: "completed" },
+  { id: 197, region: "LEC", date: "2026-05-11", time: "00:00", teamA: "MKOI", scoreA: 2, scoreB: 1, teamB: "G2", format: "BO3", status: "completed" },
+  { id: 198, region: "EWC", date: "2026-05-12", time: "16:00", teamA: "BFX", scoreA: 0, scoreB: 2, teamB: "T1", format: "BO3", status: "completed" },
+  { id: 199, region: "LPL", date: "2026-05-12", time: "17:00", teamA: "TES", scoreA: 1, scoreB: 2, teamB: "NIP", format: "BO3", status: "completed" },
+  { id: 200, region: "EWC", date: "2026-05-12", time: "18:00", teamA: "HLE", scoreA: 1, scoreB: 2, teamB: "DK", format: "BO3", status: "completed" },
+  { id: 201, region: "LPL", date: "2026-05-12", time: "19:00", teamA: "IG", scoreA: 1, scoreB: 2, teamB: "BLG", format: "BO3", status: "completed" },
+  { id: 202, region: "LCK", date: "2026-05-13", time: "16:00", teamA: "T1", scoreA: 2, scoreB: 0, teamB: "NS", format: "BO3", status: "completed" },
+  { id: 203, region: "LPL", date: "2026-05-13", time: "17:00", teamA: "OMG", scoreA: 1, scoreB: 2, teamB: "EDG", format: "BO3", status: "completed" },
+  { id: 204, region: "LCK", date: "2026-05-13", time: "18:00", teamA: "DNS", scoreA: 0, scoreB: 2, teamB: "DK", format: "BO3", status: "completed" },
+  { id: 205, region: "LPL", date: "2026-05-13", time: "19:00", teamA: "WE", scoreA: 1, scoreB: 2, teamB: "AL", format: "BO3", status: "completed" },
+  { id: 206, region: "LCK", date: "2026-05-14", time: "16:00", teamA: "BFX", scoreA: 0, scoreB: 2, teamB: "GEN", format: "BO3", status: "completed" },
+  { id: 207, region: "LPL", date: "2026-05-14", time: "17:00", teamA: "LNG", scoreA: 2, scoreB: 0, teamB: "LGD", format: "BO3", status: "completed" },
+  { id: 208, region: "LCK", date: "2026-05-14", time: "18:00", teamA: "KRX", scoreA: 1, scoreB: 2, teamB: "KT", format: "BO3", status: "completed" },
+  { id: 209, region: "LPL", date: "2026-05-14", time: "19:00", teamA: "WBG", scoreA: 2, scoreB: 1, teamB: "JDG", format: "BO3", status: "completed" },
+  { id: 210, region: "EWC", date: "2026-05-14", time: "23:00", teamA: "KC", scoreA: 2, scoreB: 0, teamB: "MKOI", format: "BO3", status: "completed" },
+  { id: 211, region: "EWC", date: "2026-05-14", time: "23:00", teamA: "G2", scoreA: 2, scoreB: 0, teamB: "NAVI", format: "BO3", status: "completed" },
+  { id: 212, region: "EWC", date: "2026-05-15", time: "02:00", teamA: "GX", scoreA: 2, scoreB: 0, teamB: "SLY", format: "BO3", status: "completed" },
+  { id: 213, region: "EWC", date: "2026-05-15", time: "02:00", teamA: "Shifters", scoreA: 0, scoreB: 2, teamB: "Galions", format: "BO3", status: "completed" },
+  { id: 214, region: "LCK", date: "2026-05-15", time: "16:00", teamA: "HLE", scoreA: 2, scoreB: 0, teamB: "DK", format: "BO3", status: "completed" },
+  { id: 215, region: "LPL", date: "2026-05-15", time: "17:00", teamA: "UP", scoreA: 2, scoreB: 0, teamB: "OMG", format: "BO3", status: "completed" },
+  { id: 216, region: "LCK", date: "2026-05-15", time: "18:00", teamA: "BRO", scoreA: 2, scoreB: 0, teamB: "DNS", format: "BO3", status: "completed" },
+  { id: 217, region: "LPL", date: "2026-05-15", time: "19:00", teamA: "TES", scoreA: 0, scoreB: 2, teamB: "BLG", format: "BO3", status: "completed" },
+  { id: 218, region: "EWC", date: "2026-05-15", time: "23:00", teamA: "NAVI", scoreA: 2, scoreB: 1, teamB: "Galions", format: "BO3", status: "completed" },
+  { id: 219, region: "EWC", date: "2026-05-16", time: "02:00", teamA: "MKOI", scoreA: 2, scoreB: 0, teamB: "GX", format: "BO3", status: "completed" },
+  { id: 220, region: "LCK", date: "2026-05-16", time: "16:00", teamA: "GEN", scoreA: 1, scoreB: 2, teamB: "T1", format: "BO3", status: "completed" },
+  { id: 221, region: "LPL", date: "2026-05-16", time: "17:00", teamA: "TT", scoreA: 2, scoreB: 1, teamB: "EDG", format: "BO3", status: "completed" },
+  { id: 222, region: "LCK", date: "2026-05-16", time: "18:00", teamA: "BFX", scoreA: 2, scoreB: 0, teamB: "NS", format: "BO3", status: "completed" },
+  { id: 223, region: "LPL", date: "2026-05-16", time: "19:00", teamA: "WE", scoreA: 1, scoreB: 2, teamB: "NIP", format: "BO3", status: "completed" },
+  { id: 224, region: "EWC", date: "2026-05-16", time: "23:00", teamA: "G2", scoreA: 3, scoreB: 0, teamB: "KC", format: "BO5", status: "completed" },
+  { id: 225, region: "EWC", date: "2026-05-16", time: "23:00", teamA: "NAVI", scoreA: 0, scoreB: 2, teamB: "MKOI", format: "BO3", status: "completed" },
+  { id: 226, region: "LCK", date: "2026-05-17", time: "16:00", teamA: "HLE", scoreA: 1, scoreB: 2, teamB: "KT", format: "BO3", status: "completed" },
+  { id: 227, region: "LPL", date: "2026-05-17", time: "17:00", teamA: "JDG", scoreA: 2, scoreB: 1, teamB: "IG", format: "BO3", status: "completed" },
+  { id: 228, region: "LCK", date: "2026-05-17", time: "18:00", teamA: "KRX", scoreA: 2, scoreB: 1, teamB: "BRO", format: "BO3", status: "completed" },
+  { id: 229, region: "LPL", date: "2026-05-17", time: "19:00", teamA: "BLG", scoreA: 2, scoreB: 0, teamB: "AL", format: "BO3", status: "completed" },
+  { id: 230, region: "EWC", date: "2026-05-17", time: "23:00", teamA: "KC", scoreA: 3, scoreB: 1, teamB: "MKOI", format: "BO5", status: "completed" },
+  { id: 231, region: "EWC", date: "2026-05-18", time: "16:00", teamA: "KT", scoreA: 0, scoreB: 2, teamB: "BRO", format: "BO3", status: "completed" },
+  { id: 232, region: "EWC", date: "2026-05-18", time: "18:00", teamA: "DNS", scoreA: 0, scoreB: 2, teamB: "NS", format: "BO3", status: "completed" },
+  { id: 233, region: "EWC", date: "2026-05-19", time: "16:00", teamA: "HLE", scoreA: 2, scoreB: 0, teamB: "BRO", format: "BO3", status: "completed" },
+  { id: 234, region: "EWC", date: "2026-05-19", time: "18:00", teamA: "BFX", scoreA: 1, scoreB: 2, teamB: "NS", format: "BO3", status: "completed" },
+  { id: 235, region: "LCK", date: "2026-05-20", time: "16:00", teamA: "T1", scoreA: 2, scoreB: 1, teamB: "KRX", format: "BO3", status: "completed" },
+  { id: 236, region: "LCK", date: "2026-05-20", time: "18:00", teamA: "NS", scoreA: 1, scoreB: 2, teamB: "KT", format: "BO3", status: "completed" },
+  { id: 237, region: "EWC", date: "2026-05-21", time: "15:00", teamA: "WBG", scoreA: 2, scoreB: 0, teamB: "BLG", format: "BO3", status: "completed" },
+  { id: 238, region: "LCK", date: "2026-05-21", time: "16:00", teamA: "BFX", scoreA: 0, scoreB: 2, teamB: "HLE", format: "BO3", status: "completed" },
+  { id: 239, region: "EWC", date: "2026-05-21", time: "17:00", teamA: "JDG", scoreA: 1, scoreB: 3, teamB: "AL", format: "BO5", status: "completed" },
+  { id: 240, region: "LCK", date: "2026-05-21", time: "18:00", teamA: "DK", scoreA: 2, scoreB: 1, teamB: "BRO", format: "BO3", status: "completed" },
+  { id: 241, region: "LCK", date: "2026-05-22", time: "16:00", teamA: "DNS", scoreA: 0, scoreB: 2, teamB: "KRX", format: "BO3", status: "completed" },
+  { id: 242, region: "EWC", date: "2026-05-22", time: "17:00", teamA: "JDG", scoreA: 3, scoreB: 2, teamB: "WBG", format: "BO5", status: "completed" },
+  { id: 243, region: "LCK", date: "2026-05-22", time: "18:00", teamA: "KT", scoreA: 0, scoreB: 2, teamB: "GEN", format: "BO3", status: "completed" },
+  { id: 244, region: "LPL", date: "2026-05-23", time: "14:00", teamA: "WE", scoreA: 0, scoreB: 0, teamB: "LNG", format: "BO5", status: "live" },
+  { id: 245, region: "LCK", date: "2026-05-23", time: "16:00", teamA: "DK", scoreA: 0, scoreB: 0, teamB: "BFX", format: "BO3", status: "live" },
+  { id: 246, region: "LPL", date: "2026-05-23", time: "17:00", teamA: "IG", scoreA: 0, scoreB: 0, teamB: "TT", format: "BO5", status: "live" },
+  { id: 247, region: "LCK", date: "2026-05-23", time: "18:00", teamA: "NS", scoreA: 0, scoreB: 0, teamB: "HLE", format: "BO3", status: "live" },
+  { id: 248, region: "LEC", date: "2026-05-23", time: "23:00", teamA: "KC", scoreA: 0, scoreB: 0, teamB: "G2", format: "BO5", status: "live" },
+  { id: 249, region: "LPL", date: "2026-05-24", time: "14:00", teamA: "NIP", scoreA: 0, scoreB: 0, teamB: "EDG", format: "BO5", status: "upcoming" },
+  { id: 250, region: "LCK", date: "2026-05-24", time: "16:00", teamA: "DNS", scoreA: 0, scoreB: 0, teamB: "GEN", format: "BO3", status: "upcoming" },
+  { id: 251, region: "LPL", date: "2026-05-24", time: "17:00", teamA: "WBG", scoreA: 0, scoreB: 0, teamB: "LGD", format: "BO5", status: "upcoming" },
+  { id: 252, region: "LCK", date: "2026-05-24", time: "18:00", teamA: "BRO", scoreA: 0, scoreB: 0, teamB: "T1", format: "BO3", status: "upcoming" },
+  { id: 253, region: "LEC", date: "2026-05-24", time: "23:00", teamA: "VIT", scoreA: 0, scoreB: 0, teamB: "MKOI", format: "BO5", status: "upcoming" },
+  { id: 254, region: "EWC", date: "2026-05-25", time: "15:00", teamA: "DK", scoreA: 0, scoreB: 0, teamB: "T1", format: "BO3", status: "upcoming" },
+  { id: 255, region: "EWC", date: "2026-05-25", time: "18:00", teamA: "NS", scoreA: 0, scoreB: 0, teamB: "HLE", format: "BO3", status: "upcoming" },
+  { id: 256, region: "LEC", date: "2026-05-25", time: "23:00", teamA: null, scoreA: 0, scoreB: 0, teamB: null, format: "BO5", status: "upcoming" },
+  { id: 257, region: "EWC", date: "2026-05-26", time: "15:00", teamA: "T1", scoreA: 0, scoreB: 0, teamB: "HLE", format: "BO3", status: "upcoming" },
+  { id: 258, region: "LCK", date: "2026-05-27", time: "16:00", teamA: "GEN", scoreA: 0, scoreB: 0, teamB: "HLE", format: "BO3", status: "upcoming" },
+  { id: 259, region: "LCK", date: "2026-05-27", time: "18:00", teamA: "BFX", scoreA: 0, scoreB: 0, teamB: "KRX", format: "BO3", status: "upcoming" },
+  { id: 260, region: "LCK", date: "2026-05-28", time: "16:00", teamA: "DNS", scoreA: 0, scoreB: 0, teamB: "NS", format: "BO3", status: "upcoming" },
+  { id: 261, region: "LCK", date: "2026-05-28", time: "18:00", teamA: "KT", scoreA: 0, scoreB: 0, teamB: "T1", format: "BO3", status: "upcoming" },
+  { id: 262, region: "LPL", date: "2026-05-29", time: "14:00", teamA: null, scoreA: 0, scoreB: 0, teamB: null, format: "BO5", status: "upcoming" },
+  { id: 263, region: "LCK", date: "2026-05-29", time: "16:00", teamA: "DK", scoreA: 0, scoreB: 0, teamB: "KRX", format: "BO3", status: "upcoming" },
+  { id: 264, region: "LPL", date: "2026-05-29", time: "17:00", teamA: null, scoreA: 0, scoreB: 0, teamB: null, format: "BO5", status: "upcoming" },
+  { id: 265, region: "LCK", date: "2026-05-29", time: "18:00", teamA: "GEN", scoreA: 0, scoreB: 0, teamB: "BRO", format: "BO3", status: "upcoming" },
+  { id: 266, region: "LPL", date: "2026-05-30", time: "14:00", teamA: null, scoreA: 0, scoreB: 0, teamB: null, format: "BO5", status: "upcoming" },
+  { id: 267, region: "LCK", date: "2026-05-30", time: "16:00", teamA: "KT", scoreA: 0, scoreB: 0, teamB: "DNS", format: "BO3", status: "upcoming" },
+  { id: 268, region: "LPL", date: "2026-05-30", time: "17:00", teamA: null, scoreA: 0, scoreB: 0, teamB: null, format: "BO5", status: "upcoming" },
+  { id: 269, region: "LCK", date: "2026-05-30", time: "18:00", teamA: "BFX", scoreA: 0, scoreB: 0, teamB: "T1", format: "BO3", status: "upcoming" },
+  { id: 270, region: "LEC", date: "2026-05-30", time: "23:00", teamA: null, scoreA: 0, scoreB: 0, teamB: "NAVI", format: "BO5", status: "upcoming" },
+  { id: 271, region: "LCK", date: "2026-05-31", time: "16:00", teamA: "BRO", scoreA: 0, scoreB: 0, teamB: "HLE", format: "BO3", status: "upcoming" },
+  { id: 272, region: "LPL", date: "2026-05-31", time: "17:00", teamA: null, scoreA: 0, scoreB: 0, teamB: null, format: "BO5", status: "upcoming" },
+  { id: 273, region: "LCK", date: "2026-05-31", time: "18:00", teamA: "NS", scoreA: 0, scoreB: 0, teamB: "DK", format: "BO3", status: "upcoming" },
+  { id: 274, region: "LEC", date: "2026-05-31", time: "23:00", teamA: null, scoreA: 0, scoreB: 0, teamB: "GX", format: "BO5", status: "upcoming" },
+  { id: 275, region: "LPL", date: "2026-06-01", time: "17:00", teamA: null, scoreA: 0, scoreB: 0, teamB: null, format: "BO5", status: "upcoming" },
+  { id: 276, region: "LEC", date: "2026-06-01", time: "23:00", teamA: null, scoreA: 0, scoreB: 0, teamB: null, format: "BO5", status: "upcoming" },
+  { id: 277, region: "LPL", date: "2026-06-02", time: "17:00", teamA: null, scoreA: 0, scoreB: 0, teamB: null, format: "BO5", status: "upcoming" },
+  { id: 278, region: "LPL", date: "2026-06-03", time: "17:00", teamA: null, scoreA: 0, scoreB: 0, teamB: null, format: "BO5", status: "upcoming" },
+  { id: 279, region: "LPL", date: "2026-06-05", time: "17:00", teamA: null, scoreA: 0, scoreB: 0, teamB: null, format: "BO5", status: "upcoming" },
+  { id: 280, region: "LPL", date: "2026-06-06", time: "17:00", teamA: null, scoreA: 0, scoreB: 0, teamB: null, format: "BO5", status: "upcoming" },
+  { id: 281, region: "LEC", date: "2026-06-06", time: "23:00", teamA: null, scoreA: 0, scoreB: 0, teamB: null, format: "BO5", status: "upcoming" },
+  { id: 282, region: "LPL", date: "2026-06-07", time: "17:00", teamA: null, scoreA: 0, scoreB: 0, teamB: null, format: "BO5", status: "upcoming" },
+  { id: 283, region: "LEC", date: "2026-06-07", time: "23:00", teamA: null, scoreA: 0, scoreB: 0, teamB: null, format: "BO5", status: "upcoming" },
+  { id: 284, region: "LPL", date: "2026-06-08", time: "17:00", teamA: null, scoreA: 0, scoreB: 0, teamB: null, format: "BO5", status: "upcoming" },
+  { id: 285, region: "LPL", date: "2026-06-13", time: "17:00", teamA: null, scoreA: 0, scoreB: 0, teamB: null, format: "BO5", status: "upcoming" },
+  { id: 286, region: "LPL", date: "2026-06-14", time: "17:00", teamA: null, scoreA: 0, scoreB: 0, teamB: null, format: "BO5", status: "upcoming" }
                 ];
             }
         };
+
+
+        // ==================== 赛制系统 ====================
+        const formatConfig = {
+            'BO1': { label: 'BO1', color: '#10b981', bg: 'rgba(16,185,129,0.15)', border: 'rgba(16,185,129,0.3)', desc: '一局定胜负' },
+            'BO3': { label: 'BO3', color: '#3b82f6', bg: 'rgba(59,130,246,0.15)', border: 'rgba(59,130,246,0.3)', desc: '三局两胜' },
+            'BO5': { label: 'BO5', color: '#f59e0b', bg: 'rgba(245,158,11,0.15)', border: 'rgba(245,158,11,0.3)', desc: '五局三胜' },
+            'BO7': { label: 'BO7', color: '#ef4444', bg: 'rgba(239,68,68,0.15)', border: 'rgba(239,68,68,0.3)', desc: '七局四胜' }
+        };
+
+        function detectFormat(region, date) {
+            if (['MSI','Worlds'].includes(region)) return 'BO5';
+            if (region === 'EWC') {
+                const d = new Date(date);
+                // EWC预选赛小组赛BO3，淘汰赛BO5
+                if (d >= new Date('2026-04-10')) return 'BO5'; // 淘汰赛阶段
+                return 'BO3'; // 小组赛/预选赛
+            }
+            if (region === 'LPL') {
+                const d = new Date(date);
+                // 第二赛段：组内赛BO3(4-5月)，骑士之路BO5(5/23-24)，淘汰赛BO5(5/29起)
+                if (d >= new Date('2026-05-23')) return 'BO5';
+                return 'BO3';
+            }
+            if (region === 'LCK') {
+                const d = new Date(date);
+                // LCK常规赛BO3到5月底，季后赛BO5从6月开始
+                if (d >= new Date('2026-06-01')) return 'BO5';
+                return 'BO3';
+            }
+            if (region === 'LEC') {
+                const d = new Date(date);
+                // LEC夏季赛5/23开赛，常规赛BO3，季后赛BO5从6月中开始
+                if (d >= new Date('2026-06-15')) return 'BO5';
+                return 'BO3';
+            }
+            if (region === 'LCS') return 'BO3';
+            return 'BO3';
+        }
+
+        function getFormatBadge(format, context) {
+            const cfg = formatConfig[format] || formatConfig['BO3'];
+            if (context === 'admin') {
+                return { style: `background:${cfg.bg};color:${cfg.color};border:1px solid ${cfg.border}`, class: 'px-2 py-1 rounded-lg text-xs font-bold inline-block' };
+            }
+            return { style: `background:${cfg.bg};color:${cfg.color};border:1px solid ${cfg.border}`, class: 'px-1.5 py-0.5 rounded-md text-[10px] font-bold inline-block' };
+        }
+
+
 
         let matches = DataStore.getMatches();
         let teamHeats = DataStore.getTeamHeats();
@@ -2191,6 +2252,7 @@
                                 </div>
                                 <div class="text-[9px] text-white/40 mb-0.5">${m.time}</div>
                                 <div class="mb-0.5"><span class="text-[8px] px-1.5 py-0.5 rounded font-semibold ${getRegionStyle(m.region, 'admin').class}" style="${getRegionStyle(m.region, 'admin').style}">${m.region}</span></div>
+                                <div class="my-0.5">${(() => { const f = getFormatBadge(m.format || detectFormat(m.region, m.date), 'admin'); return '<span class="' + f.class + '" style="' + f.style + '">' + (m.format || detectFormat(m.region, m.date)) + '</span>'; })()}</div>
                                 <div class="mt-0.5"><span class="text-[8px] px-1.5 py-0.5 rounded-full ${sc[m.status]}">${sl[m.status]}</span></div>
                             </div>`;
                     });
@@ -2253,6 +2315,7 @@
                                     </div>
                                     <div class="text-center px-4">
                                         <div class="text-xl font-bold text-white">${m.status === 'completed' ? m.scoreA + ' - ' + m.scoreB : 'VS'}</div>
+                                        <div class="my-1">${(() => { const f = getFormatBadge(m.format || detectFormat(m.region, m.date)); return '<span class="' + f.class + '" style="' + f.style + '">' + (m.format || detectFormat(m.region, m.date)) + '</span>'; })()}</div>
                                         <span class="text-[10px] px-2 py-0.5 rounded-full ${sc[m.status]}">${sl[m.status]}</span>
                                     </div>
                                     <div class="flex items-center gap-2">
@@ -2472,6 +2535,7 @@
                         <div class="text-center flex-shrink-0 px-1 sm:px-2">
                             <div class="text-xs text-white/30 mb-1">${m.time}</div>
                             <div class="text-lg sm:text-xl font-bold text-white">VS</div>
+                            <div class="my-1">${(() => { const f = getFormatBadge(m.format || detectFormat(m.region, m.date)); return '<span class="' + f.class + '" style="' + f.style + '">' + (m.format || detectFormat(m.region, m.date)) + '</span>'; })()}</div>
                             <div class="text-base sm:text-lg font-bold text-white/80 mt-0.5">${m.status === 'completed' ? m.scoreA + ' - ' + m.scoreB : '--'}</div>
                             <span class="px-2 py-0.5 rounded-full text-[10px] sm:text-xs font-medium ${statusColors[m.status]}">${statusLabels[m.status]}</span>
                         </div>
@@ -2963,6 +3027,7 @@
                                 </div>
                             </td>
                             <td class="py-3 font-bold text-white">${m.status === 'completed' ? m.scoreA + ' - ' + m.scoreB : '-'}</td>
+                            <td class="py-3">${(() => { const f = getFormatBadge(m.format || detectFormat(m.region, m.date)); return '<span class="' + f.class + '" style="' + f.style + '">' + (m.format || detectFormat(m.region, m.date)) + '</span>'; })()}</td>
                             <td class="py-3"><span class="px-2 py-1 rounded-lg text-xs font-medium ${statusColors[m.status]}">${statusLabels[m.status]}</span></td>
                         `;
                         recentMatches.appendChild(tr);
@@ -2979,7 +3044,10 @@
                                 <span class="text-white/40 text-xs">${m.status === 'completed' ? m.scoreA + '-' + m.scoreB : 'VS'}</span>
                                 <span class="font-bold text-white text-sm">${m.teamB}</span>
                             </div>
-                            <span class="px-2 py-1 rounded-lg text-[10px] font-medium ${statusColors[m.status]}">${statusLabels[m.status]}</span>
+                            <div class="flex items-center gap-2">
+                                ${(() => { const f = getFormatBadge(m.format || detectFormat(m.region, m.date)); return '<span class="' + f.class + '" style="' + f.style + '">' + (m.format || detectFormat(m.region, m.date)) + '</span>'; })()}
+                                <span class="px-2 py-1 rounded-lg text-[10px] font-medium ${statusColors[m.status]}">${statusLabels[m.status]}</span>
+                            </div>
                         `;
                         recentMatchesMobile.appendChild(mobileCard);
                     });
@@ -3043,6 +3111,7 @@
                     <td class="px-4 sm:px-6 py-3 sm:py-4 text-right font-bold text-gray-800 text-xs sm:text-sm">${m.teamA}</td>
                     <td class="px-4 sm:px-6 py-3 sm:py-4 text-center font-bold text-blue-600 text-xs sm:text-sm">${m.status === 'completed' ? m.scoreA + ' : ' + m.scoreB : '-'}</td>
                     <td class="px-4 sm:px-6 py-3 sm:py-4 font-bold text-gray-800 text-xs sm:text-sm">${m.teamB}</td>
+                    <td class="px-4 sm:px-6 py-3 sm:py-4">${(() => { const f = getFormatBadge(m.format || detectFormat(m.region, m.date), 'admin'); return '<span class="' + f.class + '" style="' + f.style + '">' + (m.format || detectFormat(m.region, m.date)) + '</span>'; })()}</td>
                     <td class="px-4 sm:px-6 py-3 sm:py-4"><span class="px-2 py-1 rounded-lg text-[10px] sm:text-xs font-medium ${statusColors[m.status]}">${statusLabels[m.status]}</span></td>
                     <td class="px-4 sm:px-6 py-3 sm:py-4 text-right whitespace-nowrap">
                         <button onclick="editMatch(${m.id})" class="text-blue-600 hover:text-blue-800 mr-3 transition-colors p-1"><i class="fas fa-edit"></i></button>
@@ -3072,6 +3141,9 @@
                         <div class="text-center flex-1">
                             <div class="font-bold text-gray-800">${m.teamB}</div>
                         </div>
+                    </div>
+                    <div class="flex items-center justify-center gap-2 my-2">
+                        ${(() => { const f = getFormatBadge(m.format || detectFormat(m.region, m.date), 'admin'); return '<span class="' + f.class + '" style="' + f.style + '">' + (m.format || detectFormat(m.region, m.date)) + '</span>'; })()}
                     </div>
                     <div class="flex justify-end gap-2 pt-2 border-t border-gray-100">
                         <button onclick="editMatch(${m.id})" class="text-blue-600 hover:text-blue-800 text-sm font-medium px-3 py-1.5 rounded-lg hover:bg-blue-50 transition-colors">
@@ -3501,6 +3573,7 @@
                 document.getElementById('form-score-a').value = m.scoreA;
                 document.getElementById('form-score-b').value = m.scoreB;
                 document.getElementById('form-team-b').value = m.teamB;
+                document.getElementById('form-format').value = m.format || detectFormat(m.region, m.date);
                 document.getElementById('form-status').value = m.status;
             } else {
                 document.getElementById('match-form').reset();
@@ -3526,6 +3599,7 @@
                 scoreA: parseInt(document.getElementById('form-score-a').value) || 0,
                 scoreB: parseInt(document.getElementById('form-score-b').value) || 0,
                 teamB: document.getElementById('form-team-b').value.trim(),
+                format: document.getElementById('form-format').value,
                 status: document.getElementById('form-status').value
             };
 
@@ -3647,8 +3721,8 @@
 
         // ==================== 导入导出 ====================
         function exportToCSV() {
-            const headers = ['赛区', '日期', '时间', 'A战队', 'A成绩', 'B成绩', 'B战队', '状态'];
-            const rows = matches.map(m => [m.region, m.date, m.time, m.teamA, m.scoreA, m.scoreB, m.teamB, m.status]);
+            const headers = ['赛区', '日期', '时间', 'A战队', 'A成绩', 'B成绩', 'B战队', '赛制', '状态'];
+            const rows = matches.map(m => [m.region, m.date, m.time, m.teamA, m.scoreA, m.scoreB, m.teamB, m.format || detectFormat(m.region, m.date), m.status]);
             downloadFile([headers, ...rows].map(r => r.join(',')).join('\n'), 'lol_matches.csv', 'text/csv');
             showToast('CSV 导出成功');
         }
@@ -3685,7 +3759,8 @@
                         newMatches.push({
                             id: ++maxId, region: cols[0].trim(), date: cols[1].trim(), time: cols[2].trim(),
                             teamA: cols[3].trim(), scoreA: parseInt(cols[4]) || 0, scoreB: parseInt(cols[5]) || 0,
-                            teamB: cols[6].trim(), status: cols[7]?.trim() || 'upcoming'
+                            teamB: cols[6].trim(), format: cols[7]?.trim() || detectFormat(cols[0].trim(), cols[1].trim()),
+                            status: cols[8]?.trim() || 'upcoming'
                         });
                     }
                 }
@@ -3706,7 +3781,8 @@
                 const newMatches = data.map(m => ({
                     id: ++maxId, region: m.region, date: m.date, time: m.time,
                     teamA: m.teamA, scoreA: m.scoreA || 0, scoreB: m.scoreB || 0,
-                    teamB: m.teamB, status: m.status || 'upcoming'
+                    teamB: m.teamB, format: m.format || detectFormat(m.region, m.date),
+                    status: m.status || 'upcoming'
                 }));
                 matches = [...matches, ...newMatches];
                 DataStore.saveMatches(matches);
