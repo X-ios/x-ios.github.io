@@ -863,7 +863,7 @@
                         <h1 class="text-2xl sm:text-3xl font-bold text-white mb-1 flex items-center gap-2 sm:gap-3">
                             <i class="fas fa-calendar-star text-yellow-400"></i>
                             <span class="truncate">赛事日历</span>
-                            <span class="text-xs sm:text-sm font-normal text-white/50 bg-white/10 px-2 sm:px-3 py-1 rounded-full" id="calendar-month-label">2026年5月</span>
+                            <span class="text-xs sm:text-sm font-normal text-white/50 bg-white/10 px-2 sm:px-3 py-1 rounded-full" id="calendar-month-label">2026年7月</span>
                         </h1>
                         <p class="text-white/50 text-xs sm:text-sm mt-1">点击日期查看当日赛事，悬停战队查看氛围预览</p>
                     </div>
@@ -872,7 +872,7 @@
                             <button onclick="changeMonth(-1)" class="w-9 h-9 sm:w-10 sm:h-10 rounded-xl flex items-center justify-center text-white/70 hover:text-white hover:bg-white/10 transition-all active:scale-95">
                                 <i class="fas fa-chevron-left text-sm"></i>
                             </button>
-                            <span class="text-white font-bold px-2 sm:px-4 min-w-[100px] sm:min-w-[120px] text-center text-sm sm:text-base" id="month-display">2026年5月</span>
+                            <span class="text-white font-bold px-2 sm:px-4 min-w-[100px] sm:min-w-[120px] text-center text-sm sm:text-base" id="month-display">2026年7月</span>
                             <button onclick="changeMonth(1)" class="w-9 h-9 sm:w-10 sm:h-10 rounded-xl flex items-center justify-center text-white/70 hover:text-white hover:bg-white/10 transition-all active:scale-95">
                                 <i class="fas fa-chevron-right text-sm"></i>
                             </button>
@@ -912,7 +912,7 @@
                                 <div class="flex flex-col sm:flex-row sm:items-center justify-between mb-4 sm:mb-6 gap-3">
                                     <h3 class="text-lg sm:text-xl font-bold text-white flex items-center gap-2">
                                         <i class="fas fa-clock text-yellow-400"></i>
-                                        <span id="selected-date-label">5月10日 赛事</span>
+                                        <span id="selected-date-label">7月14日 赛事</span>
                                         <span class="text-xs sm:text-sm font-normal text-white/50" id="match-count-badge">3 场</span>
                                     </h3>
                                     <button onclick="openModal()" class="px-3 sm:px-4 py-2 rounded-xl bg-white/10 text-white text-xs sm:text-sm font-medium hover:bg-white/20 transition-all active:scale-95 flex items-center gap-2 self-start">
@@ -1471,18 +1471,16 @@
                     }
                     return [
                         { id: 1, title: "2026（MSI）（EWC）", content: "（MSI 6.28-7.12韩国大田举办‌）（EWC 7.13-7.19法国巴黎举办‌）", expiryDate: "2026-07-13", region: "", priority: "high", createdAt: "2026-06-14" },
-                        { id: 2, title: "LPL公布", content: "晋级MSI：TES·待定  晋级EWC：待定·JDG·AL  ", expiryDate: "2026-07-13", region: "LPL", priority: "high", createdAt: "2026-06-13" },
-                        { id: 3, title: "LCK公布", content: "晋级MSI：待定·待定  晋级EWC：GEN·T1·HLE·DK  ", expiryDate: "2026-07-13", region: "LCK", priority: "high", createdAt: "2026-06-13" },
-                        { id: 4, title: "LEC公布", content: "晋级MSI：G2·KC  晋级EWC：G2·KC·MKOI  ", expiryDate: "2026-07-13", region: "LEC", priority: "high", createdAt: "2026-06-08" },
-                        { id: 5, title: "其它赛区公布", content: "晋级MSI：LYON·待定·TWS·DCG  晋级EWC：SEN·待定·TWS·GAM  ", expiryDate: "2026-07-13", region: "MSI", priority: "high", createdAt: "2026-06-08" }
+                        { id: 2, title: "LPL第三赛段公布", content: "7.22开赛，骑士之路待定，决赛待定  ", expiryDate: "2026-07-22", region: "LPL", priority: "high", createdAt: "2026-07-02" },
+                        { id: 3, title: "LCK第三赛段公布", content: "7.29开赛，骑士之路8.26开始，决赛9.13结束  ", expiryDate: "2026-07-29", region: "LCK", priority: "high", createdAt: "2026-07-02" },
+                        { id: 4, title: "LEC公布", content: "待定开赛，骑士之路待定，决赛待定  ", expiryDate: "2026-07-13", region: "LEC", priority: "high", createdAt: "2026-06-08" }
                     ];
                 } catch(e) {
                     return [
                         { id: 1, title: "2026（MSI）（EWC）", content: "（MSI 6.28-7.12韩国大田举办‌）（EWC 7.13-7.19法国巴黎举办‌）", expiryDate: "2026-07-13", region: "", priority: "high", createdAt: "2026-06-14" },
-                        { id: 2, title: "LPL公布", content: "晋级MSI：TES·待定  晋级EWC：待定·JDG·AL  ", expiryDate: "2026-07-13", region: "LPL", priority: "high", createdAt: "2026-06-13" },
-                        { id: 3, title: "LCK公布", content: "晋级MSI：待定·待定  晋级EWC：GEN·T1·HLE·DK  ", expiryDate: "2026-07-13", region: "LCK", priority: "high", createdAt: "2026-06-13" },
-                        { id: 4, title: "LEC公布", content: "晋级MSI：G2·KC  晋级EWC：G2·KC·MKOI  ", expiryDate: "2026-07-13", region: "LEC", priority: "high", createdAt: "2026-06-08" },
-                        { id: 5, title: "其它赛区公布", content: "晋级MSI：LYON·待定·TWS·DCG  晋级EWC：SEN·待定·TWS·GAM  ", expiryDate: "2026-07-13", region: "MSI", priority: "high", createdAt: "2026-06-08" }
+                        { id: 2, title: "LPL第三赛段公布", content: "7.22开赛，骑士之路待定，决赛待定  ", expiryDate: "2026-07-22", region: "LPL", priority: "high", createdAt: "2026-07-02" },
+                        { id: 3, title: "LCK第三赛段公布", content: "7.29开赛，骑士之路8.26开始，决赛9.13结束  ", expiryDate: "2026-07-29", region: "LCK", priority: "high", createdAt: "2026-07-02" },
+                        { id: 4, title: "LEC公布", content: "待定开赛，骑士之路待定，决赛待定  ", expiryDate: "2026-07-13", region: "LEC", priority: "high", createdAt: "2026-06-08" }
                     ];
                 }
             },
@@ -1786,16 +1784,16 @@ getDefaultData() {
   { id: 289, region: "LPL", date: "2026-06-13", time: "17:00", teamA: "WE", scoreA: 2, scoreB: 3, teamB: "BLG", format: "BO5", status: "completed" },
   { id: 290, region: "LCK", date: "2026-06-14", time: "16:00", teamA: "T1", scoreA: 3, scoreB: 2, teamB: "GEN", format: "BO5", status: "completed" },
   { id: 291, region: "LPL", date: "2026-06-14", time: "17:00", teamA: "TES", scoreA: 0, scoreB: 3, teamB: "BLG", format: "BO5", status: "completed" },
-  { id: 292, region: "MSI", date: "2026-06-28", time: "11:00", teamA: "T1", scoreA: 0, scoreB: 0, teamB: "TLAW", format: "BO5", status: "live" },
-  { id: 293, region: "MSI", date: "2026-06-28", time: "16:00", teamA: "KC", scoreA: 0, scoreB: 0, teamB: "DCG", format: "BO5", status: "live" },
-  { id: 294, region: "MSI", date: "2026-06-29", time: "11:00", teamA: null, scoreA: 0, scoreB: 0, teamB: null, format: "BO5", status: "upcoming" },
-  { id: 295, region: "MSI", date: "2026-06-29", time: "16:00", teamA: null, scoreA: 0, scoreB: 0, teamB: null, format: "BO5", status: "upcoming" },
-  { id: 296, region: "MSI", date: "2026-06-30", time: "16:00", teamA: null, scoreA: 0, scoreB: 0, teamB: null, format: "BO5", status: "upcoming" },
-  { id: 297, region: "MSI", date: "2026-07-01", time: "16:00", teamA: null, scoreA: 0, scoreB: 0, teamB: null, format: "BO5", status: "upcoming" },
-  { id: 298, region: "MSI", date: "2026-07-03", time: "11:00", teamA: null, scoreA: 0, scoreB: 0, teamB: null, format: "BO5", status: "upcoming" },
-  { id: 299, region: "MSI", date: "2026-07-03", time: "16:00", teamA: null, scoreA: 0, scoreB: 0, teamB: null, format: "BO5", status: "upcoming" },
-  { id: 300, region: "MSI", date: "2026-07-04", time: "11:00", teamA: null, scoreA: 0, scoreB: 0, teamB: null, format: "BO5", status: "upcoming" },
-  { id: 301, region: "MSI", date: "2026-07-04", time: "16:00", teamA: null, scoreA: 0, scoreB: 0, teamB: null, format: "BO5", status: "upcoming" },
+  { id: 292, region: "MSI", date: "2026-06-28", time: "11:00", teamA: "T1", scoreA: 3, scoreB: 0, teamB: "TLAW", format: "BO5", status: "completed" },
+  { id: 293, region: "MSI", date: "2026-06-28", time: "16:00", teamA: "KC", scoreA: 3, scoreB: 0, teamB: "DCG", format: "BO5", status: "completed" },
+  { id: 294, region: "MSI", date: "2026-06-29", time: "11:00", teamA: "T1", scoreA: 3, scoreB: 0, teamB: "KC", format: "BO5", status: "completed" },
+  { id: 295, region: "MSI", date: "2026-06-29", time: "16:00", teamA: "DCG", scoreA: 0, scoreB: 3, teamB: "TLAW", format: "BO5", status: "completed" },
+  { id: 296, region: "MSI", date: "2026-06-30", time: "16:00", teamA: "KC", scoreA: 0, scoreB: 3, teamB: "TLAW", format: "BO5", status: "completed" },
+  { id: 297, region: "MSI", date: "2026-07-01", time: "16:00", teamA: "T1", scoreA: 3, scoreB: 0, teamB: "TLAW", format: "BO5", status: "completed" },
+  { id: 298, region: "MSI", date: "2026-07-03", time: "11:00", teamA: "HLE", scoreA: 0, scoreB: 0, teamB: "TWS", format: "BO5", status: "live" },
+  { id: 299, region: "MSI", date: "2026-07-03", time: "16:00", teamA: "G2", scoreA: 0, scoreB: 0, teamB: "TES", format: "BO5", status: "live" },
+  { id: 300, region: "MSI", date: "2026-07-04", time: "11:00", teamA: "LYON", scoreA: 0, scoreB: 0, teamB: "FUR", format: "BO5", status: "live" },
+  { id: 301, region: "MSI", date: "2026-07-04", time: "16:00", teamA: "BLG", scoreA: 0, scoreB: 0, teamB: "T1", format: "BO5", status: "upcoming" },
   { id: 302, region: "MSI", date: "2026-07-05", time: "11:00", teamA: null, scoreA: 0, scoreB: 0, teamB: null, format: "BO5", status: "upcoming" },
   { id: 303, region: "MSI", date: "2026-07-05", time: "16:00", teamA: null, scoreA: 0, scoreB: 0, teamB: null, format: "BO5", status: "upcoming" },
   { id: 304, region: "MSI", date: "2026-07-06", time: "11:00", teamA: null, scoreA: 0, scoreB: 0, teamB: null, format: "BO5", status: "upcoming" },
