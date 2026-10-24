@@ -2,7 +2,7 @@
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     <title>英雄联盟瑞士轮晋级系统</title>
     <style>
         :root {
@@ -17,9 +17,13 @@
             --bo3-bg: #fef08a; --bo3-text: #854d0e;
         }
         * { box-sizing: border-box; margin: 0; padding: 0;
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; }
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            -webkit-tap-highlight-color: transparent; }
         body { background-color: var(--bg-color); color: var(--text-main);
-            display: flex; flex-direction: column; height: 100vh; overflow: hidden; position: relative; }
+            display: flex; flex-direction: column;
+            height: 100vh;
+            height: 100dvh;
+            overflow: hidden; position: relative; }
 
         .bg-blobs { position: fixed; inset: 0; z-index: -1; overflow: hidden; pointer-events: none; }
         .blob { position: absolute; border-radius: 50%; filter: blur(140px); opacity: 0.6; }
@@ -81,23 +85,22 @@
         .match-card:hover { border-color: #cbd5e1; box-shadow: 0 4px 8px rgba(0,0,0,0.05); }
 
         .team-box { flex: 1; display: flex; align-items: center; height: 100%; padding: 0 8px;
-            cursor: pointer; position: relative; border-radius: 6px; min-width: 0;
-            transition: 0.15s; }
+            position: relative; border-radius: 6px; min-width: 0; transition: 0.15s; }
         .team-box.left { justify-content: flex-start; }
         .team-box.right { justify-content: flex-end; text-align: right; }
         .team-box:hover { background-color: #f8fafc; }
 
         .team-logo-wrap { position: relative; display: inline-flex; align-items: center;
-            justify-content: center; height: 80%; flex-shrink: 0; }
+            justify-content: center; height: 80%; flex-shrink: 0; cursor: pointer; z-index: 3;
+            transition: 0.15s; }
+        .team-logo-wrap:hover { transform: scale(1.1); }
         .left .team-logo-wrap { margin-right: 10px; }
         .right .team-logo-wrap { margin-left: 10px; order: 2; }
         .team-logo { height: 100%; width: auto; max-width: 40px; object-fit: contain; }
         .team-name { font-size: 14px; font-weight: 600; white-space: nowrap;
             overflow: hidden; text-overflow: ellipsis; max-width: 100%; }
         .vs-text { font-size: 12px; color: #94a3b8; font-weight: 800; font-style: italic;
-            padding: 4px 8px; flex-shrink: 0; cursor: pointer; border-radius: 4px;
-            transition: 0.2s; user-select: none; }
-        .vs-text:hover { color: var(--accent-blue); background: #eff6ff; }
+            padding: 0 5px; flex-shrink: 0; user-select: none; }
 
         .team-box.winner { background-color: #eff6ff; }
         .team-box.winner .team-name { color: var(--accent-blue); }
@@ -109,6 +112,12 @@
             width: 140%; max-width: 52px; height: 3px; background: #ef4444;
             border-radius: 2px; transform: translate(-50%,-50%) rotate(-45deg);
             pointer-events: none; box-shadow: 0 0 3px rgba(239,68,68,0.5);
+        }
+
+        .team-select {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            opacity: 0; cursor: pointer; z-index: 2; border: none; outline: none;
+            font-family: inherit;
         }
 
         /* 右侧结果列 */
@@ -130,7 +139,8 @@
             border: 1px solid #e2e8f0; border-radius: 6px; padding: 8px;
             position: relative; height: 40px; min-width: 0; }
         .result-slot:hover { border-color: #cbd5e1; }
-        .result-slot .team-logo-wrap { height: 60%; margin-right: 8px; }
+        .result-slot .team-logo-wrap { height: 60%; margin-right: 8px; cursor: default; }
+        .result-slot .team-logo-wrap:hover { transform: none; }
         .result-slot .team-logo-wrap img { height: 100%; width: auto; max-width: 24px; object-fit: contain; }
         .result-slot span { font-size: 13px; font-weight: 600; white-space: nowrap;
             overflow: hidden; text-overflow: ellipsis; max-width: 100%; }
@@ -163,24 +173,27 @@
 
         .tournament-match { background: white; border-radius: 10px; display: flex; align-items: center;
             height: 64px; padding: 0 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.06);
-            border: 1px solid var(--border-color); transition: 0.2s; flex-shrink: 0; }
+            border: 1px solid var(--border-color); transition: 0.2s; flex-shrink: 0; position: relative; }
         .tournament-match:hover { box-shadow: 0 4px 14px rgba(0,0,0,0.08); border-color: #cbd5e1; }
 
         .tournament-team { flex: 1; display: flex; align-items: center; gap: 8px; height: 100%;
-            padding: 0 8px; cursor: pointer; border-radius: 6px; transition: 0.2s; min-width: 0; }
+            padding: 0 8px; border-radius: 6px; transition: 0.2s; min-width: 0; position: relative; }
         .tournament-team.left { justify-content: flex-start; }
         .tournament-team.right { justify-content: flex-end; text-align: right; }
         .tournament-team:hover { background: rgba(37,99,235,0.05); }
-        .tournament-team .team-logo-small { width: 26px; height: 26px; object-fit: contain; flex-shrink: 0; }
+        .team-logo-small { width: 26px; height: 26px; object-fit: contain; flex-shrink: 0;
+            cursor: pointer; position: relative; z-index: 3; transition: 0.15s; }
+        .team-logo-small:hover { transform: scale(1.1); }
         .tournament-team.right .team-logo-small { order: 2; }
         .tournament-team-name { font-size: 14px; font-weight: 600; white-space: nowrap;
             overflow: hidden; text-overflow: ellipsis; max-width: 100%; }
         .tournament-vs { font-size: 11px; color: #94a3b8; font-weight: 800; font-style: italic;
-            padding: 0 6px; flex-shrink: 0; user-select: none; cursor: pointer; border-radius: 3px;
-            transition: 0.15s; }
-        .tournament-vs:hover { color: var(--accent-blue); background: #eff6ff; }
-        .tournament-vs.disabled { cursor: default; }
-        .tournament-vs.disabled:hover { color: #94a3b8; background: transparent; }
+            padding: 0 6px; flex-shrink: 0; user-select: none; }
+
+        .tournament-team .team-select {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            opacity: 0; cursor: pointer; z-index: 2; border: none; outline: none;
+        }
 
         .tournament-team.winner { background: #eff6ff; }
         .tournament-team.winner .tournament-team-name { color: var(--accent-blue); }
@@ -206,13 +219,15 @@
         /* ===== 弹窗 ===== */
         .modal-overlay { position: fixed; inset: 0; background: rgba(15,23,42,0.4);
             backdrop-filter: blur(4px); display: none; justify-content: center;
-            align-items: center; z-index: 100; }
-        .modal-content { background: #ffffff; padding: 25px; border-radius: 12px; width: 460px; }
+            align-items: center; z-index: 100; padding: 15px; }
+        .modal-content { background: #ffffff; padding: 25px; border-radius: 12px;
+            width: 460px; max-width: 100%; max-height: 90vh; overflow-y: auto; }
         .modal-header { display: flex; justify-content: space-between; margin-bottom: 20px; align-items: center; }
         .close-btn { background: none; border: none; color: var(--text-muted); font-size: 24px; cursor: pointer; }
         .form-group { display: flex; gap: 10px; margin-bottom: 20px; }
         .form-group input { flex: 1; padding: 10px; background: #f8fafc;
-            border: 1px solid var(--border-color); border-radius: 6px; outline: none; }
+            border: 1px solid var(--border-color); border-radius: 6px; outline: none;
+            font-family: inherit; font-size: 14px; }
         .team-list-manage { max-height: 300px; overflow-y: auto; }
         .manage-item { display: flex; align-items: center; gap: 12px; padding: 10px;
             border-bottom: 1px solid var(--border-color); }
@@ -221,24 +236,122 @@
         .manage-item button { background: #fef2f2; color: var(--danger); border: none;
             padding: 6px 12px; border-radius: 6px; cursor: pointer; }
 
-        /* 选队弹窗 */
-        .pick-teams { display: flex; align-items: flex-start; gap: 12px; margin-bottom: 20px; }
-        .pick-side { flex: 1; display: flex; flex-direction: column; align-items: center;
-            gap: 10px; min-width: 0; }
-        .pick-side-label { font-size: 12px; font-weight: 700; color: var(--text-muted);
-            text-transform: uppercase; letter-spacing: 1px; }
-        .pick-logo-preview { width: 64px; height: 64px; display: flex; align-items: center;
-            justify-content: center; background: #f8fafc; border: 1px solid var(--border-color);
-            border-radius: 8px; flex-shrink: 0; }
-        .pick-logo-preview img { max-width: 48px; max-height: 48px; object-fit: contain; }
-        .pick-select { width: 100%; padding: 10px; background: #f8fafc;
-            border: 1px solid var(--border-color); border-radius: 6px; outline: none;
-            font-size: 14px; font-weight: 600; cursor: pointer; font-family: inherit; }
-        .pick-select:focus { border-color: var(--accent-blue); }
-        .pick-vs { font-size: 14px; font-weight: 800; font-style: italic; color: #94a3b8;
-            flex-shrink: 0; padding-top: 48px; }
-        .pick-footer { display: flex; justify-content: flex-end; gap: 10px;
-            padding-top: 15px; border-top: 1px solid var(--border-color); }
+        /* ================= 移动端竖屏适配 ================= */
+        @media (max-width: 768px) {
+            /* 顶部导航改为竖排 */
+            header {
+                flex-direction: column;
+                align-items: stretch;
+                gap: 10px;
+                padding: 10px 15px;
+            }
+            .logo-title {
+                flex-wrap: wrap;
+                gap: 8px;
+                font-size: 16px;
+            }
+            .page-tabs {
+                flex: 1 1 100%;
+                margin-left: 0;
+                order: 10;
+            }
+            .page-tab {
+                flex: 1;
+                text-align: center;
+                padding: 8px 10px;
+                font-size: 13px;
+            }
+            .header-actions { width: 100%; }
+            .actions-group {
+                width: 100%;
+                overflow-x: auto;
+                flex-wrap: nowrap;
+                -webkit-overflow-scrolling: touch;
+                padding-bottom: 2px;
+            }
+            .actions-group::-webkit-scrollbar { height: 4px; }
+            .actions-group::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 2px; }
+            .actions-group .btn {
+                flex-shrink: 0;
+                font-size: 13px;
+                padding: 8px 12px;
+            }
+
+            .main-container { padding: 15px 12px; }
+
+            /* 瑞士轮：改为纵向堆叠 */
+            .bracket-wrapper {
+                flex-direction: column;
+                min-width: 0;
+                min-height: auto;
+                gap: 14px;
+                padding-bottom: 30px;
+            }
+            .round-column { min-width: 0; flex: none; }
+            .round-title { margin-bottom: 12px; }
+            .pools-wrapper {
+                justify-content: flex-start;
+                gap: 12px;
+            }
+            .pool-group { padding: 12px; gap: 10px; }
+            .pool-title { font-size: 14px; }
+            .result-column { min-width: 0; flex: none; }
+            .result-wrapper {
+                justify-content: flex-start;
+                gap: 12px;
+            }
+            .result-slots { grid-template-columns: 1fr; }
+            .result-slots > div:only-child { grid-column: auto; }
+
+            /* 队名允许稍微收窄 */
+            .team-name { font-size: 13px; }
+            .team-logo { max-width: 34px; }
+            .vs-text { padding: 0 6px; }
+
+            /* 总决赛：改为纵向堆叠 */
+            .tournament-wrapper {
+                min-width: 0;
+                padding-bottom: 30px;
+            }
+            .tournament-header { margin-bottom: 20px; }
+            .tournament-header h1 { font-size: 20px; }
+            .tournament-header p { font-size: 12px; line-height: 1.5; }
+            .tournament-bracket {
+                flex-direction: column;
+                gap: 16px;
+                min-height: auto;
+            }
+            .bracket-column { min-width: 0; }
+            .column-title { margin-bottom: 12px; }
+            .matches-container {
+                justify-content: flex-start;
+                gap: 10px;
+            }
+            .bracket-svg { display: none; }
+            .tournament-match { height: 56px; }
+            .tournament-team-name { font-size: 13px; }
+            .team-logo-small { width: 24px; height: 24px; }
+            .champion-card { height: 140px; padding: 14px; }
+            .champion-logo { width: 44px; height: 44px; margin-bottom: 6px; }
+            .champion-crown { font-size: 24px; margin-bottom: 4px; }
+            .champion-name { font-size: 16px; }
+
+            /* 弹窗 */
+            .modal-content { padding: 20px; }
+            .form-group { flex-direction: column; }
+            .form-group .btn { justify-content: center; }
+        }
+
+        /* 超小屏（比如 iPhone SE 375px 以下）进一步缩小 */
+        @media (max-width: 380px) {
+            .logo-title { font-size: 15px; }
+            .page-tab { font-size: 12px; padding: 7px 8px; }
+            .actions-group .btn { font-size: 12px; padding: 7px 10px; }
+            .team-name { font-size: 12px; }
+            .tournament-team-name { font-size: 12px; }
+            .match-card { height: 44px; }
+            .tournament-match { height: 52px; }
+        }
     </style>
 </head>
 <body>
@@ -268,17 +381,15 @@
         </div>
     </header>
 
-    <!-- 瑞士轮页面 -->
     <div class="main-container" id="swissPage">
         <div class="bracket-wrapper" id="bracket"></div>
     </div>
 
-    <!-- 全球总决赛页面 -->
     <div class="main-container" id="worldsPage" style="display:none;">
         <div class="tournament-wrapper">
             <div class="tournament-header">
                 <h1>全球总决赛 · 8强淘汰赛</h1>
-                <p>BO5 单败淘汰<span class="bo5">BO5</span></p>
+                <p>BO5 单败淘汰<span class="bo5">BO5</span> · 点击队标判定胜者，点击队名选择队伍</p>
             </div>
             <div class="tournament-bracket" id="tournamentBracket">
                 <svg class="bracket-svg" id="bracketSvg"></svg>
@@ -302,7 +413,6 @@
         </div>
     </div>
 
-    <!-- 赛事信息管理弹窗 -->
     <div class="modal-overlay" id="manageModal">
         <div class="modal-content">
             <div class="modal-header">
@@ -315,21 +425,6 @@
                 <button class="btn btn-primary" onclick="addTeam()">添加</button>
             </div>
             <div class="team-list-manage" id="manageList"></div>
-        </div>
-    </div>
-
-    <!-- 选队弹窗 -->
-    <div class="modal-overlay" id="pickModal">
-        <div class="modal-content" style="width: 480px;">
-            <div class="modal-header">
-                <h2>选择对局队伍</h2>
-                <button class="close-btn" onclick="closePickModal()">&times;</button>
-            </div>
-            <div id="pickModalBody"></div>
-            <div class="pick-footer">
-                <button class="btn btn-secondary" onclick="closePickModal()">取消</button>
-                <button class="btn btn-primary" onclick="confirmPick()">确定</button>
-            </div>
         </div>
     </div>
 
@@ -430,7 +525,6 @@
             semis:    Array.from({ length: 2 }, () => ({ left: null, right: null, winner: null })),
             final:    { left: null, right: null, winner: null },
         };
-        let pickContext = null;
 
         // ============ 瑞士轮逻辑 ============
         function initState() {
@@ -540,10 +634,10 @@
                         <span class="result-badge ${rd.type}">${rd.badge} · ${ids.length}/${total}</span>
                     </div>
                 `;
-                const sc2 = document.createElement('div');
-                sc2.className = 'result-slots';
-                for (let i = 0; i < total; i++) sc2.appendChild(createResultSlot(ids[i], rd.type));
-                group.appendChild(sc2);
+                const slotsC = document.createElement('div');
+                slotsC.className = 'result-slots';
+                for (let i = 0; i < total; i++) slotsC.appendChild(createResultSlot(ids[i], rd.type));
+                group.appendChild(slotsC);
                 rw.appendChild(group);
             });
             resultCol.appendChild(rw);
@@ -556,17 +650,10 @@
             const card = document.createElement('div');
             card.className = 'match-card';
             card.appendChild(createTeamBox(poolId, matchIndex, 'left'));
-
             const vs = document.createElement('div');
             vs.className = 'vs-text';
             vs.innerText = 'VS';
-            vs.title = '点击选择双方队伍';
-            vs.addEventListener('click', () => {
-                const m = state[poolId][matchIndex];
-                openPickModal({ type: 'swiss', poolId, matchIndex, left: m.left, right: m.right });
-            });
             card.appendChild(vs);
-
             card.appendChild(createTeamBox(poolId, matchIndex, 'right'));
             return card;
         }
@@ -586,31 +673,55 @@
 
             const lw = document.createElement('span');
             lw.className = 'team-logo-wrap';
+            lw.title = '点击判定胜者';
             const img = document.createElement('img');
             img.className = 'team-logo';
             img.src = team ? (team.logo || defaultLogo) : defaultLogo;
             lw.appendChild(img);
 
-            const name = document.createElement('span');
-            name.className = 'team-name';
-            name.innerText = team ? team.name : '待定';
-
-            box.appendChild(lw);
-            box.appendChild(name);
-
-            box.addEventListener('click', () => {
+            lw.addEventListener('click', (e) => {
+                e.stopPropagation();
                 const mm = state[poolId][matchIndex];
-                // 未选队 → 打开选队弹窗
-                if (!mm.left || !mm.right) {
-                    openPickModal({ type: 'swiss', poolId, matchIndex, left: mm.left, right: mm.right });
-                    return;
-                }
-                // 已选队 → 判定胜者
+                if (!mm.left || !mm.right) return;
                 mm.winner = (mm.winner === side) ? null : side;
                 validateAll();
                 render();
             });
 
+            const name = document.createElement('span');
+            name.className = 'team-name';
+            name.innerText = team ? team.name : '待定';
+
+            const select = document.createElement('select');
+            select.className = 'team-select';
+            select.title = '点击选择队伍';
+            select.innerHTML = `<option value="">— 待定 —</option>`;
+
+            const usedElsewhere = new Set();
+            state[poolId].forEach((mm, i) => {
+                if (i === matchIndex) return;
+                if (mm.left) usedElsewhere.add(mm.left);
+                if (mm.right) usedElsewhere.add(mm.right);
+            });
+
+            [...new Set(getSourceTeams(poolId))].forEach(tid => {
+                const t = teams.find(x => x.id === tid);
+                if (!t) return;
+                const opt = document.createElement('option');
+                opt.value = t.id;
+                opt.textContent = t.name + (usedElsewhere.has(t.id) ? ' (已选)' : '');
+                select.appendChild(opt);
+            });
+            select.value = teamId || '';
+
+            select.addEventListener('change', (e) => {
+                onSelectChange(poolId, matchIndex, side, e.target.value || null);
+            });
+            select.addEventListener('click', (e) => e.stopPropagation());
+
+            box.appendChild(lw);
+            box.appendChild(name);
+            box.appendChild(select);
             return box;
         }
 
@@ -638,125 +749,23 @@
             return slot;
         }
 
+        function onSelectChange(poolId, matchIndex, side, newTeamId) {
+            if (newTeamId) {
+                state[poolId].forEach((mm, i) => {
+                    if (i === matchIndex) return;
+                    if (mm.left === newTeamId)  mm.left = null;
+                    if (mm.right === newTeamId) mm.right = null;
+                });
+            }
+            state[poolId][matchIndex][side] = newTeamId;
+            state[poolId][matchIndex].winner = null;
+            validateAll();
+            render();
+        }
+
         function syncState() { validateAll(); render(); }
         function resetAll() {
             if (confirm('确定要重置所有瑞士轮排阵吗？')) { initState(); render(); }
-        }
-
-        // ============ 选队弹窗 ============
-        function openPickModal(context) {
-            let pool;
-            if (context.type === 'swiss') {
-                const src = getSourceTeams(context.poolId);
-                const usedElsewhere = new Set();
-                state[context.poolId].forEach((m, i) => {
-                    if (i === context.matchIndex) return;
-                    if (m.left) usedElsewhere.add(m.left);
-                    if (m.right) usedElsewhere.add(m.right);
-                });
-                pool = src.filter(id => !usedElsewhere.has(id) || id === context.left || id === context.right);
-            } else {
-                const src = getTournamentPool();
-                const usedElsewhere = new Set();
-                tournamentState.quarters.forEach((m, i) => {
-                    if (i === context.index) return;
-                    if (m.left) usedElsewhere.add(m.left);
-                    if (m.right) usedElsewhere.add(m.right);
-                });
-                pool = src.filter(id => !usedElsewhere.has(id) || id === context.left || id === context.right);
-            }
-            pool = [...new Set(pool)];
-
-            if (pool.length === 0) {
-                alert('当前没有可选的队伍，请先完成上游比赛');
-                return;
-            }
-
-            pickContext = { ...context };
-
-            const body = document.getElementById('pickModalBody');
-            body.innerHTML = `
-                <div class="pick-teams">
-                    <div class="pick-side">
-                        <div class="pick-side-label">左侧队伍</div>
-                        <div class="pick-logo-preview" id="pickLeftLogo"></div>
-                        <select id="pickLeftSelect" class="pick-select"></select>
-                    </div>
-                    <div class="pick-vs">VS</div>
-                    <div class="pick-side">
-                        <div class="pick-side-label">右侧队伍</div>
-                        <div class="pick-logo-preview" id="pickRightLogo"></div>
-                        <select id="pickRightSelect" class="pick-select"></select>
-                    </div>
-                </div>
-            `;
-
-            const leftSel  = document.getElementById('pickLeftSelect');
-            const rightSel = document.getElementById('pickRightSelect');
-
-            function fill(sel, selected) {
-                sel.innerHTML = '<option value="">— 待定 —</option>';
-                pool.forEach(tid => {
-                    const t = teams.find(x => x.id === tid);
-                    if (!t) return;
-                    const opt = document.createElement('option');
-                    opt.value = t.id;
-                    opt.textContent = t.name;
-                    sel.appendChild(opt);
-                });
-                sel.value = selected || '';
-            }
-
-            fill(leftSel, context.left);
-            fill(rightSel, context.right);
-
-            function updateLogo(side, teamId) {
-                const t = teams.find(x => x.id === teamId);
-                const el = document.getElementById(side === 'left' ? 'pickLeftLogo' : 'pickRightLogo');
-                el.innerHTML = t
-                    ? `<img src="${t.logo || defaultLogo}" alt="">`
-                    : `<span style="color:#94a3b8;font-size:12px;">无</span>`;
-            }
-            updateLogo('left', context.left);
-            updateLogo('right', context.right);
-
-            leftSel.addEventListener('change', e => {
-                pickContext.left = e.target.value || null;
-                updateLogo('left', pickContext.left);
-            });
-            rightSel.addEventListener('change', e => {
-                pickContext.right = e.target.value || null;
-                updateLogo('right', pickContext.right);
-            });
-
-            document.getElementById('pickModal').style.display = 'flex';
-        }
-
-        function confirmPick() {
-            if (!pickContext) return;
-            const { type, poolId, matchIndex, stage, index, left, right } = pickContext;
-
-            if (type === 'swiss') {
-                const m = state[poolId][matchIndex];
-                if (m.left !== left || m.right !== right) m.winner = null;
-                m.left = left; m.right = right;
-                validateAll();
-                render();
-            } else if (type === 'tournament') {
-                const m = (stage === 'quarter') ? tournamentState.quarters[index]
-                        : (stage === 'semi') ? tournamentState.semis[index]
-                        : tournamentState.final;
-                if (m.left !== left || m.right !== right) m.winner = null;
-                m.left = left; m.right = right;
-                refreshTournament();
-                renderTournament();
-            }
-            closePickModal();
-        }
-
-        function closePickModal() {
-            document.getElementById('pickModal').style.display = 'none';
-            pickContext = null;
         }
 
         // ============ 总决赛逻辑 ============
@@ -775,12 +784,10 @@
         function getTournamentPool() {
             const adv = getAdvancingTeams().filter(id => id);
             if (adv.length >= 8) return adv.slice(0, 8);
-            // 晋级队伍不足 → 允许从全部队伍中选
             return teams.map(t => t.id);
         }
 
         function refreshTournament() {
-            // 8 强：用户自由选，校验是否在当前池中
             const pool = new Set(getTournamentPool());
             tournamentState.quarters.forEach(q => {
                 if (q.left  && !pool.has(q.left))  { q.left = null;  q.winner = null; }
@@ -788,7 +795,6 @@
                 if (!q.left || !q.right) q.winner = null;
             });
 
-            // 4 强 = 8 强胜者
             const qW = tournamentState.quarters.map(q => {
                 if (!q.winner) return null;
                 return q.winner === 'left' ? q.left : q.right;
@@ -805,7 +811,6 @@
             }
             tournamentState.semis = newSemis;
 
-            // 决赛 = 4 强胜者
             const sW = tournamentState.semis.map(s => {
                 if (!s.winner) return null;
                 return s.winner === 'left' ? s.left : s.right;
@@ -846,27 +851,12 @@
         function createTournamentMatch(match, stage, index) {
             const card = document.createElement('div');
             card.className = 'tournament-match';
-
-            const left  = createTournamentTeam(match.left,  'left',  stage, index, match);
-            const right = createTournamentTeam(match.right, 'right', stage, index, match);
-
+            card.appendChild(createTournamentTeam(match.left,  'left',  stage, index, match));
             const vs = document.createElement('div');
             vs.className = 'tournament-vs';
             vs.innerText = 'VS';
-
-            if (stage === 'quarter') {
-                vs.title = '点击选择双方队伍';
-                vs.addEventListener('click', () => {
-                    openPickModal({ type: 'tournament', stage, index, left: match.left, right: match.right });
-                });
-            } else {
-                vs.classList.add('disabled');
-                vs.title = '对阵由上一轮胜者自动晋级';
-            }
-
-            card.appendChild(left);
             card.appendChild(vs);
-            card.appendChild(right);
+            card.appendChild(createTournamentTeam(match.right, 'right', stage, index, match));
             return card;
         }
 
@@ -880,18 +870,13 @@
             const img = document.createElement('img');
             img.src = team ? (team.logo || defaultLogo) : defaultLogo;
             img.className = 'team-logo-small';
+            img.title = '点击判定胜者';
 
-            const name = document.createElement('span');
-            name.className = 'tournament-team-name';
-            name.innerText = team ? team.name : '待定';
-
-            div.appendChild(img);
-            div.appendChild(name);
-
-            div.addEventListener('click', () => {
+            img.addEventListener('click', (e) => {
+                e.stopPropagation();
                 if (!match.left || !match.right) {
                     if (stage === 'quarter') {
-                        openPickModal({ type: 'tournament', stage, index, left: match.left, right: match.right });
+                        alert('请先为双方选择队伍');
                     } else {
                         alert('该场对阵由上一轮胜者自动晋级，请先完成上一轮比赛');
                     }
@@ -901,6 +886,48 @@
                 refreshTournament();
                 renderTournament();
             });
+
+            const name = document.createElement('span');
+            name.className = 'tournament-team-name';
+            name.innerText = team ? team.name : '待定';
+
+            div.appendChild(img);
+            div.appendChild(name);
+
+            if (stage === 'quarter') {
+                const select = document.createElement('select');
+                select.className = 'team-select';
+                select.title = '点击选择队伍';
+                select.innerHTML = `<option value="">— 待定 —</option>`;
+
+                const usedElsewhere = new Set();
+                tournamentState.quarters.forEach((m, i) => {
+                    if (i === index) return;
+                    if (m.left) usedElsewhere.add(m.left);
+                    if (m.right) usedElsewhere.add(m.right);
+                });
+
+                [...new Set(getTournamentPool())].forEach(tid => {
+                    const t = teams.find(x => x.id === tid);
+                    if (!t) return;
+                    const opt = document.createElement('option');
+                    opt.value = t.id;
+                    opt.textContent = t.name + (usedElsewhere.has(t.id) ? ' (已选)' : '');
+                    select.appendChild(opt);
+                });
+                select.value = teamId || '';
+
+                select.addEventListener('change', (e) => {
+                    const v = e.target.value || null;
+                    if (match[side] !== v) match.winner = null;
+                    match[side] = v;
+                    refreshTournament();
+                    renderTournament();
+                });
+                select.addEventListener('click', (e) => e.stopPropagation());
+
+                div.appendChild(select);
+            }
 
             return div;
         }
@@ -925,7 +952,9 @@
         function drawBracketLines() {
             const bracket = document.getElementById('tournamentBracket');
             const svg = document.getElementById('bracketSvg');
-            if (!bracket || !svg || document.getElementById('worldsPage').style.display === 'none') return;
+            if (!bracket || !svg) return;
+            if (document.getElementById('worldsPage').style.display === 'none') return;
+            if (window.matchMedia('(max-width: 768px)').matches) return;
 
             const rect = bracket.getBoundingClientRect();
             if (rect.width === 0 || rect.height === 0) return;
@@ -953,7 +982,6 @@
                 p.setAttribute('stroke-linejoin', 'round');
                 svg.appendChild(p);
             }
-
             function connect(srcEl, dstEl) {
                 const y1 = getY(srcEl), y2 = getY(dstEl);
                 const x1 = getRX(srcEl), x2 = getLX(dstEl);
@@ -971,9 +999,7 @@
                 connect(ss[0], fs[0]);
                 connect(ss[1], fs[0]);
             }
-            if (fs.length === 1 && champ) {
-                connect(fs[0], champ);
-            }
+            if (fs.length === 1 && champ) connect(fs[0], champ);
         }
 
         function resetTournament() {
@@ -995,7 +1021,6 @@
                 g.style.display = g.dataset.page === page ? 'flex' : 'none';
             });
             if (page === 'worlds') renderTournament();
-            else drawBracketLines();
         }
 
         // ============ 赛事信息管理 ============
@@ -1059,8 +1084,14 @@
             renderManageList();
         }
 
+        let resizeTimer;
         window.addEventListener('resize', () => {
-            if (currentPage === 'worlds') drawBracketLines();
+            clearTimeout(resizeTimer);
+            resizeTimer = setTimeout(() => {
+                if (currentPage === 'worlds') {
+                    requestAnimationFrame(() => requestAnimationFrame(drawBracketLines));
+                }
+            }, 100);
         });
 
         init();
