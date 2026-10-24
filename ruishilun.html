@@ -21,8 +21,7 @@
             -webkit-tap-highlight-color: transparent; }
         body { background-color: var(--bg-color); color: var(--text-main);
             display: flex; flex-direction: column;
-            height: 100vh;
-            height: 100dvh;
+            height: 100vh; height: 100dvh;
             overflow: hidden; position: relative; }
 
         .bg-blobs { position: fixed; inset: 0; z-index: -1; overflow: hidden; pointer-events: none; }
@@ -72,9 +71,51 @@
         .pool-group { background: rgba(255,255,255,0.7); backdrop-filter: blur(10px);
             border-radius: 10px; padding: 15px; display: flex; flex-direction: column; gap: 12px;
             border: 1px solid var(--border-color); box-shadow: 0 2px 10px rgba(0,0,0,0.02); }
-        .pool-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 5px; }
-        .pool-title { font-size: 15px; font-weight: 800; white-space: nowrap; }
-        .bo-tag { font-size: 11px; padding: 2px 8px; border-radius: 12px; font-weight: 700; white-space: nowrap; }
+
+        .pool-header {
+            display: grid;
+            grid-template-columns: auto 1fr auto;
+            grid-template-areas: "title date bo";
+            align-items: center;
+            gap: 6px;
+            margin-bottom: 5px;
+        }
+        .pool-title { grid-area: title; font-size: 15px; font-weight: 800; white-space: nowrap; }
+        .pool-date-chip {
+            grid-area: date;
+            justify-self: center;
+            position: relative;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 4px;
+            padding: 2px 8px;
+            border-radius: 10px;
+            font-size: 11px;
+            font-weight: 700;
+            color: #94a3b8;
+            background: transparent;
+            border: 1px dashed #cbd5e1;
+            cursor: pointer;
+            white-space: nowrap;
+            transition: 0.2s;
+            min-height: 20px;
+        }
+        .pool-date-chip:hover { border-color: var(--accent-blue); color: var(--accent-blue); }
+        .pool-date-chip.has-date {
+            color: var(--accent-blue);
+            background: #eff6ff;
+            border: 1px solid #bfdbfe;
+        }
+        .pool-date-chip .date-text {
+            display: inline-flex; align-items: center; gap: 4px; line-height: 1;
+        }
+        .pool-date-chip .date-input {
+            position: absolute; inset: 0; opacity: 0; cursor: pointer;
+            border: none; width: 100%; height: 100%;
+        }
+        .bo-tag { grid-area: bo; font-size: 11px; padding: 2px 8px; border-radius: 12px;
+            font-weight: 700; white-space: nowrap; justify-self: end; }
         .bo-tag.bo1 { background: var(--bo1-bg); color: var(--bo1-text); }
         .bo-tag.bo3 { background: var(--bo3-bg); color: var(--bo3-text); }
         .bo-tag.bo5 { background: #fee2e2; color: #991b1b; }
@@ -99,8 +140,20 @@
         .team-logo { height: 100%; width: auto; max-width: 40px; object-fit: contain; }
         .team-name { font-size: 14px; font-weight: 600; white-space: nowrap;
             overflow: hidden; text-overflow: ellipsis; max-width: 100%; }
+
+        /* 对局时间区域（VS 上方显示时间） */
+        .vs-area {
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            gap: 1px; padding: 0 5px; flex-shrink: 0; border-radius: 4px;
+            transition: 0.15s; position: relative; cursor: pointer; min-width: 36px;
+        }
+        .vs-area:hover { background: #f1f5f9; }
+        .match-time { font-size: 10px; font-weight: 700; color: var(--accent-blue);
+            line-height: 1; white-space: nowrap; }
         .vs-text { font-size: 12px; color: #94a3b8; font-weight: 800; font-style: italic;
-            padding: 0 5px; flex-shrink: 0; user-select: none; }
+            line-height: 1; user-select: none; }
+        .time-input { position: absolute; inset: 0; opacity: 0; cursor: pointer;
+            border: none; width: 100%; height: 100%; font-family: inherit; }
 
         .team-box.winner { background-color: #eff6ff; }
         .team-box.winner .team-name { color: var(--accent-blue); }
@@ -155,9 +208,10 @@
             min-width: 1300px; margin: 0 auto; padding-bottom: 50px; }
         .tournament-header { text-align: center; margin-bottom: 30px; flex-shrink: 0; }
         .tournament-header h1 { font-size: 24px; font-weight: 800; color: var(--text-main); letter-spacing: 1px; }
-        .tournament-header p { font-size: 13px; color: var(--text-muted); margin-top: 6px; }
+        .tournament-header p { font-size: 13px; color: var(--text-muted); margin-top: 6px;
+            display: flex; align-items: center; justify-content: center; gap: 6px; flex-wrap: wrap; }
         .tournament-header p .bo5 { display: inline-block; background: #fee2e2; color: #991b1b;
-            font-weight: 700; padding: 2px 10px; border-radius: 10px; margin-left: 6px;
+            font-weight: 700; padding: 2px 10px; border-radius: 10px;
             font-size: 11px; letter-spacing: 1px; }
 
         .tournament-bracket { display: flex; gap: 40px; width: 100%; min-height: 640px; position: relative; }
@@ -167,8 +221,47 @@
 
         .bracket-column { flex: 1; display: flex; flex-direction: column; min-width: 220px;
             position: relative; z-index: 2; }
-        .column-title { text-align: center; font-size: 13px; font-weight: 700; letter-spacing: 2px;
-            color: var(--text-muted); text-transform: uppercase; margin-bottom: 20px; flex-shrink: 0; }
+
+        /* 列标题：文字 + 日期 chip 水平居中 */
+        .column-title {
+            display: flex; align-items: center; justify-content: center;
+            gap: 8px; font-size: 13px; font-weight: 700; letter-spacing: 2px;
+            color: var(--text-muted); text-transform: uppercase;
+            margin-bottom: 20px; flex-shrink: 0;
+        }
+
+        /* 阶段日期 chip */
+        .stage-date-chip {
+            position: relative;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 4px;
+            padding: 2px 8px;
+            border-radius: 10px;
+            font-size: 11px;
+            font-weight: 700;
+            color: #94a3b8;
+            background: transparent;
+            border: 1px dashed #cbd5e1;
+            cursor: pointer;
+            white-space: nowrap;
+            transition: 0.2s;
+            letter-spacing: 0;
+            text-transform: none;
+            min-height: 20px;
+        }
+        .stage-date-chip:hover { border-color: var(--accent-blue); color: var(--accent-blue); }
+        .stage-date-chip.has-date {
+            color: var(--accent-blue);
+            background: #eff6ff;
+            border: 1px solid #bfdbfe;
+        }
+        .stage-date-chip .stage-date-input {
+            position: absolute; inset: 0; opacity: 0; cursor: pointer;
+            border: none; width: 100%; height: 100%;
+        }
+
         .matches-container { flex: 1; display: flex; flex-direction: column; justify-content: space-around; }
 
         .tournament-match { background: white; border-radius: 10px; display: flex; align-items: center;
@@ -236,9 +329,20 @@
         .manage-item button { background: #fef2f2; color: var(--danger); border: none;
             padding: 6px 12px; border-radius: 6px; cursor: pointer; }
 
+        /* ================= 窄屏：pool-header 两行 ================= */
+        @media (max-width: 1500px) {
+            .pool-header {
+                grid-template-columns: 1fr auto;
+                grid-template-areas:
+                    "title bo"
+                    "date date";
+                row-gap: 5px;
+            }
+            .pool-date-chip { justify-self: center; }
+        }
+
         /* ================= 移动端竖屏适配 ================= */
         @media (max-width: 768px) {
-            /* 顶部导航改为竖排 */
             header {
                 flex-direction: column;
                 align-items: stretch;
@@ -279,7 +383,6 @@
 
             .main-container { padding: 15px 12px; }
 
-            /* 瑞士轮：改为纵向堆叠 */
             .bracket-wrapper {
                 flex-direction: column;
                 min-width: 0;
@@ -295,6 +398,8 @@
             }
             .pool-group { padding: 12px; gap: 10px; }
             .pool-title { font-size: 14px; }
+            .pool-date-chip { font-size: 10px; padding: 2px 6px; }
+            .bo-tag { font-size: 10px; padding: 2px 6px; }
             .result-column { min-width: 0; flex: none; }
             .result-wrapper {
                 justify-content: flex-start;
@@ -303,26 +408,31 @@
             .result-slots { grid-template-columns: 1fr; }
             .result-slots > div:only-child { grid-column: auto; }
 
-            /* 队名允许稍微收窄 */
             .team-name { font-size: 13px; }
             .team-logo { max-width: 34px; }
-            .vs-text { padding: 0 6px; }
+            .match-time { font-size: 9px; }
+            .vs-text { font-size: 11px; }
+            .vs-area { min-width: 32px; padding: 0 4px; }
 
-            /* 总决赛：改为纵向堆叠 */
             .tournament-wrapper {
                 min-width: 0;
                 padding-bottom: 30px;
             }
             .tournament-header { margin-bottom: 20px; }
             .tournament-header h1 { font-size: 20px; }
-            .tournament-header p { font-size: 12px; line-height: 1.5; }
+            .tournament-header p { font-size: 12px; line-height: 1.6; }
             .tournament-bracket {
                 flex-direction: column;
                 gap: 16px;
                 min-height: auto;
             }
             .bracket-column { min-width: 0; }
-            .column-title { margin-bottom: 12px; }
+            .column-title {
+                margin-bottom: 12px;
+                gap: 6px;
+                font-size: 12px;
+            }
+            .stage-date-chip { font-size: 10px; padding: 2px 6px; }
             .matches-container {
                 justify-content: flex-start;
                 gap: 10px;
@@ -336,21 +446,22 @@
             .champion-crown { font-size: 24px; margin-bottom: 4px; }
             .champion-name { font-size: 16px; }
 
-            /* 弹窗 */
             .modal-content { padding: 20px; }
             .form-group { flex-direction: column; }
             .form-group .btn { justify-content: center; }
         }
 
-        /* 超小屏（比如 iPhone SE 375px 以下）进一步缩小 */
         @media (max-width: 380px) {
             .logo-title { font-size: 15px; }
             .page-tab { font-size: 12px; padding: 7px 8px; }
             .actions-group .btn { font-size: 12px; padding: 7px 10px; }
             .team-name { font-size: 12px; }
             .tournament-team-name { font-size: 12px; }
-            .match-card { height: 44px; }
+            .match-card { height: 46px; }
             .tournament-match { height: 52px; }
+            .match-time { font-size: 8px; }
+            .pool-date-chip { font-size: 9px; }
+            .stage-date-chip { font-size: 9px; }
         }
     </style>
 </head>
@@ -389,24 +500,47 @@
         <div class="tournament-wrapper">
             <div class="tournament-header">
                 <h1>全球总决赛 · 8强淘汰赛</h1>
-                <p>BO5 单败淘汰<span class="bo5">BO5</span> · 点击队标判定胜者，点击队名选择队伍</p>
+                <p>
+                    BO5 单败淘汰<span class="bo5">BO5</span>
+                    <span class="worlds-hint">· 点击队标判定胜者，点击队名选择队伍</span>
+                </p>
             </div>
             <div class="tournament-bracket" id="tournamentBracket">
                 <svg class="bracket-svg" id="bracketSvg"></svg>
                 <div class="bracket-column">
-                    <div class="column-title">八强 · BO5</div>
+                    <div class="column-title">
+                        <span>八强 · BO5</span>
+                        <label class="stage-date-chip" data-stage="quarter" title="设置比赛日期">
+                            <span class="stage-date-text" id="quarterDateText"></span>
+                            <input type="date" class="stage-date-input" id="quarterDateInput">
+                        </label>
+                    </div>
                     <div class="matches-container" id="quartersContainer"></div>
                 </div>
                 <div class="bracket-column">
-                    <div class="column-title">四强 · BO5</div>
+                    <div class="column-title">
+                        <span>四强 · BO5</span>
+                        <label class="stage-date-chip" data-stage="semi" title="设置比赛日期">
+                            <span class="stage-date-text" id="semiDateText"></span>
+                            <input type="date" class="stage-date-input" id="semiDateInput">
+                        </label>
+                    </div>
                     <div class="matches-container" id="semisContainer"></div>
                 </div>
                 <div class="bracket-column">
-                    <div class="column-title">决赛 · BO5</div>
+                    <div class="column-title">
+                        <span>决赛 · BO5</span>
+                        <label class="stage-date-chip" data-stage="final" title="设置比赛日期">
+                            <span class="stage-date-text" id="finalDateText"></span>
+                            <input type="date" class="stage-date-input" id="finalDateInput">
+                        </label>
+                    </div>
                     <div class="matches-container" id="finalContainer"></div>
                 </div>
                 <div class="bracket-column">
-                    <div class="column-title">冠军</div>
+                    <div class="column-title">
+                        <span>冠军</span>
+                    </div>
                     <div class="matches-container" id="championContainer"></div>
                 </div>
             </div>
@@ -451,6 +585,8 @@
 
         const defaultLogo = 'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="%2394a3b8" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg>';
 
+        const calendarIcon = `<svg xmlns="http://www.w3.org/2000/svg" width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>`;
+
         // ============ 瑞士轮配置 ============
         const poolDefs = [
             { id: 'r1',    name: '第一轮 • 0-0', count: 8, bo: 'bo1' },
@@ -492,34 +628,44 @@
         ];
         const poolOrder = ['r1','r2_10','r2_01','r3_20','r3_11','r3_02','r4_21','r4_12','r5_22'];
 
+        // 预设对局（含时间，time 为整点小时两位字符串，如 '01'）
         const presetData = {
             r1: [
-                { left: 'IG',   right: 'GEN', winner: 'right' },
-                { left: 'TES',  right: 'HLE', winner: 'right' },
-                { left: 'MKOI', right: 'BLG', winner: 'left'  },
-                { left: 'KC',   right: 'AL',  winner: 'left'  },
-                { left: 'DK',   right: 'G2',  winner: 'left'  },
-                { left: 'TL',   right: 'CFO', winner: 'right' },
-                { left: 'LOS',  right: 'T1',  winner: 'right' },
-                { left: 'LYON', right: 'TSW', winner: 'left'  },
+                { left: 'IG',   right: 'GEN', winner: 'right', time: '01' },
+                { left: 'TES',  right: 'HLE', winner: 'right', time: '02' },
+                { left: 'MKOI', right: 'BLG', winner: 'left',  time: '03' },
+                { left: 'KC',   right: 'AL',  winner: 'left',  time: '04' },
+                { left: 'DK',   right: 'G2',  winner: 'left',  time: '05' },
+                { left: 'TL',   right: 'CFO', winner: 'right', time: '06' },
+                { left: 'LOS',  right: 'T1',  winner: 'right', time: '07' },
+                { left: 'LYON', right: 'TSW', winner: 'left',  time: '08' },
             ],
             r2_10: [
-                { left: 'CFO',  right: 'MKOI', winner: null },
-                { left: 'LYON', right: 'KC',   winner: null },
-                { left: 'GEN',  right: 'HLE',  winner: null },
-                { left: 'T1',   right: 'DK',   winner: null },
+                { left: 'CFO',  right: 'MKOI', winner: null, time: '02' },
+                { left: 'LYON', right: 'KC',   winner: null, time: '04' },
+                { left: 'GEN',  right: 'HLE',  winner: null, time: '06' },
+                { left: 'T1',   right: 'DK',   winner: null, time: '07' },
             ],
             r2_01: [
-                { left: 'AL',  right: 'TES', winner: null },
-                { left: 'G2',  right: 'LOS', winner: null },
-                { left: 'TSW', right: 'IG',  winner: null },
-                { left: 'TL',  right: 'BLG', winner: null },
+                { left: 'AL',  right: 'TES', winner: null, time: '01' },
+                { left: 'G2',  right: 'LOS', winner: null, time: '03' },
+                { left: 'TSW', right: 'IG',  winner: null, time: '05' },
+                { left: 'TL',  right: 'BLG', winner: null, time: '08' },
             ],
+        };
+
+        // 预设池子日期
+        const presetPoolDates = {
+            r1: '2026-10-24',
+            r2_10: '2026-10-25',
+            r2_01: '2026-10-25',
         };
 
         // ============ 状态 ============
         let currentPage = 'swiss';
         let state = {};
+        let poolDates = {};
+        let stageDates = { quarter: '', semi: '', final: '' };
         let tournamentState = {
             quarters: Array.from({ length: 4 }, () => ({ left: null, right: null, winner: null })),
             semis:    Array.from({ length: 2 }, () => ({ left: null, right: null, winner: null })),
@@ -529,8 +675,10 @@
         // ============ 瑞士轮逻辑 ============
         function initState() {
             state = {};
+            poolDates = {};
             poolDefs.forEach(p => {
-                state[p.id] = Array.from({ length: p.count }, () => ({ left: null, right: null, winner: null }));
+                state[p.id] = Array.from({ length: p.count }, () => ({ left: null, right: null, winner: null, time: '' }));
+                poolDates[p.id] = presetPoolDates[p.id] || '';
             });
             Object.keys(presetData).forEach(poolId => {
                 if (!state[poolId]) return;
@@ -539,6 +687,7 @@
                         state[poolId][i].left   = mu.left;
                         state[poolId][i].right  = mu.right;
                         state[poolId][i].winner = mu.winner;
+                        state[poolId][i].time   = mu.time || '';
                     }
                 });
             });
@@ -604,12 +753,26 @@
                     const pDef = poolDefs.find(p => p.id === pid);
                     const poolDiv = document.createElement('div');
                     poolDiv.className = 'pool-group';
+
+                    const dateVal = poolDates[pid] || '';
+
                     poolDiv.innerHTML = `
                         <div class="pool-header">
                             <span class="pool-title">${pDef.name}</span>
+                            <label class="pool-date-chip ${dateVal ? 'has-date' : ''}" title="设置比赛日期">
+                                <span class="date-text">${dateVal || calendarIcon}</span>
+                                <input type="date" class="date-input" value="${dateVal}">
+                            </label>
                             <span class="bo-tag ${pDef.bo}">${pDef.bo.toUpperCase()} · ${pDef.count}场</span>
                         </div>
                     `;
+
+                    const dateInput = poolDiv.querySelector('.date-input');
+                    dateInput.addEventListener('change', (e) => {
+                        poolDates[pid] = e.target.value;
+                        render();
+                    });
+
                     for (let i = 0; i < pDef.count; i++) poolDiv.appendChild(createMatchCard(pid, i));
                     poolsWrapper.appendChild(poolDiv);
                 });
@@ -647,13 +810,44 @@
         }
 
         function createMatchCard(poolId, matchIndex) {
+            const m = state[poolId][matchIndex];
             const card = document.createElement('div');
             card.className = 'match-card';
             card.appendChild(createTeamBox(poolId, matchIndex, 'left'));
-            const vs = document.createElement('div');
-            vs.className = 'vs-text';
-            vs.innerText = 'VS';
-            card.appendChild(vs);
+
+            // VS + 整点时间区域
+            const vsArea = document.createElement('div');
+            vsArea.className = 'vs-area';
+            vsArea.title = '点击设置比赛时间（整点）';
+
+            if (m.time) {
+                const timeSpan = document.createElement('span');
+                timeSpan.className = 'match-time';
+                timeSpan.innerText = m.time + '点';
+                vsArea.appendChild(timeSpan);
+            }
+
+            const vsText = document.createElement('span');
+            vsText.className = 'vs-text';
+            vsText.innerText = 'VS';
+            vsArea.appendChild(vsText);
+
+            // 整点时间 select
+            const timeSelect = document.createElement('select');
+            timeSelect.className = 'time-input';
+            timeSelect.innerHTML = `<option value="">— 时间 —</option>`;
+            for (let h = 1; h <= 24; h++) {
+                const hh = String(h).padStart(2, '0');
+                timeSelect.innerHTML += `<option value="${hh}">${hh}点</option>`;
+            }
+            timeSelect.value = m.time || '';
+            timeSelect.addEventListener('change', (e) => {
+                state[poolId][matchIndex].time = e.target.value;
+                render();
+            });
+            vsArea.appendChild(timeSelect);
+
+            card.appendChild(vsArea);
             card.appendChild(createTeamBox(poolId, matchIndex, 'right'));
             return card;
         }
@@ -765,7 +959,7 @@
 
         function syncState() { validateAll(); render(); }
         function resetAll() {
-            if (confirm('确定要重置所有瑞士轮排阵吗？')) { initState(); render(); }
+            if (confirm('确定要重置所有瑞士轮排阵吗？日期和时间也会一并清空。')) { initState(); render(); }
         }
 
         // ============ 总决赛逻辑 ============
@@ -824,8 +1018,42 @@
             tournamentState.final = newFinal;
         }
 
+        function renderStageDates() {
+            const map = {
+                quarter: { inp: document.getElementById('quarterDateInput'), txt: document.getElementById('quarterDateText') },
+                semi:    { inp: document.getElementById('semiDateInput'),    txt: document.getElementById('semiDateText') },
+                final:   { inp: document.getElementById('finalDateInput'),   txt: document.getElementById('finalDateText') },
+            };
+            Object.keys(map).forEach(stage => {
+                const { inp, txt } = map[stage];
+                if (!inp || !txt) return;
+                const v = stageDates[stage] || '';
+                inp.value = v;
+                const chip = inp.closest('.stage-date-chip');
+                if (v) {
+                    chip.classList.add('has-date');
+                    txt.innerHTML = v;
+                } else {
+                    chip.classList.remove('has-date');
+                    txt.innerHTML = calendarIcon;
+                }
+            });
+        }
+
+        function bindStageDateInputs() {
+            ['quarter','semi','final'].forEach(stage => {
+                const inp = document.getElementById(stage + 'DateInput');
+                if (!inp) return;
+                inp.addEventListener('change', (e) => {
+                    stageDates[stage] = e.target.value;
+                    renderStageDates();
+                });
+            });
+        }
+
         function renderTournament() {
             refreshTournament();
+            renderStageDates();
 
             const qC = document.getElementById('quartersContainer');
             const sC = document.getElementById('semisContainer');
@@ -1003,7 +1231,7 @@
         }
 
         function resetTournament() {
-            if (confirm('确定要重置总决赛对阵吗？')) {
+            if (confirm('确定要重置总决赛对阵吗？日期时间会保留。')) {
                 tournamentState.quarters = Array.from({ length: 4 }, () => ({ left: null, right: null, winner: null }));
                 tournamentState.semis    = Array.from({ length: 2 }, () => ({ left: null, right: null, winner: null }));
                 tournamentState.final    = { left: null, right: null, winner: null };
@@ -1082,6 +1310,7 @@
             validateAll();
             render();
             renderManageList();
+            bindStageDateInputs();
         }
 
         let resizeTimer;
