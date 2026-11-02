@@ -222,7 +222,7 @@
         .bracket-column { flex: 1; display: flex; flex-direction: column; min-width: 220px;
             position: relative; z-index: 2; }
 
-        /* 列标题：文字 + 日期 chip 水平居中 */
+        /* 列标题 */
         .column-title {
             display: flex; align-items: center; justify-content: center;
             gap: 8px; font-size: 13px; font-weight: 700; letter-spacing: 2px;
@@ -230,7 +230,7 @@
             margin-bottom: 20px; flex-shrink: 0;
         }
 
-        /* 阶段日期 chip */
+        /* 日期 chip（每场对阵单独） */
         .stage-date-chip {
             position: relative;
             display: inline-flex;
@@ -261,6 +261,11 @@
             position: absolute; inset: 0; opacity: 0; cursor: pointer;
             border: none; width: 100%; height: 100%;
         }
+        .tournament-center .stage-date-chip {
+            font-size: 10px;
+            padding: 1px 6px;
+            min-height: 16px;
+        }
 
         .matches-container { flex: 1; display: flex; flex-direction: column; justify-content: space-around; }
 
@@ -268,6 +273,9 @@
             height: 64px; padding: 0 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.06);
             border: 1px solid var(--border-color); transition: 0.2s; flex-shrink: 0; position: relative; }
         .tournament-match:hover { box-shadow: 0 4px 14px rgba(0,0,0,0.08); border-color: #cbd5e1; }
+
+        .tournament-center { display: flex; flex-direction: column; align-items: center;
+            justify-content: center; gap: 2px; flex-shrink: 0; padding: 0 4px; }
 
         .tournament-team { flex: 1; display: flex; align-items: center; gap: 8px; height: 100%;
             padding: 0 8px; border-radius: 6px; transition: 0.2s; min-width: 0; position: relative; }
@@ -281,7 +289,7 @@
         .tournament-team-name { font-size: 14px; font-weight: 600; white-space: nowrap;
             overflow: hidden; text-overflow: ellipsis; max-width: 100%; }
         .tournament-vs { font-size: 11px; color: #94a3b8; font-weight: 800; font-style: italic;
-            padding: 0 6px; flex-shrink: 0; user-select: none; }
+            padding: 0 4px; flex-shrink: 0; user-select: none; }
 
         .tournament-team .team-select {
             position: absolute; top: 0; left: 0; width: 100%; height: 100%;
@@ -502,7 +510,7 @@
                 <h1>全球总决赛 · 8强淘汰赛</h1>
                 <p>
                     BO5 单败淘汰<span class="bo5">BO5</span>
-                    <span class="worlds-hint">· 点击队标判定胜者，点击队名选择队伍</span>
+                    <span class="worlds-hint">· 点击队标判定胜者，点击队名选择队伍，点击日期设置比赛时间</span>
                 </p>
             </div>
             <div class="tournament-bracket" id="tournamentBracket">
@@ -510,30 +518,18 @@
                 <div class="bracket-column">
                     <div class="column-title">
                         <span>八强 · BO5</span>
-                        <label class="stage-date-chip" data-stage="quarter" title="设置比赛日期">
-                            <span class="stage-date-text" id="quarterDateText"></span>
-                            <input type="date" class="stage-date-input" id="quarterDateInput">
-                        </label>
                     </div>
                     <div class="matches-container" id="quartersContainer"></div>
                 </div>
                 <div class="bracket-column">
                     <div class="column-title">
                         <span>四强 · BO5</span>
-                        <label class="stage-date-chip" data-stage="semi" title="设置比赛日期">
-                            <span class="stage-date-text" id="semiDateText"></span>
-                            <input type="date" class="stage-date-input" id="semiDateInput">
-                        </label>
                     </div>
                     <div class="matches-container" id="semisContainer"></div>
                 </div>
                 <div class="bracket-column">
                     <div class="column-title">
                         <span>决赛 · BO5</span>
-                        <label class="stage-date-chip" data-stage="final" title="设置比赛日期">
-                            <span class="stage-date-text" id="finalDateText"></span>
-                            <input type="date" class="stage-date-input" id="finalDateInput">
-                        </label>
                     </div>
                     <div class="matches-container" id="finalContainer"></div>
                 </div>
@@ -667,14 +663,19 @@
                 { left: 'AL',  right: 'TL', winner: 'right', time: '06' },
             ],
           r4_21: [
-                { left: 'MKOI',  right: 'T1', winner: null, time: '04' },
-                { left: 'LYON',  right: 'IG', winner: null, time: '07' },
-                { left: 'BLG',  right: 'TES', winner: null, time: '07' },
+                { left: 'MKOI',  right: 'T1', winner: 'right', time: '04' },
+                { left: 'LYON',  right: 'IG', winner: 'right', time: '07' },
+                { left: 'BLG',  right: 'TES', winner: 'right', time: '07' },
             ],
           r4_12: [
-                { left: 'CFO',  right: 'KC', winner: null, time: '04' },
-                { left: 'TL',  right: 'LOS', winner: null, time: '04' },
-                { left: 'G2',  right: 'HLE', winner: null, time: '07' },
+                { left: 'CFO',  right: 'KC', winner: 'right', time: '04' },
+                { left: 'TL',  right: 'LOS', winner: 'right', time: '04' },
+                { left: 'G2',  right: 'HLE', winner: 'right', time: '07' },
+            ],
+          r5_22: [
+                { left: 'KC',  right: 'MKOI', winner: 'left', time: '01' },
+                { left: 'LYON',  right: 'LOS', winner: 'left', time: '04' },
+                { left: 'BLG',  right: 'HLE', winner: 'left', time: '07' },
             ],
         };
 
@@ -688,17 +689,25 @@
             r3_02: '2026-10-27',
             r4_21: '2026-10-29',
             r4_12: '2026-10-31',
+            r5_22: '2026-11-01',
         };
 
         // ============ 状态 ============
         let currentPage = 'swiss';
         let state = {};
         let poolDates = {};
-        let stageDates = { quarter: '', semi: '', final: '' };
         let tournamentState = {
-            quarters: Array.from({ length: 4 }, () => ({ left: null, right: null, winner: null })),
-            semis:    Array.from({ length: 2 }, () => ({ left: null, right: null, winner: null })),
-            final:    { left: null, right: null, winner: null },
+            quarters: [
+                { left: 'DK',  right: 'BLG',  winner: null, date: '2026-11-06' },
+                { left: 'T1',  right: 'KC',   winner: null,  date: '2026-11-07' },
+                { left: 'TES', right: 'IG',   winner: null, date: '2026-11-04' },
+                { left: 'GEN', right: 'LYON', winner: null,  date: '2026-11-05' },
+            ],
+            semis: [
+                { left: null, right: null, winner: null, date: '2026-11-08' },
+                { left: null,  right: null, winner: null, date: '2026-11-09' },
+            ],
+            final: { left: null, right: null, winner: null, date: '2026-11-15' },
         };
 
         // ============ 瑞士轮逻辑 ============
@@ -1029,6 +1038,7 @@
             ];
             for (let i = 0; i < 2; i++) {
                 const o = oldSemis[i], n = newSemis[i];
+                n.date = (o && o.date) || '';
                 if (o && o.left === n.left && o.right === n.right && o.winner) n.winner = o.winner;
                 if (!n.left || !n.right) n.winner = null;
             }
@@ -1038,8 +1048,8 @@
                 if (!s.winner) return null;
                 return s.winner === 'left' ? s.left : s.right;
             });
-            const oldFinal = tournamentState.final || { left: null, right: null, winner: null };
-            const newFinal = { left: sW[0], right: sW[1], winner: null };
+            const oldFinal = tournamentState.final || { left: null, right: null, winner: null, date: '' };
+            const newFinal = { left: sW[0], right: sW[1], winner: null, date: oldFinal.date || '' };
             if (oldFinal.left === newFinal.left && oldFinal.right === newFinal.right && oldFinal.winner) {
                 newFinal.winner = oldFinal.winner;
             }
@@ -1047,42 +1057,8 @@
             tournamentState.final = newFinal;
         }
 
-        function renderStageDates() {
-            const map = {
-                quarter: { inp: document.getElementById('quarterDateInput'), txt: document.getElementById('quarterDateText') },
-                semi:    { inp: document.getElementById('semiDateInput'),    txt: document.getElementById('semiDateText') },
-                final:   { inp: document.getElementById('finalDateInput'),   txt: document.getElementById('finalDateText') },
-            };
-            Object.keys(map).forEach(stage => {
-                const { inp, txt } = map[stage];
-                if (!inp || !txt) return;
-                const v = stageDates[stage] || '';
-                inp.value = v;
-                const chip = inp.closest('.stage-date-chip');
-                if (v) {
-                    chip.classList.add('has-date');
-                    txt.innerHTML = v;
-                } else {
-                    chip.classList.remove('has-date');
-                    txt.innerHTML = calendarIcon;
-                }
-            });
-        }
-
-        function bindStageDateInputs() {
-            ['quarter','semi','final'].forEach(stage => {
-                const inp = document.getElementById(stage + 'DateInput');
-                if (!inp) return;
-                inp.addEventListener('change', (e) => {
-                    stageDates[stage] = e.target.value;
-                    renderStageDates();
-                });
-            });
-        }
-
         function renderTournament() {
             refreshTournament();
-            renderStageDates();
 
             const qC = document.getElementById('quartersContainer');
             const sC = document.getElementById('semisContainer');
@@ -1109,10 +1085,36 @@
             const card = document.createElement('div');
             card.className = 'tournament-match';
             card.appendChild(createTournamentTeam(match.left,  'left',  stage, index, match));
+
+            const center = document.createElement('div');
+            center.className = 'tournament-center';
+
+            // 日期 chip
+            const chip = document.createElement('label');
+            chip.className = 'stage-date-chip' + (match.date ? ' has-date' : '');
+            chip.title = '设置比赛日期';
+            const txt = document.createElement('span');
+            txt.className = 'stage-date-text';
+            if (match.date) txt.textContent = match.date;
+            else txt.innerHTML = calendarIcon;
+            const inp = document.createElement('input');
+            inp.type = 'date';
+            inp.className = 'stage-date-input';
+            inp.value = match.date || '';
+            inp.addEventListener('change', (e) => {
+                match.date = e.target.value;
+                renderTournament();
+            });
+            chip.appendChild(txt);
+            chip.appendChild(inp);
+            center.appendChild(chip);
+
             const vs = document.createElement('div');
             vs.className = 'tournament-vs';
             vs.innerText = 'VS';
-            card.appendChild(vs);
+            center.appendChild(vs);
+
+            card.appendChild(center);
             card.appendChild(createTournamentTeam(match.right, 'right', stage, index, match));
             return card;
         }
@@ -1260,10 +1262,12 @@
         }
 
         function resetTournament() {
-            if (confirm('确定要重置总决赛对阵吗？日期时间会保留。')) {
-                tournamentState.quarters = Array.from({ length: 4 }, () => ({ left: null, right: null, winner: null }));
-                tournamentState.semis    = Array.from({ length: 2 }, () => ({ left: null, right: null, winner: null }));
-                tournamentState.final    = { left: null, right: null, winner: null };
+            if (confirm('确定要重置总决赛对阵吗？日期会保留。')) {
+                tournamentState.quarters.forEach(q => { q.left = null; q.right = null; q.winner = null; });
+                tournamentState.semis.forEach(s => { s.left = null; s.right = null; s.winner = null; });
+                tournamentState.final.left = null;
+                tournamentState.final.right = null;
+                tournamentState.final.winner = null;
                 renderTournament();
             }
         }
@@ -1339,7 +1343,6 @@
             validateAll();
             render();
             renderManageList();
-            bindStageDateInputs();
         }
 
         let resizeTimer;
