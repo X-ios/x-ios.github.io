@@ -698,14 +698,14 @@
         let poolDates = {};
         let tournamentState = {
             quarters: [
-                { left: 'DK',  right: 'BLG',  winner: null, date: '2026-11-06' },
-                { left: 'T1',  right: 'KC',   winner: null,  date: '2026-11-07' },
+                { left: 'DK',  right: 'BLG',  winner: 'right', date: '2026-11-06' },
+                { left: 'T1',  right: 'KC',   winner: 'left',  date: '2026-11-07' },
                 { left: 'TES', right: 'IG',   winner: 'right', date: '2026-11-04' },
                 { left: 'GEN', right: 'LYON', winner: 'left',  date: '2026-11-05' },
             ],
             semis: [
-                { left: null, right: null, winner: null, date: '2026-11-09' },
-                { left: null,  right: null, winner: null, date: '2026-11-08' },
+                { left: 'BLG', right: 'T1', winner: null, date: '2026-11-09' },
+                { left: 'IG',  right: 'GEN', winner: null, date: '2026-11-08' },
             ],
             final: { left: null, right: null, winner: null, date: '2026-11-15' },
         };
